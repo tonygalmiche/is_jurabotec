@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- is.bois -->
+        <record model="ir.ui.view" id="is_bois_tree_view">
+            <field name="name">is.bois.tree</field>
+            <field name="model">is.bois</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_bois_form_view">
+            <field name="name">is.bois.form</field>
+            <field name="model">is.bois</field>
+            <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_bois_search_view" >
+            <field name="name">is.bois.search</field>
+            <field name="model">is.bois</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <record id="is_bois_action" model="ir.actions.act_window">
+            <field name="name">Bois</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">is.bois</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+        <!-- is.qualite.bois -->
+        <record model="ir.ui.view" id="is_qualite_bois_tree_view">
+            <field name="name">is.qualite.bois.tree</field>
+            <field name="model">is.qualite.bois</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="color" widget="color_picker"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_qualite_bois_form_view">
+            <field name="name">is.qualite.bois.form</field>
+            <field name="model">is.qualite.bois</field>
+            <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="color" widget="color_picker"/>
+                    </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_qualite_bois_search_view" >
+            <field name="name">is.qualite.bois.search</field>
+            <field name="model">is.qualite.bois</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <record id="is_qualite_bois_action" model="ir.actions.act_window">
+            <field name="name">Bois</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">is.qualite.bois</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- product.template -->
+        <record id="is_product_template_form_view" model="ir.ui.view">
+            <field name="name">is_product_template_form_view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <field name="detailed_type" position="after">
+                    <field name="is_bois_id"/>
+                    <field name="is_qualite_bois_ids" widget="many2many_tags"  options="{'color_field': 'color'}"/>
+                    <field name="is_largeur"/>
+                    <field name="is_epaisseur"/>
+                </field>
+            </field>
+        </record>
+        <record id="is_product_template_tree_view" model="ir.ui.view">
+            <field name="name">is_product_template_tree_view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="is_bois_id"           optional="show"/>
+                    <field name="is_qualite_bois_ids"  optional="show" widget="many2many_tags"  options="{'color_field': 'color'}"/>
+                    <field name="is_largeur"           optional="show"/>
+                    <field name="is_epaisseur"         optional="show"/>
+                </field>
+            </field>
+        </record>
+        <record id="is_view_stock_product_template_tree" model="ir.ui.view">
+            <field name="name">is_view_stock_product_template_tree</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_stock_product_template_tree"/>
+            <field name="arch" type="xml">
+                <field name="responsible_id" position="replace"/>
+            </field>
+        </record>
+        <record id="is_product_template_search_view" model="ir.ui.view">
+            <field name="name">is_product_template_search_view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+               <field name="name" position="after">
+                    <field name="is_bois_id"/>
+                    <field name="is_qualite_bois_ids"/>
+                    <field name="is_largeur"/>
+                    <field name="is_epaisseur"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

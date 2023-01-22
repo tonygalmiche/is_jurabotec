@@ -2,3 +2,10 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_is_sale_order_colis,access_is_sale_order_colis,model_is_sale_order_colis,sales_team.group_sale_manager,1,1,1,1
 access_is_sale_order_colisage_composant,access_is_sale_order_colisage_composant,model_is_sale_order_colisage_composant,sales_team.group_sale_manager,1,1,1,1
 access_is_deplacement_charge,access_is_deplacement_charge,model_is_deplacement_charge,sales_team.group_sale_manager,1,1,1,1
+
+access_is_bois,access_is_bois,model_is_bois,base.group_user,1,0,0,0
+access_is_bois_manager,access_is_bois_manager,model_is_bois,sales_team.group_sale_manager,1,1,1,1
+
+
+access_is_qualite_bois,access_is_qualite_bois,model_is_qualite_bois,base.group_user,1,0,0,0
+access_is_qualite_bois_manager,access_is_qualite_bois_manager,model_is_qualite_bois,sales_team.group_sale_manager,1,1,1,1

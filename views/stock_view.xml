@@ -69,7 +69,6 @@
             ]"/>
         <field name="domain">[('usage', '=', 'internal')]</field>
     </record>
-    <menuitem id="is_tablette_menu" sequence="400" name="Tablette"/>
 
 
 
@@ -80,7 +79,6 @@
         <field name="state">code</field>
         <field name="code">action = model.emplacement_origine_charge_action()</field>
     </record>
-    <menuitem id="is_emplacement_charge_menu" sequence="10" name="Emplacement charge" parent="is_tablette_menu" action="is_emplacement_origine_charge_action_server"/>
 
 
     <!--stock.lot -->
