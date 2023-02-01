@@ -26,8 +26,37 @@ class ProductTemplate(models.Model):
 
     is_bois_id    = fields.Many2one('is.bois', 'Bois')
     is_qualite_bois_ids = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
-    is_largeur          = fields.Integer("Largeur")
-    is_epaisseur        = fields.Integer("Epaisseur")
+    is_largeur          = fields.Float("Largeur (m)")
+    is_epaisseur        = fields.Float("Epaisseur (mm)")
+
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+ 
+    @api.depends('product_template_variant_value_ids','is_largeur','is_epaisseur')
+    def _compute_longueur(self):
+        for obj in self:
+            longeur = 0
+            for line in obj.product_template_variant_value_ids:
+                if line.attribute_line_id.attribute_id.name=="Longueur":
+                    val = line.product_attribute_value_id.name
+                    try:
+                        longeur = float(val)
+                    except TypeError:
+                        longeur = 0
+            obj.is_longueur = longeur
+            obj.is_surface  = longeur*obj.is_largeur
+            obj.is_volume   = longeur*obj.is_largeur*obj.is_epaisseur/1000
+
+    is_longueur = fields.Float("Longueur (m)", compute='_compute_longueur')
+    is_surface  = fields.Float("Surface (m2)", compute='_compute_longueur')
+    is_volume   = fields.Float("Volume (m3) ", compute='_compute_longueur')
+
+
+
+#product_template_variant_value_ids
 
 
 #     • Désignation de base
