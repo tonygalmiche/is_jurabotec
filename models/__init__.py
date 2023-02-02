@@ -2,4 +2,5 @@
 from . import sale
 from . import stock
 from . import product
+from . import mrp
 

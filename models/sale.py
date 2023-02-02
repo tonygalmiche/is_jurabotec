@@ -6,8 +6,17 @@ class IsSaleOrderColis(models.Model):
     _name='is.sale.order.colis'
     _description = "Colis des commandes"
 
-    order_id = fields.Many2one('sale.order', 'Commande', required=True, ondelete='cascade')
-    name   = fields.Char("Colis", required=True)
+    order_id     = fields.Many2one('sale.order', 'Commande', required=True, ondelete='cascade')
+    name         = fields.Char("Colis", required=True)
+    colisage_ids = fields.One2many('is.sale.order.colisage.composant', 'colis_id', 'Colisage')
+
+
+
+    def imprimer_fiche_colisage_action(self):
+        for obj in self:
+            report=self.env.ref('is_jurabotec.is_sale_order_colis_reports')
+            return report.report_action([obj.id])
+
 
 
 class IsSaleOrderColisageComposant(models.Model):
@@ -18,6 +27,7 @@ class IsSaleOrderColisageComposant(models.Model):
     colis_id     = fields.Many2one('is.sale.order.colis', 'Colis', group_expand='_group_expand_colis_id')
     product_id   = fields.Many2one('product.product', 'Article')
     composant_id = fields.Many2one('product.product', 'Composant')
+    qty          = fields.Float(string='Quantité', digits='Product Unit of Measure')
     sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande')
 
 
@@ -47,11 +57,6 @@ class IsSaleOrderColisageComposant(models.Model):
 
         return colis
 
-        #return stages.browse(self.)
-
-## _group_expand_colis_id is.sale.order.colisage.composant() is.sale.order.colis(1,) [['order_id', '=', 1]] id
-
-
 
 class sale_order(models.Model):
     _inherit = "sale.order"
@@ -64,9 +69,12 @@ class sale_order(models.Model):
             print(obj)
             if len(obj.is_colisage_ids)==0:
                 for line in obj.order_line:
-                    filtre=[('product_tmpl_id', '=', line.product_id.product_tmpl_id.id)]
+                    filtre=[
+                        ('product_tmpl_id', '=', line.product_id.product_tmpl_id.id),
+                        ('type'           , '=', 'commande'),
+                    ]
                     print(filtre)
-                    boms = self.env['mrp.bom'].search(filtre)
+                    boms = self.env['mrp.bom'].search(filtre,limit=1)
                     print(line.product_id,boms)
                     if len(boms)>0:
                         for bom_line in boms[0].bom_line_ids:
@@ -76,16 +84,32 @@ class sale_order(models.Model):
                                 "order_id": obj.id,
                                 "product_id": line.product_id.id,
                                 "composant_id": bom_line.product_id.id,
+                                "qty": line.product_uom_qty*bom_line.product_qty,
                                 "sale_line_id": line.id,
                             }
                             res = self.env['is.sale.order.colisage.composant'].create(vals)
 
             return {
                 "name": "Colisage des composants %s"%(obj.name),
-                "view_mode": "kanban,tree",
+                "view_mode": "kanban,tree,form",
                 "res_model": "is.sale.order.colisage.composant",
                 "domain": [
                     ("order_id","=",obj.id),
                 ],
                 "type": "ir.actions.act_window",
             }
+
+
+    def liste_colis_action(self):
+        for obj in self:
+           return {
+                "name": "Colis %s"%(obj.name),
+                "view_mode": "tree,form",
+                "res_model": "is.sale.order.colis",
+                "domain": [
+                    ("order_id","=",obj.id),
+                ],
+                "type": "ir.actions.act_window",
+            }
+
+

@@ -21,6 +21,12 @@
                 <page string="Colis">
                     <field name="is_colis_ids" nolabel="1">
                         <tree editable="bottom">
+                            <button 
+                                title="Fiche de colisage" 
+                                name="imprimer_fiche_colisage_action" 
+                                type="object" 
+                                icon="fa-print" 
+                            />
                             <field name="name"/>
                         </tree>
                     </field>
@@ -28,6 +34,12 @@
                         <button 
                             name="colisage_action" 
                             string="Gestion du colisage des composants" type="object" 
+                            class="btn btn-primary"
+                        />
+                        <button 
+                            name="liste_colis_action" 
+                            string="Liste des colis" type="object" 
+                            class="btn btn-primary"
                         />
                     </group>
                 </page>
@@ -36,6 +48,22 @@
     </record>
 
 
+    <!--is.sale.order.colis -->
+    <record model="ir.ui.view" id="is_sale_order_colis_form_view">
+        <field name="name">is_sale_order_colis_form_view</field>
+        <field name="model">is.sale.order.colis</field>
+        <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <field name="order_id" readonly="1"/>
+                    <field name="name"     readonly="1"/>
+                </group>
+            </sheet>
+        </form>
+        </field>
+    </record>
+
 
     <!--is.sale.order.colisage.composant -->
     <record model="ir.ui.view" id="is_sale_order_colisage_composant_tree_view">
@@ -43,12 +71,30 @@
         <field name="model">is.sale.order.colisage.composant</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree editable="bottom">
+            <tree>
                 <field name="colis_id"/>
                 <field name="product_id"/>
                 <field name="composant_id"/>
-                <field name="sale_line_id"/>
+                <field name="qty" sum="Total"/>
+                <field name="sale_line_id" optional="hide"/>
             </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_sale_order_colisage_composant_form_view">
+        <field name="name">is_sale_order_colisage_composant_form_view</field>
+        <field name="model">is.sale.order.colisage.composant</field>
+        <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <field name="colis_id" readonly="1"/>
+                    <field name="product_id" readonly="1"/>
+                    <field name="composant_id" readonly="1"/>
+                    <field name="qty"/>
+                    <field name="sale_line_id" readonly="1"/>
+                </group>
+            </sheet>
+        </form>
         </field>
     </record>
     <record id="is_sale_order_colisage_composant_kanban_view" model="ir.ui.view">
@@ -73,6 +119,7 @@
                                     </div>
                                 </div>
                                 <div>Composant : <field name="composant_id"/></div>
+                                <div>Quantité :  <field name="qty"/></div>
                             </div>
                         </div>
                     </t>
@@ -80,7 +127,6 @@
             </kanban>
         </field>
     </record>
-
     <record id="is_sale_order_colisage_composant_search_view" model="ir.ui.view">
         <field name="name">is_sale_order_colisage_composant_search_view</field>
         <field name="model">is.sale.order.colisage.composant</field>
