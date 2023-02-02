@@ -19,21 +19,17 @@ class IsQualiteBois(models.Model):
     color = fields.Integer("Couleur", default=_get_default_color)
 
 
-
-
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     is_bois_id    = fields.Many2one('is.bois', 'Bois')
     is_qualite_bois_ids = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
-    is_largeur          = fields.Float("Largeur (m)")
+    is_largeur          = fields.Float("Largeur (mm)")
     is_epaisseur        = fields.Float("Epaisseur (mm)")
-
 
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
-
  
     @api.depends('product_template_variant_value_ids','is_largeur','is_epaisseur')
     def _compute_longueur(self):
@@ -47,28 +43,9 @@ class ProductProduct(models.Model):
                     except TypeError:
                         longeur = 0
             obj.is_longueur = longeur
-            obj.is_surface  = longeur*obj.is_largeur
-            obj.is_volume   = longeur*obj.is_largeur*obj.is_epaisseur/1000
+            obj.is_surface  = longeur*obj.is_largeur/1000
+            obj.is_volume   = longeur*obj.is_largeur*obj.is_epaisseur/1000/1000
 
     is_longueur = fields.Float("Longueur (m)", compute='_compute_longueur')
     is_surface  = fields.Float("Surface (m2)", compute='_compute_longueur')
-    is_volume   = fields.Float("Volume (m3) ", compute='_compute_longueur')
-
-
-
-#product_template_variant_value_ids
-
-
-#     • Désignation de base
-#     • Commentaire
-#     • Longueur => Permettra de distinguer les variantes des articles
-
-
-
-# La désignation complète sera la concaténation de ces champs : 
-#     • Désignation de base
-#     • Bois : Liste de choix (ex : Redwoo)
-#     • Qualité : Liste de choix multiples (ex : S/F)
-# L’article de base n’aura pas de longueur et il sera utilisé dans les contrats avec les fournisseurs
-# La longueur sera indiquée dans la variante de l’article (Une variante par longueur)
-# L’unité par défaut sera la pièce.
+    is_volume   = fields.Float("Volume (m3) ", compute='_compute_longueur', digits=(16, 4))

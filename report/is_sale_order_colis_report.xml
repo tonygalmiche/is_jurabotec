@@ -47,7 +47,23 @@
                     }
                 </style>
  
-
+                <table style="border:1px solid black; width:100%">
+                    <thead>
+                        <tr>
+                            <th style="border:1px solid black;text-align:center">Référence client</th>
+                            <th style="border:1px solid black;text-align:center">N° commande client</th>
+                            <th style="border:1px solid black;text-align:center">N° commande Jurabotec</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="border:1px solid black;text-align:center"><span t-field="o.order_id.client_order_ref"/></td>
+                            <td style="border:1px solid black;text-align:center"><span t-field="o.order_id.is_num_cde_client"/></td>
+                            <td style="border:1px solid black;text-align:center"><span t-field="o.order_id.name"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
                 <table style="border:1px solid black; width:100%">
                     <thead>
                         <tr>

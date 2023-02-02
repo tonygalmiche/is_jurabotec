@@ -6,7 +6,6 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-
             <xpath expr="//sheet[1]" position="inside">
                 <style>
                     .o_form_label{
@@ -17,6 +16,11 @@
                     }
                 </style>
             </xpath>
+            <field name="client_order_ref" position="replace"/>
+            <field name="partner_id" position="after">
+                <field name="client_order_ref"/>
+                <field name="is_num_cde_client"/>
+            </field>
             <xpath expr="//page[@name='order_lines']" position="after">
                 <page string="Colis">
                     <field name="is_colis_ids" nolabel="1">

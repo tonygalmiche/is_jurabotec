@@ -18,9 +18,10 @@ InfoSaône - Module Odoo 16 pour Jurabotec
     ],
     'data' : [
         "security/ir.model.access.csv",
+        "views/product_view.xml",
+        "views/purchase_view.xml",
         "views/sale_view.xml",
         "views/stock_view.xml",
-        "views/product_view.xml",
         "views/menu.xml",
         "report/is_sale_order_colis_report.xml",
         "report/report.xml",

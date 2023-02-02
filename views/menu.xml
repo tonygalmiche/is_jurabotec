@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Déplacer les menus non utilisés -->
-    <menuitem id="is_archive_menu"        parent="base.menu_custom" sequence="900" name="Archives"/>
-    <!-- <menuitem id="is_tablette_menu"       parent="is_archive_menu"  sequence="10"  name="Tablette"/> -->
-    <menuitem id="mail.menu_root_discuss" parent="is_archive_menu"  sequence="20"/>
-
 
     <!-- Ventes / Configuration -->
     <menuitem id="is_ventes_tables_menu" parent="sale.menu_sale_config"  sequence="900"  name="Tables"/>
     <menuitem id="is_bois_menu"         parent="is_ventes_tables_menu" name="Bois" action="is_bois_action" sequence="10"/>
     <menuitem id="is_qualite_bois_menu" parent="is_ventes_tables_menu" name="Qualité bois" action="is_qualite_bois_action" sequence="20"/>
 
+
+    <!-- Achats -->
+    <menuitem 
+        id="is_contrat_fournisseur_menu" sequence="90" 
+        name="Contrats fournisseurs" parent="purchase.menu_procurement_management" 
+        action="is_contrat_fournisseur_action"
+    />
+
+    
     <!-- Tablette -->
     <menuitem id="is_emplacement_charge_menu" sequence="10" name="Emplacement charge" parent="is_archive_menu" action="is_emplacement_origine_charge_action_server"/>
 
-</odoo>
 
+    <!-- Déplacer les menus non utilisés -->
+    <menuitem id="is_archive_menu"        parent="base.menu_custom" sequence="900" name="Archives"/>
+    <!-- <menuitem id="is_tablette_menu"       parent="is_archive_menu"  sequence="10"  name="Tablette"/> -->
+    <menuitem id="mail.menu_root_discuss" parent="is_archive_menu"  sequence="20"/>
+
+</odoo>

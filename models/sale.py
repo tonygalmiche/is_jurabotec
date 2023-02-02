@@ -61,8 +61,10 @@ class IsSaleOrderColisageComposant(models.Model):
 class sale_order(models.Model):
     _inherit = "sale.order"
 
-    is_colis_ids    = fields.One2many('is.sale.order.colis', 'order_id', 'Colis')
-    is_colisage_ids = fields.One2many('is.sale.order.colisage.composant', 'order_id', 'Colisage')
+    is_colis_ids      = fields.One2many('is.sale.order.colis', 'order_id', 'Colis')
+    is_colis_ids      = fields.One2many('is.sale.order.colis', 'order_id', 'Colis')
+    is_num_cde_client = fields.Char('N° commande client')
+
 
     def colisage_action(self):
         for obj in self:
