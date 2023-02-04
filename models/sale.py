@@ -25,16 +25,15 @@ class IsSaleOrderColisageComposant(models.Model):
 
     order_id     = fields.Many2one('sale.order', 'Commande', required=True, ondelete='cascade')
     colis_id     = fields.Many2one('is.sale.order.colis', 'Colis', group_expand='_group_expand_colis_id')
-    product_id   = fields.Many2one('product.product', 'Article')
+    #product_id   = fields.Many2one('product.product', 'Article')
+    product_id   = fields.Many2one("product.product", string="Catégorie de clientArticle", related="sale_line_id.product_id", readonly=True)
     composant_id = fields.Many2one('product.product', 'Composant')
     qty          = fields.Float(string='Quantité', digits='Product Unit of Measure')
-    sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande')
+    sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande', required=True)
 
 
     @api.model
     def _group_expand_colis_id(self, stages, domain, order):
-        print("## _group_expand_colis_id",self, stages, domain, order)
-        print(self.order_id.is_colis_ids)
         # # retrieve team_id from the context and write the domain
         # # - ('id', 'in', stages.ids): add columns that should be present
         # # - OR ('fold', '=', False): add default columns that are not folded
@@ -47,44 +46,35 @@ class IsSaleOrderColisageComposant(models.Model):
 
         # # perform search
         # stage_ids = stages._search(search_domain, order=order, access_rights_uid=SUPERUSER_ID)
-
         colis = self.env['is.sale.order.colis'].search([])
-        print("colis 1",colis)
-
         colis = stages.order_id.is_colis_ids
-        print("colis 2",colis)
-
-
         return colis
 
 
 class sale_order(models.Model):
     _inherit = "sale.order"
 
-    is_colis_ids      = fields.One2many('is.sale.order.colis'             , 'order_id', 'Colis')
-    is_colisage_ids   = fields.One2many('is.sale.order.colisage.composant', 'order_id', 'Colisage')
-    is_num_cde_client = fields.Char('N° commande client')
+    is_delai             = fields.Date('Délai')
+    is_colis_ids         = fields.One2many('is.sale.order.colis'             , 'order_id', 'Colis')
+    is_colisage_ids      = fields.One2many('is.sale.order.colisage.composant', 'order_id', 'Colisage')
+    is_num_cde_client    = fields.Char('N° commande client')
+    is_detail_composants = fields.Boolean('Imprimer le détail des composants', default=False)
 
 
     def colisage_action(self):
         for obj in self:
-            print(obj)
             if len(obj.is_colisage_ids)==0:
                 for line in obj.order_line:
                     filtre=[
                         ('product_tmpl_id', '=', line.product_id.product_tmpl_id.id),
                         ('type'           , '=', 'commande'),
                     ]
-                    print(filtre)
                     boms = self.env['mrp.bom'].search(filtre,limit=1)
-                    print(line.product_id,boms)
                     if len(boms)>0:
                         for bom_line in boms[0].bom_line_ids:
-                            print("-",bom_line.product_id)
                             vals={
                                 "colis_id": obj.is_colis_ids[0].id,
                                 "order_id": obj.id,
-                                "product_id": line.product_id.id,
                                 "composant_id": bom_line.product_id.id,
                                 "qty": line.product_uom_qty*bom_line.product_qty,
                                 "sale_line_id": line.id,
@@ -114,4 +104,19 @@ class sale_order(models.Model):
                 "type": "ir.actions.act_window",
             }
 
+
+class sale_order_line(models.Model):
+    _inherit = "sale.order.line"
+
+    is_composants     = fields.Html(string='Composants', compute='_compute_is_composants')
+    is_composants_ids = fields.One2many('is.sale.order.colisage.composant', 'sale_line_id', 'Lignes des composants')
+
+
+    def _compute_is_composants(self):
+        for obj in self:
+            t=[]
+            for line in obj.is_composants_ids:
+                t.append("<div>- %s x %s</div>"%(line.qty, line.composant_id.name))
+            html = "\n".join(t)
+            obj.is_composants = html
 

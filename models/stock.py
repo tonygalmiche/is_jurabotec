@@ -28,7 +28,6 @@ class StockLocation(models.Model):
 
     def emplacement_charge_action(self):
         for obj in self:
-            print(obj, "emplacement_charge_action")
             filtre=[('location_id', '=', obj.id),('quantity','>',0)]
             ids=[]
             lines = self.env['stock.quant'].search(filtre)
@@ -55,7 +54,6 @@ class StockLocation(models.Model):
         for obj in self:
             new_context = dict(self.env.context).copy()
             new_context["destination_id"] = obj.id
-            print(obj,new_context)
             vals={
                 "origine_id"    : new_context["origine_id"],
                 "destination_id": new_context["destination_id"],
@@ -64,7 +62,6 @@ class StockLocation(models.Model):
                 "quantity"      : new_context["quantity"],
             }
             res=self.env['is.deplacement.charge'].create(vals)
-            print(res)
             return {
                 "name": "Destination %s"%(obj.name),
                 "view_mode": "form",
@@ -85,7 +82,6 @@ class StockLot(models.Model):
         for obj in self:
             qt=0
             context = self.env.context
-            print(context)
             origine_id = context["origine_id"]
             filtre=[('location_id', '=', origine_id),('quantity','>',0)]
             lines = self.env['stock.quant'].search(filtre)
@@ -104,7 +100,6 @@ class StockLot(models.Model):
             new_context["lot_id"]     = obj.id
             new_context["product_id"] = obj.product_id.id
             new_context["quantity"]   = obj.is_qt_lot_emplacement
-            print(obj,new_context)
             view_id = self.env.ref('is_jurabotec.is_stock_location_kanban_view2', False)
             return {
                 "name": "Lot %s"%(obj.name),

@@ -78,7 +78,6 @@ class PurchaseOrderLine(models.Model):
         if self.product_id:
             for line in self.order_id.is_contrat_id.ligne_ids:
                 if line.product_id == self.product_id.product_tmpl_id:
-                    print("TE, ST 1",line.unite,self.product_id.is_volume, self.product_id.is_longueur, self.product_id.is_surface)
                     if line.unite=="m3":
                         price_unit = line.prix_achat*self.product_id.is_volume
         if price_unit:

@@ -17,10 +17,19 @@
                 </style>
             </xpath>
             <field name="client_order_ref" position="replace"/>
+            <field name="payment_term_id" position="before">
+                <field name="is_delai"/>
+                <field name="is_detail_composants"/>
+            </field>
             <field name="partner_id" position="after">
                 <field name="client_order_ref"/>
                 <field name="is_num_cde_client"/>
             </field>
+
+            <xpath expr="//page[@name='order_lines']/field/tree/field[@name='product_uom_qty']" position="after">
+                <field name="is_composants" optional="hide"/>
+            </xpath>
+
             <xpath expr="//page[@name='order_lines']" position="after">
                 <page string="Colis">
                     <field name="is_colis_ids" nolabel="1">
