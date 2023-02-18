@@ -17,12 +17,12 @@
 
     
     <!-- Tablette -->
-    <menuitem id="is_emplacement_charge_menu" sequence="10" name="Emplacement charge" parent="is_archive_menu" action="is_emplacement_origine_charge_action_server"/>
+    <menuitem id="is_tablette_menu" sequence="146"  name="Tablette"/>
+    <menuitem id="is_emplacement_charge_menu" sequence="10" name="Emplacement charge" parent="is_tablette_menu" action="is_emplacement_origine_charge_action_server"/>
 
 
     <!-- Déplacer les menus non utilisés -->
     <menuitem id="is_archive_menu"        parent="base.menu_custom" sequence="900" name="Archives"/>
-    <!-- <menuitem id="is_tablette_menu"       parent="is_archive_menu"  sequence="10"  name="Tablette"/> -->
     <menuitem id="mail.menu_root_discuss" parent="is_archive_menu"  sequence="20"/>
 
 </odoo>
