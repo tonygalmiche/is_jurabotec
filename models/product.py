@@ -40,7 +40,7 @@ class ProductProduct(models.Model):
                     val = line.product_attribute_value_id.name
                     try:
                         longeur = float(val)
-                    except TypeError:
+                    except:
                         longeur = 0
             obj.is_longueur = longeur
             obj.is_surface  = longeur*obj.is_largeur/1000
