@@ -10,8 +10,12 @@
                     }
                 </style>
                 <div class="oe_structure"/>
-                <h1>Confirmation de commande n° <span t-field="doc.name"/></h1>
-
+                <t t-if="doc.state in ['draft','sent']">
+                    <h1>Devis n° <span t-field="doc.name"/></h1>
+                </t>
+                <t t-else="">
+                    <h1>Confirmation de commande n° <span t-field="doc.name"/></h1>
+                </t>
                 <table class="table table-sm o_main_table mt-4">
                     <thead style="display: table-row-group">
                         <tr>
