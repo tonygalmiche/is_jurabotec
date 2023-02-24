@@ -24,7 +24,7 @@ class IsSaleOrderColisageComposant(models.Model):
     _description = "Colisage des composants"
 
     order_id     = fields.Many2one('sale.order', 'Commande', required=True, ondelete='cascade')
-    colis_id     = fields.Many2one('is.sale.order.colis', 'Colis', group_expand='_group_expand_colis_id')
+    colis_id     = fields.Many2one('is.sale.order.colis', 'Colis', group_expand='_group_expand_colis_id', required=True)
     #product_id   = fields.Many2one('product.product', 'Article')
     product_id   = fields.Many2one("product.product", string="Catégorie de clientArticle", related="sale_line_id.product_id", readonly=True)
     composant_id = fields.Many2one('product.product', 'Composant')
