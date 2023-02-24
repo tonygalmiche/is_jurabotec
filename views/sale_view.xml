@@ -84,12 +84,19 @@
         <field name="model">is.sale.order.colisage.composant</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="colis_id"/>
-                <field name="product_id"/>
-                <field name="composant_id"/>
+            <tree editable="bottom">
+                <button 
+                    title="Dupliquer" 
+                    name="dupliquer_colis_action" 
+                    type="object" 
+                    icon="fa-copy" 
+                />
+                <field name="colis_id" domain="[('id', 'in', colis_ids)]"  widget="selection"/>
+                <field name="product_id"    readonly="1"/>
+                <field name="composant_id"  readonly="1"/>
                 <field name="qty" sum="Total"/>
-                <field name="sale_line_id" optional="hide"/>
+                <field name="sale_line_id"  readonly="1" optional="hide"/>
+                <field name="colis_ids"     readonly="1" optional="hide" widget="many2many_tags"/>
             </tree>
         </field>
     </record>
@@ -100,11 +107,15 @@
         <form>
             <sheet>
                 <group>
-                    <field name="colis_id" readonly="1"/>
-                    <field name="product_id" readonly="1"/>
+                    <field name="colis_id" domain="[('id', 'in', colis_ids)]" widget="selection"/>
+                    <field name="product_id"   readonly="1"/>
                     <field name="composant_id" readonly="1"/>
                     <field name="qty"/>
                     <field name="sale_line_id" readonly="1"/>
+                    <field name="colis_ids"    invisible="1"/>
+
+
+
                 </group>
             </sheet>
         </form>
@@ -126,6 +137,12 @@
                              <div class="oe_kanban_details">
                                 <div class="o_kanban_record_top mb-0">
                                     <div class="o_kanban_record_headings">
+                                        <button 
+                                            title="Dupliquer" 
+                                            name="dupliquer_colis_action" 
+                                            type="object" 
+                                            icon="fa-copy" 
+                                        />
                                         <strong class="o_kanban_record_title">
                                             <field name="product_id"/>
                                         </strong>

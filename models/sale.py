@@ -30,6 +30,16 @@ class IsSaleOrderColisageComposant(models.Model):
     composant_id = fields.Many2one('product.product', 'Composant')
     qty          = fields.Float(string='Quantité', digits='Product Unit of Measure')
     sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande', required=True)
+    colis_ids    = fields.Many2many('is.sale.order.colis', 'is_sale_order_line_colis_ids', 'line_id', 'colis_id', store=False, readonly=True, compute='_compute_colis_ids', string="Colis autorisés")
+
+
+    @api.depends('colis_id')
+    def _compute_colis_ids(self):
+        for obj in self:
+            ids=[]
+            for colis in obj.order_id.is_colis_ids:
+                ids.append(colis.id)
+            obj.colis_ids= [(6, 0, ids)]
 
 
     @api.model
@@ -49,6 +59,14 @@ class IsSaleOrderColisageComposant(models.Model):
         colis = self.env['is.sale.order.colis'].search([])
         colis = stages.order_id.is_colis_ids
         return colis
+
+
+    def dupliquer_colis_action(self):
+        for obj in self:
+            print(obj)
+            res=obj.copy()
+            res.qty=0
+
 
 
 class sale_order(models.Model):
