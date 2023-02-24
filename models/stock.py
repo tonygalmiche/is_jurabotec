@@ -83,7 +83,13 @@ class StockLot(models.Model):
             qt=0
             context = self.env.context
             origine_id = context["origine_id"]
-            filtre=[('location_id', '=', origine_id),('quantity','>',0)]
+            product_id = obj.product_id.id
+            filtre=[
+                ('lot_id'     , '=', obj.id),
+                ('product_id' , '=', product_id),
+                ('location_id', '=', origine_id),
+                ('quantity'   , '>', 0),
+            ]
             lines = self.env['stock.quant'].search(filtre)
             for line in lines:
                 qt+=line.quantity
