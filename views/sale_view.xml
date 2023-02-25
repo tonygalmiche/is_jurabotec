@@ -26,8 +26,21 @@
                 <field name="is_num_cde_client"/>
             </field>
 
+
+            <xpath expr="//page[@name='order_lines']/field/tree/field[@name='product_uom_qty']" position="before">
+                <field name="is_longueur"    optional="hide"/>
+                <field name="is_surface"     optional="hide"/>
+                <field name="is_volume"      optional="hide"/>
+                <field name="is_prix_tarif"  optional="show"/>
+                <field name="is_unite_tarif" optional="show"/>
+            </xpath>
+
+
             <xpath expr="//page[@name='order_lines']/field/tree/field[@name='product_uom_qty']" position="after">
-                <field name="is_composants" optional="hide"/>
+                <field name="is_longueur_totale" optional="show"/>
+                <field name="is_surface_totale"  optional="show"/>
+                <field name="is_volume_total"    optional="show"/>
+                <field name="is_composants"      optional="hide"/>
             </xpath>
 
             <xpath expr="//page[@name='order_lines']" position="after">

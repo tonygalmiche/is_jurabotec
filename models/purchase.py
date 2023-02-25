@@ -95,8 +95,8 @@ class PurchaseOrderLine(models.Model):
         ('m2', 'm2'),
         ('m3', 'm3'),
     ], "Unité contrat")
-    is_volume       = fields.Float(string="Volume", related="product_id.is_volume", readonly=True)
-    is_volume_total = fields.Float(string="Volume total", digits='Product Unit of Measure', compute='_compute_is_volume_total')
+    is_volume       = fields.Float(string="Volume"      , digits='Volume', related="product_id.is_volume", readonly=True)
+    is_volume_total = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total')
     is_product_ids  = fields.Many2many('product.product', 'is_purchase_order_line_product_ids', 'line_id', 'product_id', store=False, readonly=True, compute='_compute_is_product_ids', string="Articles autorisés")
 
 

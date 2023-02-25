@@ -63,7 +63,6 @@ class IsSaleOrderColisageComposant(models.Model):
 
     def dupliquer_colis_action(self):
         for obj in self:
-            print(obj)
             res=obj.copy()
             res.qty=0
 
@@ -128,6 +127,94 @@ class sale_order_line(models.Model):
 
     is_composants     = fields.Html(string='Composants', compute='_compute_is_composants')
     is_composants_ids = fields.One2many('is.sale.order.colisage.composant', 'sale_line_id', 'Lignes des composants')
+    is_prix_tarif  = fields.Float(string="Prix tarif", digits='Product Unit of Measure', help="Tarif de la liste de prix")
+    is_unite_tarif = fields.Selection([
+        ('m'    , 'm'),
+        ('m2'   , 'm2'),
+        ('m3'   , 'm3'),
+        ('unite', 'Unité'),
+    ], "Unité", help="Unité de la liste de prix")
+    is_longueur        = fields.Float(string="Longueur",        digits='Product Unit of Measure', related="product_id.is_longueur", readonly=True)
+    is_longueur_totale = fields.Float(string="Longueur totale", digits='Product Unit of Measure')
+    is_surface         = fields.Float(string="Surface",         digits='Product Unit of Measure', related="product_id.is_surface", readonly=True)
+    is_surface_totale  = fields.Float(string="Surface totale",  digits='Product Unit of Measure')
+    is_volume          = fields.Float(string="Volume",          digits='Volume', related="product_id.is_volume", readonly=True)
+    is_volume_total    = fields.Float(string="Volume total",    digits='Volume')
+
+
+
+
+    @api.onchange('product_id','product_template_id')
+    def _onchange_product_id(self):
+        price = 0
+        unite = False
+        pricelist = self.order_id.pricelist_id
+        if pricelist:
+            for line in pricelist.item_ids:
+                if line.product_id == self.product_id:
+                    price = line.fixed_price
+                    unite = line.is_unite
+                    break
+                if line.product_tmpl_id == self.product_template_id:
+                    price = line.fixed_price
+                    unite = line.is_unite
+                    break
+                    
+        self.is_prix_tarif  = price
+        self.is_unite_tarif = unite
+
+
+
+    @api.onchange('is_prix_tarif','is_unite_tarif')
+    def _onchange_is_prix_tarif(self):
+        price = 0
+        if self.is_unite_tarif=="m":
+            price = self.is_prix_tarif*self.is_longueur
+        if self.is_unite_tarif=="m2":
+            price = self.is_prix_tarif*self.is_surface
+        if self.is_unite_tarif=="m3":
+            price = self.is_prix_tarif*self.is_volume
+        if self.is_unite_tarif=="unite":
+            price = self.is_prix_tarif
+        self.price_unit = price
+
+
+
+
+    @api.onchange('product_uom_qty')
+    def _onchange_product_uom_qty(self):
+        self.is_longueur_totale = self.product_uom_qty * self.is_longueur
+        self.is_surface_totale  = self.product_uom_qty * self.is_surface
+        self.is_volume_total    = self.product_uom_qty * self.is_volume
+        self.price_unit = 1.11
+
+
+    @api.onchange('is_longueur_totale')
+    def _onchange_is_longueur_totale(self):
+        qty = surface = volume = 0
+        if self.is_longueur>0:
+            qty     = self.is_longueur_totale/self.is_longueur
+            surface = self.is_longueur_totale * self.product_id.is_largeur/1000
+            volume  = self.is_longueur_totale * self.product_id.is_largeur/1000 * self.product_id.is_epaisseur/1000
+        self.product_uom_qty   = qty
+        self.is_surface_totale = surface
+        self.is_volume_total   = volume
+
+
+    @api.onchange('is_surface_totale')
+    def _onchange_is_surface_totale(self):
+        qty = 0
+        if self.is_surface>0:
+            qty = self.is_surface_totale/self.is_surface
+        self.product_uom_qty = qty
+
+
+    @api.onchange('is_volume_total')
+    def _onchange_is_volume_total(self):
+        qty = 0
+        if self.is_volume>0:
+            qty = self.is_volume_total/self.is_volume
+        self.product_uom_qty = qty
 
 
     def _compute_is_composants(self):

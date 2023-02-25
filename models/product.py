@@ -24,8 +24,8 @@ class ProductTemplate(models.Model):
 
     is_bois_id    = fields.Many2one('is.bois', 'Bois')
     is_qualite_bois_ids = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
-    is_largeur          = fields.Float("Largeur (mm)")
-    is_epaisseur        = fields.Float("Epaisseur (mm)")
+    is_largeur          = fields.Float("Largeur (mm)"  , digits='Product Unit of Measure')
+    is_epaisseur        = fields.Float("Epaisseur (mm)", digits='Product Unit of Measure')
 
 
 class ProductProduct(models.Model):
@@ -46,6 +46,6 @@ class ProductProduct(models.Model):
             obj.is_surface  = longeur*obj.is_largeur/1000
             obj.is_volume   = longeur*obj.is_largeur*obj.is_epaisseur/1000/1000
 
-    is_longueur = fields.Float("Longueur (m)", compute='_compute_longueur')
-    is_surface  = fields.Float("Surface (m2)", compute='_compute_longueur')
-    is_volume   = fields.Float("Volume (m3) ", compute='_compute_longueur', digits=(16, 4))
+    is_longueur = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
+    is_surface  = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
+    is_volume   = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
