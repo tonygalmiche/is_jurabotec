@@ -165,7 +165,7 @@ class sale_order_line(models.Model):
 
 
 
-    @api.onchange('is_prix_tarif','is_unite_tarif')
+    @api.onchange('is_prix_tarif','is_unite_tarif','product_uom_qty')
     def _onchange_is_prix_tarif(self):
         price = 0
         if self.is_unite_tarif=="m":
@@ -186,7 +186,6 @@ class sale_order_line(models.Model):
         self.is_longueur_totale = self.product_uom_qty * self.is_longueur
         self.is_surface_totale  = self.product_uom_qty * self.is_surface
         self.is_volume_total    = self.product_uom_qty * self.is_volume
-        self.price_unit = 1.11
 
 
     @api.onchange('is_longueur_totale')
