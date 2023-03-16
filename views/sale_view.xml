@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- sale.order  -->
-    <record id="view_sale_order_form_inherit" model="ir.ui.view">
-        <field name="name">sale.order.form.inherit</field>
+    <record id="is_view_order_form" model="ir.ui.view">
+        <field name="name">is_view_order_form</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
@@ -16,6 +16,17 @@
                     }
                 </style>
             </xpath>
+            <button name="payment_action_capture" position="before">
+                <button 
+                    name="convertir_en_commande_action" 
+                    type="object" 
+                    string="Convertir en commande" 
+                    attrs="{'invisible': ['|',
+                        ('state', 'not in', ['draft','sent']),
+                        ('is_devis_id', '!=', False),
+                    ]}"
+                />
+            </button>
             <field name="client_order_ref" position="replace"/>
             <field name="payment_term_id" position="before">
                 <field name="is_delai"/>
@@ -24,6 +35,7 @@
             <field name="partner_id" position="after">
                 <field name="client_order_ref"/>
                 <field name="is_num_cde_client"/>
+                <field name="is_devis_id" attrs="{'invisible': [('is_devis_id', '=', False)]}"/>
             </field>
 
 
@@ -70,6 +82,26 @@
                     </group>
                 </page>
             </xpath>
+        </field>
+    </record>
+    <record id="is_view_order_tree" model="ir.ui.view">
+        <field name="name">is_view_order_tree</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="is_devis_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+    <record id="is_view_quotation_tree" model="ir.ui.view">
+        <field name="name">is_view_quotation_tree</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="is_devis_id" optional="show"/>
+            </field>
         </field>
     </record>
 

@@ -76,6 +76,22 @@ class sale_order(models.Model):
     is_colisage_ids      = fields.One2many('is.sale.order.colisage.composant', 'order_id', 'Colisage')
     is_num_cde_client    = fields.Char('N° commande client')
     is_detail_composants = fields.Boolean('Imprimer le détail des composants', default=False)
+    is_devis_id          = fields.Many2one('sale.order', "Devis d'origine", copy=False, readonly=True)
+
+
+    def convertir_en_commande_action(self):
+        for obj in self:
+            print(obj)
+            copy = obj.copy()
+            copy.is_devis_id = obj.id
+            res= {
+                'name': copy.name,
+                'view_mode': 'form',
+                'res_model': 'sale.order',
+                'res_id': copy.id,
+                'type': 'ir.actions.act_window',
+            }
+            return res
 
 
     def colisage_action(self):
