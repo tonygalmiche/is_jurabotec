@@ -114,6 +114,36 @@
 
 
     <!--stock.lot -->
+    <record id="init_prix_achat_actions_server" model="ir.actions.server">
+        <field name="name">Initialisation prix d'achat</field>
+        <field name="model_id" ref="stock.model_stock_lot"/>
+        <field name="binding_model_id" ref="stock.model_stock_lot"/>
+        <field name="state">code</field>
+        <field name="code">records.init_prix_achat_action()</field>
+    </record>
+    <record id="is_view_production_lot_form" model="ir.ui.view">
+        <field name="name">is_view_production_lot_form</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <field name="ref" position="after">
+                <field name="is_prix_achat"/>
+                <field name="is_valeur"/>
+            </field>
+        </field>
+    </record>
+    <record id="is_view_production_lot_tree" model="ir.ui.view">
+        <field name="name">is_view_production_lot_tree</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <field name="create_date" position="before">
+                <field name="is_prix_achat"/>
+                <field name="is_valeur" sum="Total"/>
+            </field>
+
+        </field>
+    </record>
     <record id="is_stock_lot_kanban_view" model="ir.ui.view">
         <field name="name">is_stock_lot_kanban_view</field>
         <field name="model">stock.lot</field>

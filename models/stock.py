@@ -83,6 +83,16 @@ class StockLocation(models.Model):
 class StockLot(models.Model):
     _inherit = "stock.lot"
 
+    is_prix_achat = fields.Float(string="Prix d'achat", digits="Product Price")
+    is_valeur     = fields.Float(string="Valeur stock", digits="Product Price", compute='_compute_is_valeur', store=True, readonly=True)
+
+
+    @api.depends('is_prix_achat','product_qty')
+    def _compute_is_valeur(self):
+        for obj in self:
+            obj.is_valeur = obj.product_qty*obj.is_prix_achat
+
+
     @api.depends('product_id')
     def _compute_qt_lot_emplacement(self):
         for obj in self:
@@ -125,6 +135,17 @@ class StockLot(models.Model):
                 "type": "ir.actions.act_window",
                 "context": new_context,
             }
+
+
+    def init_prix_achat_action(self):
+        for obj in self:
+            for order in obj.purchase_order_ids:
+                for line in order.order_line:
+                    if obj.product_id==line.product_id:
+                        if line.price_unit>0:
+                            obj.is_prix_achat = line.price_unit
+
+
 
 
 
