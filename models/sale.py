@@ -164,7 +164,8 @@ class sale_order_line(models.Model):
             price = 0
             for l in line.product_id.product_template_variant_value_ids:
                 if l.attribute_line_id.attribute_id.name=="Longueur":
-                    if l.product_attribute_value_id.name=="ml":
+                    variante = l.product_attribute_value_id.name
+                    if variante in ['ml','m2','m','u']:
                         price = line.is_prix_tarif
             if price==0:
                 if line.is_unite_tarif=="m":
