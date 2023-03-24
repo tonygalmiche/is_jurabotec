@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!-- stock.picking -->
+    <record id="is_view_picking_form" model="ir.ui.view">
+        <field name="name">is_view_picking_form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group/group/field[@name='origin']" position="after">
+                <field name="is_bl_fournisseur"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="is_vpicktree" model="ir.ui.view">
+        <field name="name">is_vpicktree</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="is_bl_fournisseur" optional="show"/>
+            </field>
+        </field>
+    </record>
+    <record id="is_view_picking_internal_search" model="ir.ui.view">
+        <field name="name">is_view_picking_internal_search</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="is_bl_fournisseur"/>
+            </field>
+        </field>
+    </record>
+
+
+    
+
     <!--stock.location -->
-
-
-
-
     <record id="is_stock_location_kanban_view" model="ir.ui.view">
         <field name="name">is_stock_location_kanban_view</field>
         <field name="model">stock.location</field>

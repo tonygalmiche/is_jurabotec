@@ -2,6 +2,12 @@
 from odoo import fields, models, api
 
 
+class StockPicking(models.Model):
+    _inherit = "stock.picking"
+ 
+    is_bl_fournisseur = fields.Char("BL fournisseur")
+
+
 class StockLocation(models.Model):
     _inherit = "stock.location"
 
