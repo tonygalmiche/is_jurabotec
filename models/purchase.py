@@ -59,7 +59,8 @@ class IsContratFournisseur(models.Model):
             obj.montant = montant
 
 
-    name          = fields.Char("N°contrat", readonly=True)
+    name                = fields.Char("N°contrat", readonly=True)
+    contrat_fournisseur = fields.Char("N°contrat fournisseur")
     partner_id    = fields.Many2one('res.partner', 'Fournisseur', required=True)
     date_creation = fields.Date("Date de création", readonly=True, default=lambda *a: fields.datetime.now())
     commentaire   = fields.Text("Commentaire")
@@ -76,6 +77,34 @@ class IsContratFournisseur(models.Model):
         for vals in vals_list:
             vals['name'] = self.env['ir.sequence'].next_by_code('is.contrat.fournisseur')
         return super().create(vals_list)
+
+
+    def name_get(self):
+        result = []
+        for obj in self:
+
+            name = "[%s] %s"%(obj.name,(obj.contrat_fournisseur or ''))
+            result.append((obj.id, name))
+        return result
+
+
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+        if args is None:
+            args = []
+
+        ids = []
+        if len(name) >= 1:
+            filtre=[
+                '|',
+                ('name', 'ilike', name),
+                ('contrat_fournisseur', 'ilike', name),
+            ]
+            ids = list(self._search(filtre + args, limit=limit))
+        search_domain = [('name', operator, name)]
+        if ids:
+            search_domain.append(('id', 'not in', ids))
+        ids += list(self._search(search_domain + args, limit=limit))
+        return ids
 
 
 class PurchaseOrder(models.Model):
