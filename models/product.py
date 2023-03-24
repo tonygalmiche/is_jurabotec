@@ -5,8 +5,13 @@ from random import randint
 class IsBois(models.Model):
     _name='is.bois'
     _description = "Bois"
+    _order='sequence'
 
-    name = fields.Char("Bois", required=True)
+    name     = fields.Char("Bois", required=True)
+    sequence = fields.Integer("Ordre")
+    active   = fields.Boolean("Actif", default=True)
+    
+
 
 class IsQualiteBois(models.Model):
     _name='is.qualite.bois'

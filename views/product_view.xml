@@ -8,6 +8,7 @@
             <field name="model">is.bois</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="sequence" widget="handle" />
                     <field name="name"/>
                 </tree>
             </field>
@@ -20,6 +21,7 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="active"/>
                     </group>
                 </sheet>
             </form>
