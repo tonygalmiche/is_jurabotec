@@ -2,6 +2,24 @@
 from odoo import fields, models, api
 
 
+# class StockQuant(models.Model):
+#     _inherit = "stock.quant"
+
+#     def modifier_charge_action(self):
+#         for obj in self:
+#             print(obj)
+
+#             view_id = self.env.ref('is_jurabotec.modifier_charge_stock_quant_form_view', False)
+#             return {
+#                 "name": obj.lot_id,
+#                 "view_mode": "form",
+#                 "res_model": "stock.quant",
+#                 "views": [(view_id.id, 'form')],
+#                 "res_id": obj.id,
+#                 "type": "ir.actions.act_window",
+#             }
+
+
 class StockPicking(models.Model):
     _inherit = "stock.picking"
  

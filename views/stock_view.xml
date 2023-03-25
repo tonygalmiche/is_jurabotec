@@ -241,13 +241,6 @@
                         ('lot_id'    , '!=', False),
                     ]}"
                 />
-
-                <!-- <button class="btn btn-secondary o_add_qty text-end form-control" type="submit" title="Add a quantity">
-                    <i class="fa fa-plus"/>
-                </button> -->
-
-
-
             </sheet>
         </form>
         </field>
@@ -271,5 +264,104 @@
     </record>
 
 
-
+    <!-- Modifier une charge -->
+    <record id="modifier_charge_stock_quant_kanban_view" model="ir.ui.view">
+        <field name="name">modifier_charge_stock_quant_kanban_view</field>
+        <field name="model">stock.quant</field>
+        <field name="arch" type="xml">
+            <kanban default_order="lot_id,location_id,product_id" create="0" quick_create="0">
+                <field name="product_id"/>
+                <field name="quantity"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                             <div class="oe_kanban_details">
+                                <div class="o_kanban_record_top mb-0">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <div style="text-align:center">
+                                                <div style="background-color:#e5e7e9">
+                                                    <field name="lot_id" style="font-size:14pt"/>
+                                                </div>
+                                                <div style="background-color:#ebf5fb">
+                                                    <field name="location_id" style="font-size:13pt"/>
+                                                </div>
+                                                <field name="product_id"/><br />
+                                                <div style="background-color:#ebf5fb">
+                                                    <field name="quantity" style="font-size:16pt"/>
+                                                </div>
+                                                <!-- <button name="modifier_charge_action" string="Modifier cette charge" type="object" class="btn btn-primary"/> -->
+                                                <br />
+                                                <field name="inventory_quantity" widget="plus_moins10"/>
+                                                <br />
+                                                <div 
+                                                    style="background-color:#e5e7e9" 
+                                                    attrs="{'invisible': [
+                                                        ('inventory_diff_quantity', '=', 0),
+                                                        ('inventory_quantity_set', '=', False),
+                                                    ]}
+                                                ">
+                                                    Différence : <field name="inventory_diff_quantity"/>
+                                                </div>
+                                                <field name="inventory_quantity_set"  invisible="1"/>
+                                                <div>
+                                                    <button 
+                                                        string="Appliquer la modification"
+                                                        name="action_apply_inventory" 
+                                                        groups="stock.group_stock_manager"
+                                                        type="object"
+                                                        class="btn btn-primary"
+                                                        attrs="{'invisible': [('inventory_quantity_set', '=', False)]}"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- <record id="modifier_charge_stock_quant_form_view" model="ir.ui.view" >
+        <field name="name">modifier_charge_stock_quant_form_view</field>
+        <field name="model">stock.quant</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="lot_id"      readonly="1"/>
+                        <field name="location_id" readonly="1"/>
+                        <field name="product_id"  readonly="1"/>
+                        <field name="quantity"  readonly="1"/>
+                        <field name="inventory_quantity" widget="plus_moins10"/>
+                        <field name="inventory_diff_quantity"  readonly="1"/>
+                        <field name="inventory_quantity_set"  invisible="1"/>
+                    </group>
+                    <group>
+                        <button 
+                            string="Appliquer la modification"
+                            name="action_apply_inventory" 
+                            groups="stock.group_stock_manager"
+                            type="object"
+                            class="btn btn-primary"
+                            attrs="{'invisible': [('inventory_quantity_set', '=', False)]}"
+                        />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record> -->
+    <record id="modifier_charge_stock_quant_action" model="ir.actions.act_window">
+        <field name="name">Charges</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.quant</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('modifier_charge_stock_quant_kanban_view')}),
+            ]"/>
+        <field name="domain">[('quantity', '&gt;', 0),('location_id.usage', '=', 'internal')]</field>
+    </record>
 </odoo>
