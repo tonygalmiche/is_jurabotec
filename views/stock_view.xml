@@ -295,9 +295,9 @@
                                                 <field name="inventory_quantity" widget="plus_moins10"/>
                                                 <br />
                                                 <div 
-                                                    style="background-color:#e5e7e9" 
-                                                    attrs="{'invisible': [
-                                                        ('inventory_diff_quantity', '=', 0),
+                                                    style="background-color:#e5e7e9;margin-top:0.5em;margin-bottom:0.5em" 
+                                                    attrs="{'invisible': ['|',
+                                                        ('inventory_quantity_set', '=', 0),
                                                         ('inventory_quantity_set', '=', False),
                                                     ]}
                                                 ">
