@@ -203,35 +203,73 @@
             </form>
         </field>
     </record>
-    <!-- <record id="is_deplacement_charge_kanban_view" model="ir.ui.view">
-        <field name="name">is_deplacement_charge_kanban_view</field>
-        <field name="model">is.deplacement.charge</field>
+
+
+    <!-- is.creation.charge -->
+    <record model="ir.ui.view" id="is_creation_charge_tree_view">
+        <field name="name">is.creation.charge.tree</field>
+        <field name="model">is.creation.charge</field>
         <field name="arch" type="xml">
-            <kanban create="0" quick_create="0">
-                <field name="origine_id"/>
+            <tree>
+                <field name="product_id"/>
+                <field name="quantity"/>
                 <field name="destination_id"/>
                 <field name="lot_id"/>
-                <templates>
-                    <t t-name="kanban-box">
-                        <div class="oe_kanban_card oe_kanban_global_click">
-                             <div class="oe_kanban_details">
-                                <div class="o_kanban_record_top mb-0">
-                                    <div class="o_kanban_record_headings">
-                                        <strong class="o_kanban_record_title">
-                                            <div style="font-size:24pt;text-align:center">
-                                                <field name="origine_id"/><br />
-                                                <field name="destination_id"/><br />
-                                                <field name="lot_id"/><br />
-                                                <button name="deplacer_charge_action" string="Déplacer cette charge" type="object" class="btn btn-primary"/>
-                                            </div>
-                                        </strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
+            </tree>
         </field>
-    </record> -->
+    </record>
+    <record model="ir.ui.view" id="is_creation_charge_form_view">
+        <field name="name">is.creation.charge.form</field>
+        <field name="model">is.creation.charge</field>
+        <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <field name="product_id"/>
+                    <field name="quantity"       widget="plus_moins10"/>
+                    <field name="destination_id" widget="selection"/>
+                    <field name="lot_id"/>
+                </group>
+                <button 
+                    name="creer_charge_action" 
+                    string="Créer cette charge" 
+                    type="object" 
+                    class="btn btn-primary"
+                    attrs="{'invisible':['|','|',
+                        ('product_id', '=', False),
+                        ('quantity'  , '=', 0),
+                        ('lot_id'    , '!=', False),
+                    ]}"
+                />
+
+                <!-- <button class="btn btn-secondary o_add_qty text-end form-control" type="submit" title="Add a quantity">
+                    <i class="fa fa-plus"/>
+                </button> -->
+
+
+
+            </sheet>
+        </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_creation_charge_search_view" >
+        <field name="name">is.creation.charge.search</field>
+        <field name="model">is.creation.charge</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="destination_id"/>
+                <field name="lot_id"/>
+            </search>
+        </field>
+    </record>
+    <record id="is_creation_charge_action" model="ir.actions.act_window">
+        <field name="name">Bois</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">is.creation.charge</field>
+        <field name="view_mode">form,tree</field>
+    </record>
+
+
+
 </odoo>

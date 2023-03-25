@@ -6,14 +6,13 @@ access_is_deplacement_charge,access_is_deplacement_charge,model_is_deplacement_c
 access_is_bois,access_is_bois,model_is_bois,base.group_user,1,0,0,0
 access_is_bois_manager,access_is_bois_manager,model_is_bois,sales_team.group_sale_manager,1,1,1,1
 
-
 access_is_qualite_bois,access_is_qualite_bois,model_is_qualite_bois,base.group_user,1,0,0,0
 access_is_qualite_bois_manager,access_is_qualite_bois_manager,model_is_qualite_bois,sales_team.group_sale_manager,1,1,1,1
-
 
 access_is_contrat_fournisseur,access_is_contrat_fournisseur,model_is_contrat_fournisseur,base.group_user,1,0,0,0
 access_is_contrat_fournisseur_manager,access_is_contrat_fournisseur_manager,model_is_contrat_fournisseur,purchase.group_purchase_manager,1,1,1,1
 
-
 access_is_contrat_fournisseur_ligne,access_is_contrat_fournisseur_ligne,model_is_contrat_fournisseur_ligne,base.group_user,1,0,0,0
 access_is_contrat_fournisseur_ligne_manager,access_is_contrat_fournisseur_ligne_manager,model_is_contrat_fournisseur_ligne,purchase.group_purchase_manager,1,1,1,1
+
+access_is_creation_charge,access_is_creation_charge,model_is_creation_charge,base.group_user,1,1,1,1

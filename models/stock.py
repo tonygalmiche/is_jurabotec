@@ -196,3 +196,80 @@ class IsDeplacementCharge(models.Model):
 
         return self.env['stock.location'].emplacement_origine_charge_action()
 
+
+class IsCreationCharge(models.Model):
+    _name='is.creation.charge'
+    _description="Création charge"
+    _order='id desc'
+    _rec_name = "lot_id"
+
+    def _get_destination_id(self):
+        filtre=[('code','=','incoming')]
+        lines = self.env['stock.picking.type'].search(filtre, limit=1)
+        destination_id = False
+        for line in lines:
+            destination_id = line.default_location_dest_id.id
+        return destination_id
+
+
+    product_id     = fields.Many2one('product.product', 'Article'    , required=True)
+    quantity       = fields.Float('Quantité'                         , required=True, digits='Product Unit of Measure')
+    destination_id = fields.Many2one('stock.location' , 'Destination', required=True, default=_get_destination_id, domain=[('usage','=','internal')])
+    lot_id         = fields.Many2one('stock.lot'      , 'Lot créé'   , readonly=True)
+
+
+    def creer_charge_action(self):
+        for obj in self:
+            vals={
+                'product_id': obj.product_id.id,
+                'company_id': self.env.user.company_id.id,
+                'name'      : self.env['ir.sequence'].next_by_code('stock.lot.serial'),
+            }
+            print(vals)
+            lot = self.env['stock.lot'].create(vals)
+            obj.lot_id = lot.id
+
+
+            #** Création stock.move et stock.move.line ************************
+            location_id = 14 # Inventory adjustment
+            location_dest_id = obj.destination_id.id
+
+
+            line_vals={
+                "location_id"     : location_id,
+                "location_dest_id": location_dest_id,
+                "lot_id"          : lot.id,
+                "qty_done"        : obj.quantity,
+                "product_id"      : obj.product_id.id,
+            }
+            move_vals={
+                #"production_id"   : production_id, # Si j'indique ce champ avant la création du lot, j'ai message => La quantité de xxx débloquée ne peut pas être supérieure à la quantité en stock
+                "location_id"     : location_id,
+                "location_dest_id": location_dest_id,
+                "product_uom_qty" : obj.quantity,
+                "product_id"      : obj.product_id.id,
+                "name"             : "Création charge %s"%(lot.name),
+                "move_line_ids"   : [[0,False,line_vals]],
+            }
+            move=self.env['stock.move'].with_context({}).create(move_vals) # Il faut effacer le context, sinon erreur avec le champ product_qty
+            move._action_done()
+            #move.production_id = production_id # Permet d'associer le mouvement à l'ordre de fabrication après sa création
+            #******************************************************************
+
+
+
+
+
+#    def action_generate_serial(self):
+#         self.ensure_one()
+#         self.lot_producing_id = self.env['stock.lot'].create({
+#             'product_id': self.product_id.id,
+#             'company_id': self.company_id.id,
+#             'name': self.env['stock.lot']._get_next_serial(self.company_id, self.product_id) or 
+# self.env['ir.sequence'].next_by_code('stock.lot.serial'),
+#         })
+#         if self.move_finished_ids.filtered(lambda m: m.product_id == self.product_id).move_line_ids:
+#             self.move_finished_ids.filtered(lambda m: m.product_id == self.product_id).move_line_ids.lot_id = self.lot_producing_id
+#         if self.product_id.tracking == 'serial':
+#             self._set_qty_producing()
+

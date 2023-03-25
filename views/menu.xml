@@ -18,7 +18,8 @@
     
     <!-- Tablette -->
     <menuitem id="is_tablette_menu" sequence="146"  name="Tablette"/>
-    <menuitem id="is_emplacement_charge_menu" sequence="10" name="Emplacement charge" parent="is_tablette_menu" action="is_emplacement_origine_charge_action_server"/>
+    <menuitem id="is_emplacement_charge_menu" sequence="10" name="Changement emplacement charge" parent="is_tablette_menu" action="is_emplacement_origine_charge_action_server"/>
+    <menuitem id="is_creation_charge_menu"    sequence="20" name="Création charge"               parent="is_tablette_menu" action="is_creation_charge_action"/>
 
 
     <!-- Déplacer les menus non utilisés -->
