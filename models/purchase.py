@@ -151,14 +151,15 @@ class PurchaseOrderLine(models.Model):
 
     def _compute_price_unit_and_date_planned_and_name(self):
         super(PurchaseOrderLine, self)._compute_price_unit_and_date_planned_and_name()
-        price_unit = False
-        if self.product_id:
-            for line in self.order_id.is_contrat_id.ligne_ids:
-                if line.product_id == self.product_id.product_tmpl_id:
-                    if line.unite=="m3":
-                        price_unit = line.prix_achat*self.product_id.is_volume
-        if price_unit:
-            self.price_unit = price_unit
+        for obj in self:
+            price_unit = False
+            if obj.product_id:
+                for line in obj.order_id.is_contrat_id.ligne_ids:
+                    if line.product_id == obj.product_id.product_tmpl_id:
+                        if line.unite=="m3":
+                            price_unit = line.prix_achat*obj.product_id.is_volume
+            if price_unit:
+                obj.price_unit = price_unit
 
 
     @api.depends('is_volume','product_qty')
