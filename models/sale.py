@@ -81,7 +81,6 @@ class sale_order(models.Model):
 
     def convertir_en_commande_action(self):
         for obj in self:
-            print(obj)
             copy = obj.copy()
             copy.is_devis_id = obj.id
             res= {
@@ -179,7 +178,7 @@ class sale_order_line(models.Model):
             line.price_unit = price
 
 
-    @api.onchange('product_id','product_template_id')
+    @api.onchange('product_id','product_template_id', 'product_uom_qty')
     def _onchange_product_id(self):
         price = 0
         unite = False
@@ -190,7 +189,7 @@ class sale_order_line(models.Model):
                     price = line.fixed_price
                     unite = line.is_unite
                     break
-                if line.product_tmpl_id == self.product_template_id:
+                if line.product_tmpl_id == self.product_template_id and self.product_uom_qty>=line.min_quantity:
                     price = line.fixed_price
                     unite = line.is_unite
                     break
