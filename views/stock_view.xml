@@ -331,7 +331,7 @@
         <field name="name">charge_stock_quant_kanban_view</field>
         <field name="model">stock.quant</field>
         <field name="arch" type="xml">
-            <kanban default_order="lot_id,product_id" create="0" quick_create="0">
+            <kanban default_order="location_id,lot_id,product_id" create="0" quick_create="0">
                 <field name="product_id"/>
                 <field name="lot_id"/>
                 <templates>
