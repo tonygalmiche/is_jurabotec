@@ -12,4 +12,30 @@
             </field>
         </field>
     </record>
+
+   <record id="is_product_pricelist_item_tree_view" model="ir.ui.view">
+        <field name="name">is_product_pricelist_item_tree_view</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="inherit_id" ref="product.product_pricelist_item_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="is_unite" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+
+
+    <record id="is_product_pricelist_item_action" model="ir.actions.act_window">
+        <field name="name">Lignes listes de prix</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.pricelist.item</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+
+
+
 </odoo>
