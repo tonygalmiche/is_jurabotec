@@ -188,7 +188,8 @@
                     <group>
                         <field name="origine_id"/>
                         <field name="destination_id"/>
-                        <field name="quantity"  widget="plus_moins"/>
+                        <!-- <field name="quantity"  widget="plus_moins"/> -->
+                        <field name="quantity"/>
                         <field name="lot_id"/>
                         <field name="product_id"/>
                     </group>
@@ -326,7 +327,7 @@
         </field>
     </record>
 
-
+    <!-- stock.quant -->
     <record id="charge_stock_quant_kanban_view" model="ir.ui.view">
         <field name="name">charge_stock_quant_kanban_view</field>
         <field name="model">stock.quant</field>
@@ -351,6 +352,9 @@
                                                 <field name="product_id"/><br />
                                                 <field name="lot_id"/><br />
                                                 <field name="quantity"/><br />
+                                                <button name="deplacer_quant_action" string="Déplacer cette charge" type="object" class="btn btn-primary"/>
+
+
                                             </div>
                                         </strong>
                                     </div>

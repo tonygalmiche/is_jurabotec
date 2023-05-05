@@ -105,6 +105,7 @@ class ProductProduct(models.Model):
                 "domain": [
                     ("product_id", "=", obj.id),
                     ('location_id.usage','=', 'internal'),
+                    ('quantity','>', 0),
                 ],
                 #"context": new_context,
                 "type": "ir.actions.act_window",

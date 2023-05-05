@@ -167,6 +167,37 @@ class StockLot(models.Model):
 
 
 
+class StockQuant(models.Model):
+    _inherit = "stock.quant"
+
+    def deplacer_quant_action(self):
+        for obj in self:
+            print(obj)
+            context = self.env.context
+            origine_id = obj.location_id.id
+            new_context = dict(context).copy()
+            new_context["origine_id"] = origine_id
+            new_context["lot_id"]     = obj.lot_id.id
+            new_context["product_id"] = obj.product_id.id
+            new_context["quantity"]   = obj.quantity
+            view_id = self.env.ref('is_jurabotec.is_stock_location_kanban_view2', False)
+            return {
+                "name": "Lot %s"%(obj.lot_id.name),
+                "view_mode": "kanban",
+                "res_model": "stock.location",
+                "views": [(view_id.id, 'kanban')],
+                "domain": [
+                    ('usage', '=' , 'internal'),
+                    ('id'   , '!=', origine_id),
+                ],
+                "type": "ir.actions.act_window",
+                "context": new_context,
+            }
+
+
+
+
+
 
 class IsDeplacementCharge(models.Model):
     _name='is.deplacement.charge'
