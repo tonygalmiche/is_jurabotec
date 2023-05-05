@@ -88,3 +88,24 @@ class ProductProduct(models.Model):
     is_longueur = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
     is_surface  = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
     is_volume   = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
+
+
+    def liste_charges_action(self):
+        for obj in self:
+            print(obj)
+
+            view_id = self.env.ref('is_jurabotec.charge_stock_quant_kanban_view', False)
+            #new_context = dict(self.env.context).copy()
+            #new_context["origine_id"] = obj.id
+            return {
+                "name": obj.name,
+                "view_mode": "kanban",
+                "res_model": "stock.quant",
+                "views": [(view_id.id, 'kanban')],
+                "domain": [
+                    ("product_id", "=", obj.id),
+                    ('location_id.usage','=', 'internal'),
+                ],
+                #"context": new_context,
+                "type": "ir.actions.act_window",
+            }

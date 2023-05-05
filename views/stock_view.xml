@@ -325,6 +325,45 @@
             </kanban>
         </field>
     </record>
+
+
+    <record id="charge_stock_quant_kanban_view" model="ir.ui.view">
+        <field name="name">charge_stock_quant_kanban_view</field>
+        <field name="model">stock.quant</field>
+        <field name="arch" type="xml">
+            <kanban default_order="lot_id,product_id" create="0" quick_create="0">
+                <field name="product_id"/>
+                <field name="lot_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                             <div class="oe_kanban_details">
+                                <div class="o_kanban_record_top mb-0">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <div style="text-align:center">
+                                                <div style="background-color:#e5e7e9">
+                                                    <field name="lot_id" style="font-size:14pt"/>
+                                                </div>
+                                                <div style="background-color:#ebf5fb">
+                                                    <field name="location_id" style="font-size:13pt"/>
+                                                </div>
+                                                <field name="product_id"/><br />
+                                                <field name="lot_id"/><br />
+                                                <field name="quantity"/><br />
+                                            </div>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+ 
+
     <!-- <record id="modifier_charge_stock_quant_form_view" model="ir.ui.view" >
         <field name="name">modifier_charge_stock_quant_form_view</field>
         <field name="model">stock.quant</field>

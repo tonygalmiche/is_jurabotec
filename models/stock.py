@@ -116,17 +116,18 @@ class StockLot(models.Model):
         for obj in self:
             qt=0
             context = self.env.context
-            origine_id = context["origine_id"]
+            origine_id = context.get("origine_id", False)
             product_id = obj.product_id.id
-            filtre=[
-                ('lot_id'     , '=', obj.id),
-                ('product_id' , '=', product_id),
-                ('location_id', '=', origine_id),
-                ('quantity'   , '>', 0),
-            ]
-            lines = self.env['stock.quant'].search(filtre)
-            for line in lines:
-                qt+=line.quantity
+            if origine_id:
+                filtre=[
+                    ('lot_id'     , '=', obj.id),
+                    ('product_id' , '=', product_id),
+                    ('location_id', '=', origine_id),
+                    ('quantity'   , '>', 0),
+                ]
+                lines = self.env['stock.quant'].search(filtre)
+                for line in lines:
+                    qt+=line.quantity
             obj.is_qt_lot_emplacement=qt
 
     is_qt_lot_emplacement = fields.Float("Qt lot dans cet emplacement", compute='_compute_qt_lot_emplacement')
