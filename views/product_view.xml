@@ -269,7 +269,7 @@
             <field name="name">Articles</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">product.product</field>
-            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_mode">kanban</field>
             <field name="search_view_id" ref="is_product_product_tablette_search"/>
             <field name="domain">[('qty_available', '&gt;', 0)]</field>
         </record>
@@ -279,11 +279,11 @@
             <field name="view_id" ref="is_product_product_tablette_kanban"/>
             <field name="act_window_id" ref="is_product_product_tablette_action"/>
         </record>
-        <record id="is_product_product_tablette_tree_act_window" model="ir.actions.act_window.view">
+        <!-- <record id="is_product_product_tablette_tree_act_window" model="ir.actions.act_window.view">
             <field name="sequence" eval="2"/>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="is_product_product_tablette_tree"/>
             <field name="act_window_id" ref="is_product_product_tablette_action"/>
-        </record>
+        </record> -->
     </data>
 </odoo>
