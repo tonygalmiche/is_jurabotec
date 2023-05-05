@@ -109,6 +109,7 @@
                 <field name="product_variant_id" position="after">
                     <field name="is_ref_plan"/>
                     <field name="is_plan_ids" widget="many2many_binary"/>
+                    <field name="is_fds_ids"  widget="many2many_binary"/>
                 </field>
             </field>
         </record>
@@ -125,7 +126,7 @@
                 </field>
                 <field name="default_code" position="after">
                     <field name="is_ref_plan" optional="show"/>
-                    <field name="is_plan_ids" widget="many2many_binary" optional="hide"/>
+                    <!-- <field name="is_plan_ids" widget="many2many_binary" optional="hide"/> -->
                 </field>
             </field>
         </record>

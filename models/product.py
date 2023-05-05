@@ -36,6 +36,7 @@ class ProductTemplate(models.Model):
     is_epaisseur        = fields.Float("Epaisseur (mm)", digits='Product Unit of Measure')
     is_ref_plan         = fields.Char("Référence plan")
     is_plan_ids         = fields.Many2many('ir.attachment', 'product_template_is_plan_rel', 'product_id', 'attachment_id', 'Plan')
+    is_fds_ids          = fields.Many2many('ir.attachment', 'product_template_is_fds_rel' , 'product_id', 'attachment_id', 'FDS', help="Fiche de sécurité")
 
 
     def import_plan_action(self):
