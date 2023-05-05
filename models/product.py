@@ -31,6 +31,7 @@ class ProductTemplate(models.Model):
     is_qualite_bois_ids = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
     is_largeur          = fields.Float("Largeur (mm)"  , digits='Product Unit of Measure')
     is_epaisseur        = fields.Float("Epaisseur (mm)", digits='Product Unit of Measure')
+    is_ref_plan         = fields.Char("Référence plan")
 
 
 class ProductProduct(models.Model):
