@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from random import randint
+import os
+import base64
+
 
 class IsBois(models.Model):
     _name='is.bois'
@@ -32,6 +35,35 @@ class ProductTemplate(models.Model):
     is_largeur          = fields.Float("Largeur (mm)"  , digits='Product Unit of Measure')
     is_epaisseur        = fields.Float("Epaisseur (mm)", digits='Product Unit of Measure')
     is_ref_plan         = fields.Char("Référence plan")
+    is_plan_ids         = fields.Many2many('ir.attachment', 'product_template_is_plan_rel', 'product_id', 'attachment_id', 'Plan')
+
+
+    def import_plan_action(self):
+        plans = {}
+        dir_path = "/home/odoo/plans"
+        #dir_path = "/media/sf_dev_odoo/16.0/jurabotec/plans/"
+        for filename in os.listdir(dir_path):
+            if os.path.isfile(os.path.join(dir_path, filename)):
+                end = filename.find("-")
+                if end>0:
+                    ref = filename[0:end]
+                    plans[ref]=filename
+        for obj in self:
+            if len(obj.is_plan_ids)==0:
+                if obj.is_ref_plan in plans:
+                    filename = plans[obj.is_ref_plan]
+                    path = os.path.join(dir_path, filename)    
+                    r = open(path,'rb').read()
+                    r = base64.b64encode(r)
+                    vals = {
+                        'name':        filename,
+                        'type':        'binary',
+                        'res_model':   "product.template",
+                        'res_id':      obj.id,
+                        'datas':       r,
+                    }
+                    attachment = self.env['ir.attachment'].create(vals)
+                    obj.is_plan_ids=[(6,0,[attachment.id])]
 
 
 class ProductProduct(models.Model):
