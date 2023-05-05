@@ -350,7 +350,7 @@
                                                     <field name="location_id" style="font-size:13pt"/>
                                                 </div>
                                                 <field name="product_id"/><br />
-                                                <field name="lot_id"/><br />
+                                                <!-- <field name="lot_id"/><br /> -->
                                                 <field name="quantity"/><br />
                                                 <button name="deplacer_quant_action" string="Déplacer cette charge" type="object" class="btn btn-primary"/>
 
