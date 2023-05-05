@@ -222,7 +222,7 @@
             <field name="model">product.product</field>
             <field name="priority">1000</field>
             <field name="arch" type="xml">
-                <kanban sample="1">
+                <kanban sample="1" create="0" quick_create="0">
                     <field name="id"/>
                     <field name="activity_state"/>
                     <field name="color"/>
