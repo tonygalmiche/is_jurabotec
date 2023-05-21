@@ -92,6 +92,10 @@
             <field name="name" position="after">
                 <field name="is_devis_id" optional="show"/>
             </field>
+            <field name="user_id" position="before">
+                <field name="client_order_ref" optional="show"/>
+                <field name="is_num_cde_client" optional="show"/>
+            </field>
         </field>
     </record>
     <record id="is_view_quotation_tree" model="ir.ui.view">
@@ -101,6 +105,21 @@
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field name="is_devis_id" optional="show"/>
+            </field>
+            <field name="user_id" position="before">
+                <field name="client_order_ref" optional="hide"/>
+                <field name="is_num_cde_client" optional="hide"/>
+            </field>
+        </field>
+    </record>
+    <record id="is_view_sales_order_filter" model="ir.ui.view">
+        <field name="name">is_view_sales_order_filter</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="client_order_ref"/>
+                <field name="is_num_cde_client"/>
             </field>
         </field>
     </record>
