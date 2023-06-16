@@ -40,11 +40,12 @@
 
 
             <xpath expr="//page[@name='order_lines']/field/tree/field[@name='product_uom_qty']" position="before">
-                <field name="is_longueur"    optional="hide"/>
-                <field name="is_surface"     optional="hide"/>
-                <field name="is_volume"      optional="hide"/>
-                <field name="is_prix_tarif"  optional="show"/>
-                <field name="is_unite_tarif" optional="show"/>
+                <field name="is_longueur"        optional="hide"/>
+                <field name="is_surface"         optional="hide"/>
+                <field name="is_volume"          optional="hide"/>
+                <field name="is_detail_quantite" optional="hide"/>
+                <field name="is_prix_tarif"      optional="show"/>
+                <field name="is_unite_tarif"     optional="show"/>
             </xpath>
 
 

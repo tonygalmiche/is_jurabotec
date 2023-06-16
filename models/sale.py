@@ -155,6 +155,16 @@ class sale_order_line(models.Model):
     is_surface_totale  = fields.Float(string="Surface totale",  digits='Product Unit of Measure')
     is_volume          = fields.Float(string="Volume",          digits='Volume', related="product_id.is_volume", readonly=True)
     is_volume_total    = fields.Float(string="Volume total",    digits='Volume')
+    is_detail_quantite = fields.Text(string='Détail quantité', compute='_compute_is_detail_quantite')
+
+
+    @api.depends('product_id', 'product_uom_qty', 'is_longueur_totale', 'is_surface_totale', 'is_volume_total')
+    def _compute_is_detail_quantite(self):
+        for obj in self:
+            x = False
+            if obj.product_uom_qty and obj.is_longueur  and obj.is_longueur_totale and obj.is_surface_totale:
+                x = "En longueur de %.1fm soit %.1fml ou %.1fm2"%(obj.is_longueur, obj.is_longueur_totale, obj.is_surface_totale)
+            obj.is_detail_quantite = x
 
 
     @api.depends('product_id', 'product_uom', 'product_uom_qty','is_prix_tarif','is_unite_tarif','product_uom_qty')
