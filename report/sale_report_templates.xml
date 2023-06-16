@@ -147,6 +147,8 @@
                     </p>
                 </div>
             </div>
+            <t t-call="is_jurabotec.conditions_generales_de_vente" />
+
         </div>
     </template>
 </odoo>
