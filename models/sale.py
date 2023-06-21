@@ -112,7 +112,15 @@ class sale_order(models.Model):
                                 "sale_line_id": line.id,
                             }
                             res = self.env['is.sale.order.colisage.composant'].create(vals)
-
+                    else:
+                        vals={
+                            "colis_id": obj.is_colis_ids[0].id,
+                            "order_id": obj.id,
+                            "composant_id": line.product_id.id,
+                            "qty": line.product_uom_qty,
+                            "sale_line_id": line.id,
+                        }
+                        res = self.env['is.sale.order.colisage.composant'].create(vals)
             return {
                 "name": "Colisage des composants %s"%(obj.name),
                 "view_mode": "kanban,tree,form",
