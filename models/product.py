@@ -30,6 +30,13 @@ class IsQualiteBois(models.Model):
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+
+    @api.depends('is_largeur','is_epaisseur')
+    def _compute_is_litre_metre(self):
+        for obj in self:
+            obj.is_litre_metre = obj.is_largeur*obj.is_epaisseur/1000  # Épaisseur x Largeur / 1000
+
+
     is_bois_id    = fields.Many2one('is.bois', 'Bois')
     is_qualite_bois_ids = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
     is_largeur          = fields.Float("Largeur (mm)"  , digits='Product Unit of Measure')
@@ -37,6 +44,7 @@ class ProductTemplate(models.Model):
     is_ref_plan         = fields.Char("Référence plan")
     is_plan_ids         = fields.Many2many('ir.attachment', 'product_template_is_plan_rel', 'product_id', 'attachment_id', 'Plan')
     is_fds_ids          = fields.Many2many('ir.attachment', 'product_template_is_fds_rel' , 'product_id', 'attachment_id', 'FDS', help="Fiche de sécurité")
+    is_litre_metre      = fields.Float("L/m ", digits='Product Unit of Measure', compute='_compute_is_litre_metre', store=True, help="Litre / mètre => Unité fictive pour faciliter le calcul des devis")
 
 
     def import_plan_action(self):
@@ -84,13 +92,11 @@ class ProductProduct(models.Model):
             obj.is_longueur    = longeur
             obj.is_surface     = longeur*obj.is_largeur/1000
             obj.is_volume      = longeur*obj.is_largeur*obj.is_epaisseur/1000/1000
-            obj.is_litre_metre = obj.is_largeur*obj.is_epaisseur/1000  # Épaisseur x Largeur / 1000
 
 
     is_longueur    = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
     is_surface     = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
     is_volume      = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
-    is_litre_metre = fields.Float("L/m "        , digits='Product Unit of Measure', compute='_compute_longueur', help="Litre / mètre => Unité fictive pour faciliter le calcul des devis")
 
 
     def liste_charges_action(self):

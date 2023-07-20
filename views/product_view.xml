@@ -105,6 +105,7 @@
                     <field name="is_qualite_bois_ids" widget="many2many_tags"  options="{'color_field': 'color'}"/>
                     <field name="is_epaisseur"/>
                     <field name="is_largeur"/>
+                    <field name="is_litre_metre"/>
                 </field>
                 <field name="product_variant_id" position="after">
                     <field name="is_ref_plan"/>
@@ -123,6 +124,7 @@
                     <field name="is_qualite_bois_ids"  optional="show" widget="many2many_tags"  options="{'color_field': 'color'}"/>
                     <field name="is_epaisseur"         optional="show"/>
                     <field name="is_largeur"           optional="show"/>
+                    <field name="is_litre_metre" optional="hide"/>
                 </field>
                 <field name="default_code" position="after">
                     <field name="is_ref_plan" optional="show"/>
