@@ -27,6 +27,7 @@
             <field name="binding_model_id" ref="model_is_sale_order_colis"/>
             <field name="binding_type">report</field>
             <field name="paperformat_id" ref="is_jurabotec.is_sale_order_colis_paperformat"/>
+            <field name="print_report_name">'Colisage %s - %s' % (object.order_id.name, object.name.replace('/','-'))</field>
         </record>
     </data>
 </odoo>

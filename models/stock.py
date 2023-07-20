@@ -7,8 +7,6 @@ from odoo import fields, models, api
 
 #     def modifier_charge_action(self):
 #         for obj in self:
-#             print(obj)
-
 #             view_id = self.env.ref('is_jurabotec.modifier_charge_stock_quant_form_view', False)
 #             return {
 #                 "name": obj.lot_id,
@@ -101,8 +99,9 @@ class StockLocation(models.Model):
 class StockLot(models.Model):
     _inherit = "stock.lot"
 
-    is_prix_achat = fields.Float(string="Prix d'achat", digits="Product Price")
-    is_valeur     = fields.Float(string="Valeur stock", digits="Product Price", compute='_compute_is_valeur', store=True, readonly=True)
+    is_fournisseur_id = fields.Many2one('res.partner', 'Fournisseur')
+    is_prix_achat     = fields.Float(string="Prix d'achat", digits="Product Price")
+    is_valeur         = fields.Float(string="Valeur stock", digits="Product Price", compute='_compute_is_valeur', store=True, readonly=True)
 
 
     @api.depends('is_prix_achat','product_qty')
@@ -161,10 +160,15 @@ class StockLot(models.Model):
             for order in obj.purchase_order_ids:
                 for line in order.order_line:
                     if obj.product_id==line.product_id:
+                        obj.is_fournisseur_id = order.partner_id.id
                         if line.price_unit>0:
                             obj.is_prix_achat = line.price_unit
 
 
+    @api.model
+    def init_prix_achat_ir_cron(self):
+        self.env['stock.lot'].search([]).init_prix_achat_action()
+        return True
 
 
 class StockQuant(models.Model):
@@ -172,7 +176,6 @@ class StockQuant(models.Model):
 
     def deplacer_quant_action(self):
         for obj in self:
-            print(obj)
             context = self.env.context
             origine_id = obj.location_id.id
             new_context = dict(context).copy()
@@ -275,7 +278,6 @@ class IsCreationCharge(models.Model):
                 'company_id': self.env.user.company_id.id,
                 'name'      : self.env['ir.sequence'].next_by_code('stock.lot.serial'),
             }
-            print(vals)
             lot = self.env['stock.lot'].create(vals)
             obj.lot_id = lot.id
 

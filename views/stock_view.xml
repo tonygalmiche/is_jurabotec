@@ -114,6 +114,14 @@
 
 
     <!--stock.lot -->
+    <record id="init_prix_achat_ir_cron" model="ir.cron">
+        <field name="name">Initialisation prix d'achat</field>
+        <field name="model_id" ref="stock.model_stock_lot"/>
+        <field name="state">code</field>
+        <field name="code">model.init_prix_achat_ir_cron()</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+    </record>
     <record id="init_prix_achat_actions_server" model="ir.actions.server">
         <field name="name">Initialisation prix d'achat</field>
         <field name="model_id" ref="stock.model_stock_lot"/>
@@ -128,6 +136,7 @@
         <field name="arch" type="xml">
             <field name="ref" position="after">
                 <field name="product_qty"/>
+                <field name="is_fournisseur_id"/>
                 <field name="is_prix_achat"/>
                 <field name="is_valeur"/>
             </field>
@@ -140,10 +149,24 @@
         <field name="arch" type="xml">
             <field name="create_date" position="before">
                 <field name="product_qty" sum="Total"/>
+                <field name="is_fournisseur_id"/>
                 <field name="is_prix_achat"/>
                 <field name="is_valeur" sum="Total"/>
             </field>
 
+        </field>
+    </record>
+    <record id="is_search_product_lot_filter" model="ir.ui.view">
+        <field name="name">is_search_product_lot_filter</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.search_product_lot_filter"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="is_fournisseur_id"/>
+            </field>
+            <filter name="group_by_product" position="after">
+                <filter name="group_by_is_fournisseur_id" string="Fournisseur" domain="[]" context="{'group_by': 'is_fournisseur_id'}"/>
+            </filter>
         </field>
     </record>
     <record id="is_stock_lot_kanban_view" model="ir.ui.view">

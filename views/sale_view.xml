@@ -16,7 +16,7 @@
                     }
                 </style>
             </xpath>
-            <button name="payment_action_capture" position="before">
+            <!-- <button name="payment_action_capture" position="before">
                 <button 
                     name="convertir_en_commande_action" 
                     type="object" 
@@ -26,7 +26,7 @@
                         ('is_devis_id', '!=', False),
                     ]}"
                 />
-            </button>
+            </button> -->
             <field name="client_order_ref" position="replace"/>
             <field name="payment_term_id" position="before">
                 <field name="is_delai"/>
