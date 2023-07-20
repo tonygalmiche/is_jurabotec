@@ -81,13 +81,16 @@ class ProductProduct(models.Model):
                         longeur = float(val)
                     except:
                         longeur = 0
-            obj.is_longueur = longeur
-            obj.is_surface  = longeur*obj.is_largeur/1000
-            obj.is_volume   = longeur*obj.is_largeur*obj.is_epaisseur/1000/1000
+            obj.is_longueur    = longeur
+            obj.is_surface     = longeur*obj.is_largeur/1000
+            obj.is_volume      = longeur*obj.is_largeur*obj.is_epaisseur/1000/1000
+            obj.is_litre_metre = obj.is_largeur*obj.is_epaisseur/1000  # Épaisseur x Largeur / 1000
 
-    is_longueur = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
-    is_surface  = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
-    is_volume   = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
+
+    is_longueur    = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
+    is_surface     = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
+    is_volume      = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
+    is_litre_metre = fields.Float("L/m "        , digits='Product Unit of Measure', compute='_compute_longueur', help="Litre / mètre => Unité fictive pour faciliter le calcul des devis")
 
 
     def liste_charges_action(self):
@@ -110,3 +113,14 @@ class ProductProduct(models.Model):
                 #"context": new_context,
                 "type": "ir.actions.act_window",
             }
+
+
+
+    # @api.onchange('type')
+    # def _onchange_type(self):
+    #     print("## Controle désactivé")
+    #     # if self._origin and self.sales_count > 0:
+    #     #     return {'warning': {
+    #     #         'title': _("Warning"),
+    #     #         'message': _("You cannot change the product's type because it is already used in sales orders.")
+    #     #     }}
