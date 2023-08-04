@@ -2,6 +2,52 @@
 <odoo>
     <data>
 
+        <!-- is.calculateur.operation -->
+        <record model="ir.ui.view" id="is_calculateur_operation_tree_view">
+            <field name="name">is.calculateur.operation.tree</field>
+            <field name="model">is.calculateur.operation</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="prix_revient"/>
+                    <field name="unite"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_calculateur_operation_form_view">
+            <field name="name">is.calculateur.operation.form</field>
+            <field name="model">is.calculateur.operation</field>
+            <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="prix_revient"/>
+                        <field name="unite"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_calculateur_operation_search_view" >
+            <field name="name">is.calculateur.operation.search</field>
+            <field name="model">is.calculateur.operation</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="unite"/>
+                </search>
+            </field>
+        </record>
+        <record id="is_calculateur_operation_action" model="ir.actions.act_window">
+            <field name="name">Opérations calculateur</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">is.calculateur.operation</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
         <!-- is.bois -->
         <record model="ir.ui.view" id="is_bois_tree_view">
             <field name="name">is.bois.tree</field>
@@ -10,6 +56,7 @@
                 <tree>
                     <field name="sequence" widget="handle" />
                     <field name="name"/>
+                    <field name="prix_revient"/>
                 </tree>
             </field>
         </record>
@@ -21,6 +68,7 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="prix_revient"/>
                         <field name="active"/>
                     </group>
                 </sheet>
@@ -105,13 +153,34 @@
                     <field name="is_qualite_bois_ids" widget="many2many_tags"  options="{'color_field': 'color'}"/>
                     <field name="is_epaisseur"/>
                     <field name="is_largeur"/>
-                    <field name="is_litre_metre"/>
                 </field>
                 <field name="product_variant_id" position="after">
                     <field name="is_ref_plan"/>
                     <field name="is_plan_ids" widget="many2many_binary"/>
                     <field name="is_fds_ids"  widget="many2many_binary"/>
                 </field>
+                <page name="general_information" position="after">
+                    <page name="calculateur" string="Calculateur">
+                        <group>
+                            <field name="is_litre_metre"/>
+                        </group>
+                        <field name="is_operation_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="sequence" widget="handle" />
+                                <field name="product_id" invisible="1"/>
+                                <field name="operation_id"/>
+                                <field name="prix_revient"/>
+                                <field name="unite"/>
+                                <field name="montant" sum="Total"/>
+                            </tree>
+                        </field>
+                        <group>
+                            <field name="is_prix_revient_bois"/>
+                            <field name="is_montant_bois"/>
+                            <field name="is_prix_revient"/>
+                        </group>
+                    </page>
+                </page>
             </field>
         </record>
         <record id="is_product_template_tree_view" model="ir.ui.view">
@@ -124,7 +193,8 @@
                     <field name="is_qualite_bois_ids"  optional="show" widget="many2many_tags"  options="{'color_field': 'color'}"/>
                     <field name="is_epaisseur"         optional="show"/>
                     <field name="is_largeur"           optional="show"/>
-                    <field name="is_litre_metre" optional="hide"/>
+                    <field name="is_litre_metre"       optional="hide"/>
+                    <field name="is_prix_revient"      optional="hide"/>
                 </field>
                 <field name="default_code" position="after">
                     <field name="is_ref_plan" optional="show"/>
@@ -166,6 +236,9 @@
                     <field name="is_litre_metre"/>
                     <field name="product_tmpl_id"/>
                 </field>
+                <field name="is_prix_revient" position="after">
+                    <field name="is_prix_revient_variante"/>
+                </field>
             </field>
         </record>
         <record id="is_product_variant_easy_edit_view" model="ir.ui.view">
@@ -181,6 +254,7 @@
                         <field name="is_surface"/>
                         <field name="is_volume"/>
                         <field name="is_litre_metre"/>
+                        <field name="is_prix_revient_variante"/>
                     </group>
                 </group>
                 <group name="packaging" position="attributes">
@@ -203,6 +277,8 @@
                     <field name="is_surface"     optional="show"/>
                     <field name="is_volume"      optional="show"/>
                     <field name="is_litre_metre" optional="hide"/>
+                    <field name="is_prix_revient"          optional="hide"/>
+                    <field name="is_prix_revient_variante" optional="hide"/>
                 </field>
             </field>
         </record>

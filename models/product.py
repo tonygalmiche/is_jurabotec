@@ -10,10 +10,10 @@ class IsBois(models.Model):
     _description = "Bois"
     _order='sequence'
 
-    name     = fields.Char("Bois", required=True)
-    sequence = fields.Integer("Ordre")
-    active   = fields.Boolean("Actif", default=True)
-    
+    name         = fields.Char("Bois", required=True)
+    sequence     = fields.Integer("Ordre")
+    active       = fields.Boolean("Actif", default=True)
+    prix_revient = fields.Float(string="Prix de revient (€/litre)", digits="Product Price")
 
 
 class IsQualiteBois(models.Model):
@@ -27,6 +27,43 @@ class IsQualiteBois(models.Model):
     color = fields.Integer("Couleur", default=_get_default_color)
 
 
+class IsCalculateurOperation(models.Model):
+    _name='is.calculateur.operation'
+    _description = "Opérations du calculateur"
+
+    name         = fields.Char("Opération", required=True)
+    prix_revient = fields.Float(string="Prix de revient", digits="Product Unit of Measure", required=True)
+    unite = fields.Selection([
+            ('litre', 'litre'),
+            ('ml'   , 'ml'),
+        ], "Unité du prix de revient", default='litre', required=True)
+    active = fields.Boolean("Actif", default=True)
+
+
+class IsProductTemplateCalculateurOperation(models.Model):
+    _name='is.product.template.calculateur.operation'
+    _description = "Opérations du calculateur de la fiche article"
+
+
+    @api.depends('prix_revient','unite','product_id.is_litre_metre')
+    def _compute_montant(self):
+        for obj in self:
+            montant=0
+            if obj.unite=="ml":
+                montant=obj.prix_revient
+            if obj.unite=="litre":
+                montant=obj.prix_revient*obj.product_id.is_litre_metre
+            obj.montant=montant
+
+
+    product_id   = fields.Many2one('product.template', 'Article', required=True, ondelete='cascade')
+    sequence     = fields.Integer("Ordre")
+    operation_id = fields.Many2one('is.calculateur.operation', 'Opération', required=True)
+    prix_revient = fields.Float(related="operation_id.prix_revient")
+    unite        = fields.Selection(related="operation_id.unite")
+    montant      = fields.Float(string="Montant", digits="Product Price", compute='_compute_montant', store=True)
+
+
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
@@ -37,14 +74,34 @@ class ProductTemplate(models.Model):
             obj.is_litre_metre = obj.is_largeur*obj.is_epaisseur/1000  # Épaisseur x Largeur / 1000
 
 
-    is_bois_id    = fields.Many2one('is.bois', 'Bois')
-    is_qualite_bois_ids = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
-    is_largeur          = fields.Float("Largeur (mm)"  , digits='Product Unit of Measure')
-    is_epaisseur        = fields.Float("Epaisseur (mm)", digits='Product Unit of Measure')
-    is_ref_plan         = fields.Char("Référence plan")
-    is_plan_ids         = fields.Many2many('ir.attachment', 'product_template_is_plan_rel', 'product_id', 'attachment_id', 'Plan')
-    is_fds_ids          = fields.Many2many('ir.attachment', 'product_template_is_fds_rel' , 'product_id', 'attachment_id', 'FDS', help="Fiche de sécurité")
-    is_litre_metre      = fields.Float("L/m ", digits='Product Unit of Measure', compute='_compute_is_litre_metre', store=True, help="Litre / mètre => Unité fictive pour faciliter le calcul des devis")
+    @api.depends('is_litre_metre','is_prix_revient_bois')
+    def _compute_is_montant_bois(self):
+        for obj in self:
+            obj.is_montant_bois = obj.is_litre_metre*obj.is_prix_revient_bois
+
+
+    @api.depends('is_montant_bois','is_operation_ids')
+    def _compute_is_prix_revient(self):
+        for obj in self:
+            v=0
+            for line in obj.is_operation_ids:
+                v+=line.montant
+            v+=obj.is_montant_bois
+            obj.is_prix_revient = v
+
+
+    is_bois_id           = fields.Many2one('is.bois', 'Bois')
+    is_prix_revient_bois = fields.Float("Prix de revient du bois", related="is_bois_id.prix_revient")
+    is_montant_bois      = fields.Float("Montant bois", compute='_compute_is_montant_bois', store=True)
+    is_qualite_bois_ids  = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
+    is_largeur           = fields.Float("Largeur (mm)"  , digits='Product Unit of Measure')
+    is_epaisseur         = fields.Float("Epaisseur (mm)", digits='Product Unit of Measure')
+    is_ref_plan          = fields.Char("Référence plan")
+    is_plan_ids          = fields.Many2many('ir.attachment', 'product_template_is_plan_rel', 'product_id', 'attachment_id', 'Plan')
+    is_fds_ids           = fields.Many2many('ir.attachment', 'product_template_is_fds_rel' , 'product_id', 'attachment_id', 'FDS', help="Fiche de sécurité")
+    is_litre_metre       = fields.Float("L/m ", digits='Product Unit of Measure', compute='_compute_is_litre_metre', store=True, help="Litre / mètre => Unité fictive pour faciliter le calcul des devis")
+    is_operation_ids     = fields.One2many('is.product.template.calculateur.operation', 'product_id', 'Opérations')
+    is_prix_revient      = fields.Float("Prix de revient (€/ml)", compute='_compute_is_prix_revient', store=False)
 
 
     def import_plan_action(self):
@@ -94,9 +151,16 @@ class ProductProduct(models.Model):
             obj.is_volume      = longeur*obj.is_largeur*obj.is_epaisseur/1000/1000
 
 
-    is_longueur    = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
-    is_surface     = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
-    is_volume      = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
+    @api.depends('is_prix_revient','is_longueur')
+    def _compute_is_prix_revient_variante(self):
+        for obj in self:
+            obj.is_prix_revient_variante=obj.is_prix_revient*obj.is_longueur
+
+
+    is_longueur              = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
+    is_surface               = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
+    is_volume                = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
+    is_prix_revient_variante = fields.Float("Prix de revient variante"                      , compute='_compute_is_prix_revient_variante')
 
 
     def liste_charges_action(self):
