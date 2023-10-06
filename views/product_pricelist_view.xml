@@ -47,6 +47,12 @@
         <field name="model">product.pricelist.item</field>
         <field name="arch" type="xml">
             <tree editable="bottom" create="true">
+                <button 
+                    title="Dupliquer" 
+                    name="dupliquer_ligne_action" 
+                    type="object" 
+                    icon="fa-copy" 
+                />
                 <field name="pricelist_id"/>
                 <field name="applied_on"/>
                 <field name="product_tmpl_id"/>

@@ -11,3 +11,10 @@ class ProductPricelistItem(models.Model):
         ('m3'   , 'm3'),
         ('unite', 'Unité'),
     ], "Unité", default='m3')
+
+
+    def dupliquer_ligne_action(self):
+        for obj in self:
+            res=obj.copy()
+
+
