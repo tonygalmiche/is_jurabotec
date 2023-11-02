@@ -5,17 +5,51 @@ from odoo import fields, models, api
 class IsSaleOrderColis(models.Model):
     _name='is.sale.order.colis'
     _description = "Colis des commandes"
+    _order='sequence'
 
     order_id     = fields.Many2one('sale.order', 'Commande', required=True, ondelete='cascade')
+    sequence     = fields.Integer("Ordre")
     name         = fields.Char("Colis", required=True)
     colisage_ids = fields.One2many('is.sale.order.colisage.composant', 'colis_id', 'Colisage')
-
 
 
     def imprimer_fiche_colisage_action(self):
         for obj in self:
             report=self.env.ref('is_jurabotec.is_sale_order_colis_reports')
             return report.report_action([obj.id])
+
+
+    def repartir_colis_action(self):
+        for obj in self:
+            print(obj,obj.colisage_ids)
+
+    def lignes_colis_action(self):
+        for obj in self:
+            print(obj,obj.colisage_ids)
+
+            return {
+                "name": obj.name,
+                "view_mode": "tree,form",
+                "res_model": "is.sale.order.colisage.composant",
+                "domain": [
+                    ("colis_id","=",obj.id),
+                ],
+                "type": "ir.actions.act_window",
+            }
+
+    def voir_colis_action(self):
+        for obj in self:
+            res= {
+                'name': obj.name,
+                'view_mode': 'form',
+                'res_model': 'is.sale.order.colis',
+                'res_id': obj.id,
+                'type': 'ir.actions.act_window',
+            }
+            return res
+
+
+
 
 
 
@@ -26,9 +60,10 @@ class IsSaleOrderColisageComposant(models.Model):
     order_id     = fields.Many2one('sale.order', 'Commande', required=True, ondelete='cascade')
     colis_id     = fields.Many2one('is.sale.order.colis', 'Colis', group_expand='_group_expand_colis_id', required=True)
     #product_id   = fields.Many2one('product.product', 'Article')
-    product_id   = fields.Many2one("product.product", string="Catégorie de clientArticle", related="sale_line_id.product_id", readonly=True)
+    product_id   = fields.Many2one("product.product", string="Article", related="sale_line_id.product_id", readonly=True)
     composant_id = fields.Many2one('product.product', 'Composant')
     qty          = fields.Float(string='Quantité', digits='Product Unit of Measure')
+    qty_bom      = fields.Float(string='Qt nomenclature', digits='Product Unit of Measure')
     sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande', required=True)
     colis_ids    = fields.Many2many('is.sale.order.colis', 'is_sale_order_line_colis_ids', 'line_id', 'colis_id', store=False, readonly=True, compute='_compute_colis_ids', string="Colis autorisés")
 
@@ -67,6 +102,23 @@ class IsSaleOrderColisageComposant(models.Model):
             res.qty=0
 
 
+    def voir_colis_action(self):
+        for obj in self:
+            print(obj)
+
+            res= {
+                'name': obj.colis_id.name,
+                'view_mode': 'form',
+                'res_model': 'is.sale.order.colis',
+                'res_id': obj.colis_id.id,
+                'type': 'ir.actions.act_window',
+            }
+            return res
+
+
+
+
+           
 
 class sale_order(models.Model):
     _inherit = "sale.order"

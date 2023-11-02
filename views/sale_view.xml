@@ -60,6 +60,13 @@
                 <page string="Colis">
                     <field name="is_colis_ids" nolabel="1">
                         <tree editable="bottom">
+                            <field name="sequence" widget="handle" />
+                            <button 
+                                title="Voir le colis" 
+                                name="voir_colis_action" 
+                                type="object" 
+                                icon="fa-search" 
+                            />
                             <button 
                                 title="Fiche de colisage" 
                                 name="imprimer_fiche_colisage_action" 
@@ -132,6 +139,18 @@
         <field name="model">is.sale.order.colis</field>
         <field name="arch" type="xml">
         <form>
+            <header>
+                <button 
+                    string="Lignes de ce colis" 
+                    name="lignes_colis_action" 
+                    type="object" 
+                />
+                <button 
+                    string="Répartir les lignes de ce colis par 8 maximum" 
+                    name="repartir_colis_action" 
+                    type="object" 
+                />
+            </header>
             <sheet>
                 <group>
                     <field name="order_id" readonly="1"/>
@@ -160,7 +179,8 @@
                 <field name="product_id"    readonly="1"/>
                 <field name="composant_id"  readonly="1"/>
                 <field name="qty" sum="Total"/>
-                <field name="sale_line_id"  readonly="1" optional="hide"/>
+                <field name="qty_bom"       readonly="1" optional="hide" />
+                <field name="sale_line_id"  readonly="1" optional="hide" widget="many2one_clickable"/>
                 <field name="colis_ids"     readonly="1" optional="hide" widget="many2many_tags"/>
             </tree>
         </field>
@@ -202,12 +222,6 @@
                              <div class="oe_kanban_details">
                                 <div class="o_kanban_record_top mb-0">
                                     <div class="o_kanban_record_headings">
-                                        <button 
-                                            title="Dupliquer" 
-                                            name="dupliquer_colis_action" 
-                                            type="object" 
-                                            icon="fa-copy" 
-                                        />
                                         <strong class="o_kanban_record_title">
                                             <field name="product_id"/>
                                         </strong>
@@ -215,6 +229,21 @@
                                 </div>
                                 <div>Composant : <field name="composant_id"/></div>
                                 <div>Quantité :  <field name="qty"/></div>
+
+                                <div>
+                                    <button 
+                                        title="Dupliquer" 
+                                        name="dupliquer_colis_action" 
+                                        type="object" 
+                                        icon="fa-copy" 
+                                    />
+                                    <button 
+                                        title="Colis" 
+                                        name="voir_colis_action" 
+                                        type="object" 
+                                        icon="fa-archive" 
+                                    />
+                                </div>
                             </div>
                         </div>
                     </t>

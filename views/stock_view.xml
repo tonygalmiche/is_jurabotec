@@ -10,8 +10,12 @@
             <xpath expr="//group/group/field[@name='origin']" position="after">
                 <field name="is_bl_fournisseur"/>
             </xpath>
+            <xpath expr="//page[@name='operations']/field/tree/field[@name='description_picking']" position="after">
+                <field name="is_description_cde" optional="show"/>
+            </xpath> 
         </field>
     </record>
+
     <record id="is_vpicktree" model="ir.ui.view">
         <field name="name">is_vpicktree</field>
         <field name="model">stock.picking</field>

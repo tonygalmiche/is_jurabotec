@@ -23,7 +23,6 @@
     <menuitem id="is_qualite_bois_menu"          parent="is_ventes_tables_menu" name="Qualité bois"              action="is_qualite_bois_action"          sequence="20"/>
     <menuitem id="is_calculateur_operation_menu" parent="is_ventes_tables_menu" name="Opérations du calculateur" action="is_calculateur_operation_action" sequence="30"/>
 
-
     <!-- Achats -->
     <menuitem 
         id="is_contrat_fournisseur_menu" sequence="90" 
@@ -31,18 +30,21 @@
         action="is_contrat_fournisseur_action"
     />
 
-    
+    <!-- Facturation -->
+    <menuitem 
+        id="is_export_vente_compta_menu" 
+        sequence="900" 
+        name="Export compta"
+        action="is_export_vente_compta_action"
+        parent="account.menu_finance_receivables"
+    />
+
     <!-- Tablette -->
     <menuitem id="is_tablette_menu" sequence="146"  name="Tablette"/>
     <menuitem id="is_product_product_tablette_menu" sequence="10" name="Articles"        action="is_product_product_tablette_action"          parent="is_tablette_menu"/>
     <menuitem id="is_emplacement_charge_menu"       sequence="20" name="Déplacer charge" action="is_emplacement_origine_charge_action_server" parent="is_tablette_menu"/>
     <menuitem id="is_creation_charge_menu"          sequence="30" name="Création charge" action="is_creation_charge_action"                   parent="is_tablette_menu"/>
     <menuitem id="is_modifier_charge_menu"          sequence="40" name="Modifier charge" action="modifier_charge_stock_quant_action"          parent="is_tablette_menu"/>
-
-
-
-
-
 
     <!-- Déplacer les menus non utilisés -->
     <menuitem id="is_archive_menu"        parent="base.menu_custom" sequence="900" name="Archives"/>

@@ -26,6 +26,28 @@ class StockPicking(models.Model):
     is_bl_fournisseur = fields.Char("BL fournisseur")
 
 
+
+
+class StockMove(models.Model):
+    _inherit = "stock.move"
+
+    is_description_cde = fields.Text('Description commande', compute="_compute_is_description_cde")
+
+    @api.onchange('product_id')
+    def _compute_is_description_cde(self):
+        for obj in self:
+            description = obj.description_picking
+            if obj.sale_line_id:
+                description = obj.sale_line_id.name
+            if obj.purchase_line_id:
+                description = obj.purchase_line_id.name
+            obj.is_description_cde=description
+
+
+
+
+
+
 class StockLocation(models.Model):
     _inherit = "stock.location"
 
