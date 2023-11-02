@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import fields, models, api
-
+from odoo.exceptions import AccessError, ValidationError, UserError
+from math import *
 
 class IsSaleOrderColis(models.Model):
     _name='is.sale.order.colis'
@@ -21,12 +22,56 @@ class IsSaleOrderColis(models.Model):
 
     def repartir_colis_action(self):
         for obj in self:
-            print(obj,obj.colisage_ids)
+
+            #** Test si supérieur à 8
+            for line in obj.colisage_ids:
+                if line.qty_cde<=8:
+                    raise ValidationError("La quantité commandée doit-être supérieure à 8")
+                if line.qty!=(line.qty_cde*line.qty_bom):
+                    raise ValidationError("Une répartition a déjà été faite")
+                
+            #** Recherche qty mini
+            qty_mini=False
+            for line in obj.colisage_ids:
+                if line.qty_cde>0:
+                    if not qty_mini:
+                        qty_mini = line.qty_cde
+                    if qty_mini>line.qty_cde:
+                        qty_mini = line.qty_cde
+            repartition=ceil(qty_mini/8)
+            if repartition>1:
+
+                #Liste des colis
+                dict_colis={}
+                name=obj.name
+                for i in range(0, repartition):
+                    if i==0:
+                        dict_colis[i]=obj
+                        colis = obj
+                    else:
+                        colis = obj.copy()
+                    colis.name = "%s.%s"%(name,(i+1))
+                    dict_colis[i]=colis
+    
+                for line in obj.colisage_ids:
+                    reste = line.qty_cde
+                    if line.qty_cde>0:
+
+                        for i in range(0, repartition):
+                            qty=ceil(line.qty_cde/repartition)
+                            reste = reste - qty
+                            if reste<0:
+                                qty=qty+reste
+                            if i==0:
+                                line.qty=qty*line.qty_bom
+                            else:
+                                new_line = line.copy()
+                                new_line.qty = qty*line.qty_bom
+                                new_line.colis_id = dict_colis[i].id
+
 
     def lignes_colis_action(self):
         for obj in self:
-            print(obj,obj.colisage_ids)
-
             return {
                 "name": obj.name,
                 "view_mode": "tree,form",
@@ -64,6 +109,7 @@ class IsSaleOrderColisageComposant(models.Model):
     composant_id = fields.Many2one('product.product', 'Composant')
     qty          = fields.Float(string='Quantité', digits='Product Unit of Measure')
     qty_bom      = fields.Float(string='Qt nomenclature', digits='Product Unit of Measure')
+    qty_cde      = fields.Float(related='sale_line_id.product_uom_qty')
     sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande', required=True)
     colis_ids    = fields.Many2many('is.sale.order.colis', 'is_sale_order_line_colis_ids', 'line_id', 'colis_id', store=False, readonly=True, compute='_compute_colis_ids', string="Colis autorisés")
 
@@ -104,8 +150,6 @@ class IsSaleOrderColisageComposant(models.Model):
 
     def voir_colis_action(self):
         for obj in self:
-            print(obj)
-
             res= {
                 'name': obj.colis_id.name,
                 'view_mode': 'form',
@@ -147,7 +191,7 @@ class sale_order(models.Model):
 
     def colisage_action(self):
         for obj in self:
-            if len(obj.is_colisage_ids)==0:
+            if len(obj.is_colisage_ids)==0 and len(obj.is_colis_ids)>0:
                 for line in obj.order_line:
                     filtre=[
                         ('product_tmpl_id', '=', line.product_id.product_tmpl_id.id),
@@ -157,10 +201,11 @@ class sale_order(models.Model):
                     if len(boms)>0:
                         for bom_line in boms[0].bom_line_ids:
                             vals={
-                                "colis_id": obj.is_colis_ids[0].id,
-                                "order_id": obj.id,
+                                "colis_id"    : obj.is_colis_ids[0].id,
+                                "order_id"    : obj.id,
                                 "composant_id": bom_line.product_id.id,
-                                "qty": line.product_uom_qty*bom_line.product_qty,
+                                "qty"         : line.product_uom_qty*bom_line.product_qty,
+                                "qty_bom"     : bom_line.product_qty,
                                 "sale_line_id": line.id,
                             }
                             res = self.env['is.sale.order.colisage.composant'].create(vals)

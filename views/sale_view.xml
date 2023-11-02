@@ -180,6 +180,7 @@
                 <field name="composant_id"  readonly="1"/>
                 <field name="qty" sum="Total"/>
                 <field name="qty_bom"       readonly="1" optional="hide" />
+                <field name="qty_cde"       readonly="1" optional="hide" />
                 <field name="sale_line_id"  readonly="1" optional="hide" widget="many2one_clickable"/>
                 <field name="colis_ids"     readonly="1" optional="hide" widget="many2many_tags"/>
             </tree>
