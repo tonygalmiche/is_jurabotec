@@ -276,20 +276,21 @@ class sale_order_line(models.Model):
     def _compute_price_unit(self):
         for line in self:
             price = 0
-            for l in line.product_id.product_template_variant_value_ids:
-                if l.attribute_line_id.attribute_id.name=="Longueur":
-                    variante = l.product_attribute_value_id.name
-                    if variante in ['ml','m2','m','u']:
+            if line.product_id:
+                for l in line.product_id.product_template_variant_value_ids:
+                    if l.attribute_line_id.attribute_id.name=="Longueur":
+                        variante = l.product_attribute_value_id.name
+                        if variante in ['ml','m2','m','u']:
+                            price = line.is_prix_tarif
+                if price==0:
+                    if line.is_unite_tarif=="m":
+                        price = line.is_prix_tarif*line.is_longueur
+                    if line.is_unite_tarif=="m2":
+                        price = line.is_prix_tarif*line.is_surface
+                    if line.is_unite_tarif=="m3":
+                        price = line.is_prix_tarif*line.is_volume
+                    if line.is_unite_tarif=="unite":
                         price = line.is_prix_tarif
-            if price==0:
-                if line.is_unite_tarif=="m":
-                    price = line.is_prix_tarif*line.is_longueur
-                if line.is_unite_tarif=="m2":
-                    price = line.is_prix_tarif*line.is_surface
-                if line.is_unite_tarif=="m3":
-                    price = line.is_prix_tarif*line.is_volume
-                if line.is_unite_tarif=="unite":
-                    price = line.is_prix_tarif
             line.price_unit = price
 
 
