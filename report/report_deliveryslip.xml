@@ -16,6 +16,14 @@
                         <strong>Commande:</strong>
                         <p t-field="o.origin"/>
                     </div>
+                    <div t-if="o.sale_id.client_order_ref" class="col-auto">
+                        <strong>Référence client:</strong>
+                        <p t-field="o.sale_id.client_order_ref"/>
+                    </div>
+                    <div t-if="o.sale_id.is_num_cde_client" class="col-auto">
+                        <strong>N° commande client:</strong>
+                        <p t-field="o.sale_id.is_num_cde_client"/>
+                    </div>
                     <div t-if="o.state" class="col-auto" name="div_sched_date">
                         <strong>Date:</strong>
                         <t t-if="o.state == 'done'">
