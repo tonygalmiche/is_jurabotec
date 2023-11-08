@@ -39,6 +39,29 @@
         parent="account.menu_finance_receivables"
     />
 
+    <!-- Facturation / Configuration -->
+    <menuitem 
+        id="is_res_bank_menu" 
+        sequence="900" 
+        name="Banques"
+        action="is_res_bank_action"
+        parent="account.account_banks_menu"
+    />
+    <menuitem 
+        id="is_res_partner_bank_menu" 
+        sequence="910" 
+        name="Comptes banquaires"
+        action="is_res_partner_bank_action"
+        parent="account.account_banks_menu"
+    />
+
+
+    
+    
+
+
+
+
     <!-- Tablette -->
     <menuitem id="is_tablette_menu" sequence="146"  name="Tablette"/>
     <menuitem id="is_product_product_tablette_menu" sequence="10" name="Articles"        action="is_product_product_tablette_action"          parent="is_tablette_menu"/>
