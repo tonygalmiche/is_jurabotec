@@ -31,6 +31,7 @@ InfoSaône - Module Odoo 16 pour Jurabotec
         "report/is_sale_order_colis_report.xml",
         "report/sale_report_templates.xml",
         "report/report_deliveryslip.xml",
+        "report/report_stockpicking_operations.xml",
         "report/report.xml",
     ],
     'installable': True,
