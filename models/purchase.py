@@ -126,27 +126,26 @@ class PurchaseOrderLine(models.Model):
     ], "Unité contrat")
     is_volume       = fields.Float(string="Volume"      , digits='Volume', related="product_id.is_volume", readonly=True)
     is_volume_total = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total')
-    is_product_ids  = fields.Many2many('product.product', 'is_purchase_order_line_product_ids', 'line_id', 'product_id', store=False, readonly=True, compute='_compute_is_product_ids', string="Articles autorisés")
+    # is_product_ids  = fields.Many2many('product.product', 'is_purchase_order_line_product_ids', 'line_id', 'product_id', store=False, readonly=True, compute='_compute_is_product_ids', string="Articles autorisés")
 
-
-    @api.depends('order_id','order_id.is_contrat_id','order_id.partner_id')
-    def _compute_is_product_ids(self):
-        for obj in self:
-            ids=[]
-            if obj.order_id.partner_id:
-                if obj.order_id.is_contrat_id:
-                    for line in obj.order_id.is_contrat_id.ligne_ids:
-                        for product in line.product_id.product_variant_ids:
-                            ids.append(product.id)
-                else:
-                    filtre=[
-                        ('partner_id', '=', obj.order_id.partner_id.id)
-                    ]
-                    lines = self.env['product.supplierinfo'].search(filtre)
-                    for line in lines:
-                        for product in line.product_tmpl_id.product_variant_ids:
-                            ids.append(product.id)
-            obj.is_product_ids= [(6, 0, ids)]
+    # @api.depends('order_id','order_id.is_contrat_id','order_id.partner_id')
+    # def _compute_is_product_ids(self):
+    #     for obj in self:
+    #         ids=[]
+    #         if obj.order_id.partner_id:
+    #             if obj.order_id.is_contrat_id:
+    #                 for line in obj.order_id.is_contrat_id.ligne_ids:
+    #                     for product in line.product_id.product_variant_ids:
+    #                         ids.append(product.id)
+    #             else:
+    #                 filtre=[
+    #                     ('partner_id', '=', obj.order_id.partner_id.id)
+    #                 ]
+    #                 lines = self.env['product.supplierinfo'].search(filtre)
+    #                 for line in lines:
+    #                     for product in line.product_tmpl_id.product_variant_ids:
+    #                         ids.append(product.id)
+    #         obj.is_product_ids= [(6, 0, ids)]
 
 
     def _compute_price_unit_and_date_planned_and_name(self):

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import re
 from odoo import api, fields, models, _
 from random import randint
 import os
 import base64
+from odoo.osv import expression
 
 
 class IsBois(models.Model):
@@ -165,8 +167,6 @@ class ProductProduct(models.Model):
 
     def liste_charges_action(self):
         for obj in self:
-            print(obj)
-
             view_id = self.env.ref('is_jurabotec.charge_stock_quant_kanban_view', False)
             #new_context = dict(self.env.context).copy()
             #new_context["origine_id"] = obj.id
@@ -185,12 +185,16 @@ class ProductProduct(models.Model):
             }
 
 
+    @api.model
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+        product_ids=[]
+        contrat_id = self._context.get('contrat_id')
+        if contrat_id:
+            lines = self.env['is.contrat.fournisseur.ligne'].search([('contrat_id','=',contrat_id)])
+            for line in lines:
+                for product in line.product_id.product_variant_ids:
+                    product_ids.append(product.id)
+        else:
+            product_ids = super()._name_search(name, args, operator, limit, name_get_uid)
+        return product_ids
 
-    # @api.onchange('type')
-    # def _onchange_type(self):
-    #     print("## Controle désactivé")
-    #     # if self._origin and self.sales_count > 0:
-    #     #     return {'warning': {
-    #     #         'title': _("Warning"),
-    #     #         'message': _("You cannot change the product's type because it is already used in sales orders.")
-    #     #     }}
