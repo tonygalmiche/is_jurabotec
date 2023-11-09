@@ -498,56 +498,61 @@ class sale_order_line(models.Model):
         self.is_unite_tarif = unite
 
 
-
-    # @api.onchange('is_prix_tarif','is_unite_tarif','product_uom_qty')
-    # def _onchange_is_prix_tarif(self):
-    #     price = 0
-    #     if self.is_unite_tarif=="m":
-    #         price = self.is_prix_tarif*self.is_longueur
-    #     if self.is_unite_tarif=="m2":
-    #         price = self.is_prix_tarif*self.is_surface
-    #     if self.is_unite_tarif=="m3":
-    #         price = self.is_prix_tarif*self.is_volume
-    #     if self.is_unite_tarif=="unite":
-    #         price = self.is_prix_tarif
-    #     self.price_unit = price
-
-
-
+    # Epaisseur (mm)
+    # Longueur (m)
+    # Largeur (mm)
+    # Surface (m2)
+    # Volume (m3)
 
     @api.onchange('product_uom_qty')
     def _onchange_product_uom_qty(self):
-        self.is_longueur_totale = self.product_uom_qty * self.is_longueur
-        self.is_surface_totale  = self.product_uom_qty * self.is_surface
-        self.is_volume_total    = self.product_uom_qty * self.is_volume
-
+        if not self.env.context.get("noonchange"): 
+            self.is_longueur_totale = self.product_uom_qty * self.is_longueur
+            self.is_surface_totale  = self.product_uom_qty * self.is_surface
+            self.is_volume_total    = self.product_uom_qty * self.is_volume
+            self.env.context = self.with_context(noonchange=True).env.context
 
     @api.onchange('is_longueur_totale')
     def _onchange_is_longueur_totale(self):
-        qty = surface = volume = 0
-        if self.is_longueur>0:
-            qty     = self.is_longueur_totale/self.is_longueur
-            surface = self.is_longueur_totale * self.product_id.is_largeur/1000
-            volume  = self.is_longueur_totale * self.product_id.is_largeur/1000 * self.product_id.is_epaisseur/1000
-        self.product_uom_qty   = qty
-        self.is_surface_totale = surface
-        self.is_volume_total   = volume
-
+        if not self.env.context.get("noonchange"): 
+            qty = surface = volume = 0
+            if self.is_longueur>0:
+                qty     = self.is_longueur_totale/self.is_longueur
+                surface = self.is_longueur_totale * self.product_id.is_largeur/1000
+                volume  = self.is_longueur_totale * self.product_id.is_largeur/1000 * self.product_id.is_epaisseur/1000
+            self.product_uom_qty   = qty
+            self.is_surface_totale = surface
+            self.is_volume_total   = volume
+            self.env.context = self.with_context(noonchange=True).env.context
 
     @api.onchange('is_surface_totale')
     def _onchange_is_surface_totale(self):
-        qty = 0
-        if self.is_surface>0:
-            qty = self.is_surface_totale/self.is_surface
-        self.product_uom_qty = qty
-
+        if not self.env.context.get("noonchange"): 
+            qty = 0
+            if self.is_surface>0:
+                self.product_uom_qty = self.is_surface_totale/self.is_surface
+            if  self.product_id.is_largeur>0:
+                self.is_longueur_totale = 1000*self.is_surface_totale / self.product_id.is_largeur
+            self.is_volume_total = self.is_surface_totale * self.product_id.is_epaisseur/1000
+            self.env.context = self.with_context(noonchange=True).env.context
 
     @api.onchange('is_volume_total')
     def _onchange_is_volume_total(self):
-        qty = 0
-        if self.is_volume>0:
-            qty = self.is_volume_total/self.is_volume
-        self.product_uom_qty = qty
+        if not self.env.context.get("noonchange"): 
+            qty = 0
+            if self.is_volume>0:
+                qty = self.is_volume_total/self.is_volume
+            self.product_uom_qty = qty
+            if self.product_id.is_epaisseur>0:
+                self.is_surface_totale = 1000 * self.is_volume_total / self.product_id.is_epaisseur
+            if self.product_id.is_epaisseur>0 and self.product_id.is_largeur>0:
+                self.is_longueur_totale = 1000*1000*self.is_volume_total / self.product_id.is_largeur / self.product_id.is_epaisseur
+            self.env.context = self.with_context(noonchange=True).env.context
+
+
+
+
+
 
 
     def _compute_is_composants(self):
