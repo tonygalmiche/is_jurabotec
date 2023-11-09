@@ -69,7 +69,22 @@
 
                                     <tr t-att-class="'bg-200 fw-bold o_line_section' if line.display_type == 'line_section' else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">
                                         <t t-if="line.display_type == 'product'" name="account_invoice_line_accountable">
-                                            <td name="account_invoice_line_name"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
+                                            <td name="account_invoice_line_name">
+                                                <span t-field="line.name" t-options="{'widget': 'text'}"/>
+
+
+                                                <t t-foreach="line.sale_line_ids" t-as="sale_line">
+                                                    <div t-if="sale_line.is_detail_quantite"  t-field="sale_line.is_detail_quantite"/>
+                                                    <div t-if="sale_line.is_prix_tarif and sale_line.is_unite_tarif and sale_line.is_unite_tarif!='unite'">
+                                                        Soit <span t-field="sale_line.is_prix_tarif"/> € HT / <span t-field="sale_line.is_unite_tarif"/>
+                                                    </div>
+                                                </t>
+            
+        
+        
+
+
+                                            </td>
                                             <td class="text-end">
                                                 <span t-field="line.quantity"/>
                                                 <span t-field="line.product_uom_id"  groups="uom.group_uom"/>

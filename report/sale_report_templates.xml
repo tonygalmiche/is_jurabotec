@@ -65,8 +65,8 @@
                                         <div t-if="line.is_detail_quantite"  t-field="line.is_detail_quantite"/>
 
                                         
-                                        <div t-if="line.is_prix_tarif and line.is_unite_tarif">
-                                            Soit <span t-field="line.is_prix_tarif"/> € HT le <span t-field="line.is_unite_tarif"/>
+                                        <div t-if="line.is_prix_tarif and line.is_unite_tarif and line.is_unite_tarif!='unite'">
+                                            Soit <span t-field="line.is_prix_tarif"/> € HT / <span t-field="line.is_unite_tarif"/>
                                         </div>
 
 
