@@ -24,8 +24,16 @@ class StockPicking(models.Model):
     _inherit = "stock.picking"
  
     is_bl_fournisseur = fields.Char("BL fournisseur")
+    is_volume_total   = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
 
 
+    @api.depends('move_ids_without_package')
+    def _compute_is_volume_total(self):
+        for obj in self:
+            volume = 0
+            for line in obj.move_ids_without_package:
+                volume+=line.sale_line_id.is_volume*line.quantity_done
+            obj.is_volume_total = volume
 
 
 class StockMove(models.Model):

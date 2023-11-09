@@ -11,9 +11,9 @@
                 <field name="sale_id" attrs="{'invisible': [('sale_id', '=', False)]}"/>
                 <field name="is_bl_fournisseur"/>
             </xpath>
-            <xpath expr="//page[@name='operations']/field/tree/field[@name='description_picking']" position="after">
-                <field name="is_description_cde" optional="show"/>
-            </xpath> 
+            <xpath expr="//group/field[@name='backorder_id']" position="after">
+                <field name="is_volume_total"/>
+            </xpath>
         </field>
     </record>
 
@@ -24,6 +24,7 @@
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field name="is_bl_fournisseur" optional="show"/>
+                <field name="is_volume_total"   optional="hide"/>
             </field>
         </field>
     </record>

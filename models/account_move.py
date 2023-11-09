@@ -6,7 +6,16 @@ class AccountMove(models.Model):
     _inherit = "account.move"
 
     is_export_compta_id = fields.Many2one('is.export.compta', 'Folio', copy=False)
+    is_volume_total     = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
 
+
+    @api.depends('invoice_line_ids','invoice_line_ids.quantity')
+    def _compute_is_volume_total(self):
+        for obj in self:
+            volume = 0
+            for line in obj.invoice_line_ids:
+                volume+=line.product_id.is_volume*line.quantity
+            obj.is_volume_total = volume
 
 
     def mise_en_page_hekipia_action(self):

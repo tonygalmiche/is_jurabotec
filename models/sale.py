@@ -175,6 +175,16 @@ class sale_order(models.Model):
     is_num_cde_client    = fields.Char('N° commande client')
     is_detail_composants = fields.Boolean('Imprimer le détail des composants', default=False)
     is_devis_id          = fields.Many2one('sale.order', "Devis d'origine", copy=False, readonly=True)
+    is_volume_total      = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
+
+
+    @api.depends('order_line','order_line.product_uom_qty')
+    def _compute_is_volume_total(self):
+        for obj in self:
+            volume = 0
+            for line in obj.order_line:
+                volume+=line.is_volume_total
+            obj.is_volume_total = volume
 
 
     def _create_invoices(self, grouped=False, final=False, date=None):

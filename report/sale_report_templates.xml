@@ -122,7 +122,11 @@
     
                 <div class="clearfix" name="so_total_summary">
                     <div id="total" class="row" name="total">
-                        <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">
+                        <div class="col-6">
+                            <i>Volume total : <span t-esc="round(doc.is_volume_total,3)"/> m3</i>
+                        </div>
+                        <!-- <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto"> -->
+                        <div class="col-6">
                             <table class="table table-sm">
                                 <t t-set="tax_totals" t-value="doc.tax_totals"/>
                                 <t t-call="account.document_tax_totals"/>

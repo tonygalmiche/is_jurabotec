@@ -15,6 +15,7 @@
             </xpath>
              <div name="journal_div" position="after">
                 <field name="is_export_compta_id"/>
+                <field name="is_volume_total"/>
             </div>
             <field name="invoice_line_ids" position="before">
                 <button 
@@ -37,6 +38,7 @@
         <field name="arch" type="xml">
             <field name="state" position="before">
                 <field name="is_export_compta_id" optional="show"/>
+                <field name="is_volume_total"     optional="hide"/>
             </field>
         </field>
     </record>
