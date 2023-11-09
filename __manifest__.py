@@ -45,7 +45,16 @@ InfoSaône - Module Odoo 16 pour Jurabotec
             'is_jurabotec/static/src/scss/styles.scss',
             'is_jurabotec/static/src/script.js',
             'is_jurabotec/static/src/templates.xml',
+        ],
+
+        'web.report_assets_common': [
+            'is_jurabotec/static/src/scss/report.scss',
+
         ]
+
+
+
+
    },
     'license': 'LGPL-3',
 }

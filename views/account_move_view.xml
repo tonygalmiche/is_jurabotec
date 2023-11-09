@@ -16,6 +16,16 @@
              <div name="journal_div" position="after">
                 <field name="is_export_compta_id"/>
             </div>
+            <field name="invoice_line_ids" position="before">
+                <button 
+                    string="Mise en page HEKIPIA" 
+                    name="mise_en_page_hekipia_action" 
+                    type="object" 
+                />
+            </field>
+            <xpath expr="//page/field[@name='invoice_line_ids']/tree" position="attributes">
+                <attribute name="limit">500</attribute>
+            </xpath>
             <!-- Suppression de l'apercu PDF sur la droite -->
             <xpath expr="//div[hasclass('o_attachment_preview')]" position="replace"/>
         </field>
