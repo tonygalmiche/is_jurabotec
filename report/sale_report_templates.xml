@@ -63,6 +63,14 @@
                                         <span t-field="line.name"/>
                                         <!-- <div t-raw="line.get_composants_action()"/> -->
                                         <div t-if="line.is_detail_quantite"  t-field="line.is_detail_quantite"/>
+
+                                        
+                                        <div t-if="line.is_prix_tarif and line.is_unite_tarif">
+                                            Soit <span t-field="line.is_prix_tarif"/> € HT le <span t-field="line.is_unite_tarif"/>
+                                        </div>
+
+
+
                                         <div t-if="doc.is_detail_composants" t-field="line.is_composants"/>
                                     </td>
                                     <td name="td_quantity" class="text-end">
