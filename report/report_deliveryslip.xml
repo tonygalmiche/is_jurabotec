@@ -106,17 +106,17 @@
                         </t>
                     </tbody>
                 </table> -->
-                <!-- <t t-set="backorders" t-value="o.backorder_ids.filtered(lambda x: x.state not in ('done', 'cancel'))"/>
+                <t t-set="backorders" t-value="o.backorder_ids.filtered(lambda x: x.state not in ('done', 'cancel'))"/>
                 <t t-if="o.backorder_ids and backorders">
                     <p class="mt-5">
-                        <span>Remaining quantities not yet delivered:</span>
+                        <span>Reliquat à livrer:</span>
                     </p>
                     <table class="table table-sm" name="stock_backorder_table" style="table-layout: fixed;">
                         <thead>
                             <tr>
-                                <th name="th_sb_product"><strong>Product 3</strong></th>
+                                <th name="th_sb_product"><strong>Description</strong></th>
                                 <th/>
-                                <th name="th_sb_quantity" class="text-center"><strong>Quantity</strong></th>
+                                <th name="th_sb_quantity" class="text-center"><strong>Quantité</strong></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -124,10 +124,11 @@
                                 <t t-set="bo_lines" t-value="backorder.move_ids.filtered(lambda x: x.product_uom_qty)"/>
                                 <tr t-foreach="bo_lines" t-as="bo_line">
                                     <td class="w-auto">
-                                        <span t-field="bo_line.product_id"/>
+                                        <!-- <span t-field="bo_line.product_id"/>
                                         <p t-if="bo_line.description_picking != bo_line.product_id.name and bo_line.description_picking != bo_line.product_id.display_name">
                                             <span t-field="bo_line.description_picking"/>
-                                        </p>
+                                        </p>-->
+                                        <div t-field="bo_line.is_description_cde"/>
                                     </td>
                                     <td/>
                                     <td class="text-center w-auto">
@@ -138,14 +139,10 @@
                             </t>
                         </tbody>
                     </table>
-                </t> -->
-
-
+                </t>
                 <div>
                     <i>Volume total : <span t-esc="round(o.is_volume_total,3)"/> m3</i>
                 </div>
-
-
                 <div t-if="o.signature" class="mt32 ml64 mr4" name="signature">
                     <div class="offset-8">
                         <strong>Signature</strong>
