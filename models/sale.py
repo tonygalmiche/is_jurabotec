@@ -438,13 +438,41 @@ class sale_order_line(models.Model):
         ('m3'   , 'm3'),
         ('unite', 'Unité'),
     ], "Unité", help="Unité de la liste de prix")
-    is_longueur        = fields.Float(string="Longueur",        digits='Product Unit of Measure', related="product_id.is_longueur", readonly=True)
-    is_longueur_totale = fields.Float(string="Longueur totale", digits='Product Unit of Measure')
-    is_surface         = fields.Float(string="Surface",         digits='Product Unit of Measure', related="product_id.is_surface", readonly=True)
-    is_surface_totale  = fields.Float(string="Surface totale",  digits='Product Unit of Measure')
-    is_volume          = fields.Float(string="Volume",          digits='Volume', related="product_id.is_volume", readonly=True)
-    is_volume_total    = fields.Float(string="Volume total",    digits='Volume')
+    # is_longueur        = fields.Float(string="Longueur",      digits='Product Unit of Measure', related="product_id.is_longueur", readonly=True)
+    # is_surface         = fields.Float(string="Surface",       digits='Product Unit of Measure', related="product_id.is_surface" , readonly=True)
+    # is_volume          = fields.Float(string="Volume",        digits='Volume'                 , related="product_id.is_volume"  , readonly=True)
+
+    is_longueur        = fields.Float(string="Longueur",      digits='Product Unit of Measure', compute='_compute_longeur')
+    is_surface         = fields.Float(string="Surface",       digits='Product Unit of Measure', compute='_compute_longeur')
+    is_volume          = fields.Float(string="Volume",        digits='Volume'                 , compute='_compute_longeur')
+
+    is_longueur_totale = fields.Float(string="Longueur cde",  digits='Product Unit of Measure')
+    is_surface_totale  = fields.Float(string="Surface cde",   digits='Product Unit of Measure')
+    is_volume_total    = fields.Float(string="Volume cde",    digits='Volume')
+
+    is_longueur_product = fields.Float(string="Longueur product", digits='Product Unit of Measure', related="product_id.is_longueur", readonly=True)
+
+    is_largeur_saisie   = fields.Float("Largeur saisie (mm)"  , digits='Product Unit of Measure')
+    is_epaisseur_saisie = fields.Float("Epaisseur saisie (mm)", digits='Product Unit of Measure')
+    is_longueur_saisie  = fields.Float("Longueur saisie (m)"  , digits='Product Unit of Measure')
+
     is_detail_quantite = fields.Text(string='Détail quantité', compute='_compute_is_detail_quantite')
+
+
+    @api.depends('product_id', 'is_largeur_saisie', 'is_epaisseur_saisie','is_longueur_saisie')
+    def _compute_longeur(self):
+        for obj in self:
+            if obj.product_id.is_longueur>0:
+                is_longueur = obj.product_id.is_longueur
+                is_surface  = obj.product_id.is_surface
+                is_volume   = obj.product_id.is_volume
+            else:
+                is_longueur = obj.is_longueur_saisie
+                is_surface  = obj.is_longueur_saisie * obj.is_largeur_saisie / 1000
+                is_volume   = obj.is_longueur_saisie * obj.is_largeur_saisie * obj.is_epaisseur_saisie / 1000/1000
+            obj.is_longueur    = is_longueur
+            obj.is_surface     = is_surface
+            obj.is_volume      = is_volume
 
 
     @api.depends('product_id', 'product_uom_qty', 'is_longueur_totale', 'is_surface_totale', 'is_volume_total')
@@ -498,61 +526,132 @@ class sale_order_line(models.Model):
         self.is_unite_tarif = unite
 
 
+    # Type d'unité : Volume, Unité, Surface, Longueur/distance
     # Epaisseur (mm)
     # Longueur (m)
     # Largeur (mm)
     # Surface (m2)
     # Volume (m3)
 
+
+    def _get_dimensions(self):
+        if self.product_id.is_longueur:
+            longueur  = self.product_id.is_longueur
+            largeur   = self.product_id.is_largeur
+            epaisseur = self.product_id.is_epaisseur
+        else:
+            longueur  = self.is_longueur_saisie
+            largeur   = self.is_largeur_saisie
+            epaisseur = self.is_epaisseur_saisie
+        return longueur, largeur, epaisseur
+
+
     @api.onchange('product_uom_qty')
     def _onchange_product_uom_qty(self):
         if not self.env.context.get("noonchange"): 
-            self.is_longueur_totale = self.product_uom_qty * self.is_longueur
-            self.is_surface_totale  = self.product_uom_qty * self.is_surface
-            self.is_volume_total    = self.product_uom_qty * self.is_volume
+            longueur, largeur, epaisseur = self._get_dimensions()
+            unite = self.product_uom.category_id.name
+            surface  = volume   = 0
+            if unite=='Unité':
+                longueur = self.product_uom_qty * self.is_longueur
+                surface  = self.product_uom_qty * self.is_surface
+                volume   = self.product_uom_qty * self.is_volume
+            if unite=='Longueur/distance':
+                longueur = self.product_uom_qty
+                surface  = self.product_uom_qty * largeur / 1000
+                volume   = self.product_uom_qty * largeur * epaisseur / 1000 / 1000
+            if unite=='Surface':
+                surface  = self.product_uom_qty
+                if largeur>0:
+                    longueur = 1000 * self.product_uom_qty / largeur
+                volume = self.product_uom_qty * epaisseur /1000
+            if unite=='Volume':
+                volume  = self.product_uom_qty
+                if epaisseur>0:
+                    surface = 1000 * self.product_uom_qty / epaisseur
+                    if largeur>0:
+                        longueur = 1000 * 1000 * self.product_uom_qty / epaisseur / largeur
+            self.is_longueur_totale = longueur
+            self.is_surface_totale  = surface
+            self.is_volume_total    = volume
             self.env.context = self.with_context(noonchange=True).env.context
+
 
     @api.onchange('is_longueur_totale')
     def _onchange_is_longueur_totale(self):
         if not self.env.context.get("noonchange"): 
             qty = surface = volume = 0
-            if self.is_longueur>0:
-                qty     = self.is_longueur_totale/self.is_longueur
-                surface = self.is_longueur_totale * self.product_id.is_largeur/1000
-                volume  = self.is_longueur_totale * self.product_id.is_largeur/1000 * self.product_id.is_epaisseur/1000
+            longueur, largeur, epaisseur = self._get_dimensions()
+            unite = self.product_uom.category_id.name
+            if unite=='Unité':
+                if longueur>0:
+                    qty = self.is_longueur_totale/longueur
+            if unite=='Longueur/distance':
+                qty = self.is_longueur_totale
+            if unite=='Surface':
+                qty = self.is_longueur_totale * largeur/1000
+            if unite=='Volume':
+                qty = self.is_longueur_totale * largeur/1000 * epaisseur/1000
+            surface = self.is_longueur_totale * largeur/1000
+            volume  = self.is_longueur_totale * largeur/1000 * epaisseur/1000
             self.product_uom_qty   = qty
             self.is_surface_totale = surface
             self.is_volume_total   = volume
             self.env.context = self.with_context(noonchange=True).env.context
 
+
     @api.onchange('is_surface_totale')
     def _onchange_is_surface_totale(self):
         if not self.env.context.get("noonchange"): 
+            longueur, largeur, epaisseur = self._get_dimensions()
+            unite = self.product_uom.category_id.name
             qty = 0
-            if self.is_surface>0:
-                self.product_uom_qty = self.is_surface_totale/self.is_surface
-            if  self.product_id.is_largeur>0:
-                self.is_longueur_totale = 1000*self.is_surface_totale / self.product_id.is_largeur
-            self.is_volume_total = self.is_surface_totale * self.product_id.is_epaisseur/1000
+            if unite=='Unité':
+                if self.is_surface>0:
+                    qty = self.is_surface_totale/self.is_surface
+            if unite=='Longueur/distance':
+                if self.is_surface>0:
+                    qty = self.is_surface_totale/self.is_surface
+            if unite=='Surface':
+                qty = self.is_surface_totale 
+            if unite=='Volume':
+                if epaisseur>0:
+                    qty = self.is_surface_totale*epaisseur/1000
+            longueur_totale = 0
+            if  largeur>0:
+                longueur_totale = 1000*self.is_surface_totale / largeur
+            volume = self.is_surface_totale * epaisseur/1000
+            self.product_uom_qty    = qty
+            self.is_longueur_totale = longueur_totale
+            self.is_volume_total    = volume
             self.env.context = self.with_context(noonchange=True).env.context
+
 
     @api.onchange('is_volume_total')
     def _onchange_is_volume_total(self):
         if not self.env.context.get("noonchange"): 
-            qty = 0
-            if self.is_volume>0:
-                qty = self.is_volume_total/self.is_volume
-            self.product_uom_qty = qty
-            if self.product_id.is_epaisseur>0:
-                self.is_surface_totale = 1000 * self.is_volume_total / self.product_id.is_epaisseur
-            if self.product_id.is_epaisseur>0 and self.product_id.is_largeur>0:
-                self.is_longueur_totale = 1000*1000*self.is_volume_total / self.product_id.is_largeur / self.product_id.is_epaisseur
+            longueur, largeur, epaisseur = self._get_dimensions()
+            unite = self.product_uom.category_id.name
+            qty = longueur_totale = surface = 0
+            if unite=='Unité':
+                if self.is_volume>0:
+                    qty = self.is_volume_total/self.is_volume
+            if unite=='Longueur/distance':
+                if epaisseur>0 and largeur>0:
+                    qty = 1000 * 1000 * self.is_volume_total / epaisseur / largeur
+            if unite=='Surface':
+                if epaisseur>0:
+                    qty = 1000  * self.is_volume_total / epaisseur 
+            if unite=='Volume':
+                qty = self.is_volume_total
+            if epaisseur>0 and largeur>0:
+                longueur_totale = 1000*1000*self.is_volume_total / largeur / epaisseur
+            if epaisseur>0:
+                surface = 1000 * self.is_volume_total / epaisseur
+            self.product_uom_qty    = qty
+            self.is_longueur_totale = longueur_totale
+            self.is_surface_totale  = surface
             self.env.context = self.with_context(noonchange=True).env.context
-
-
-
-
-
 
 
     def _compute_is_composants(self):

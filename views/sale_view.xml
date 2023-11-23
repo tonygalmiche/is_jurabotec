@@ -1,12 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+
+
+
+
+<!-- 
+    <page string="Order Lines" name="order_lines">
+        <field name="order_line" widget="section_and_note_one2many" mode="tree,kanban" attrs="{'readonly': [('state', 'in', ('done','cancel'))]}">
+            <form>
+                <field name="display_type" invisible="1"/>
+                <field name="sequence" invisible="1"/>
+                <field name="product_uom_category_id" invisible="1"/>
+                <group>
+                    <group attrs="{'invisible': [('display_type', '!=', False)]}">
+                        <field name="product_updatable" invisible="1"/>
+                        <field name="product_id" domain="[('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]" context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}" attrs="{                                                 'readonly': [('product_updatable', '=', False)],                                                 'required': [('display_type', '=', False)],                                             }" force_save="1" widget="many2one_barcode"/>
+                        <field name="product_type" invisible="1"/>
+                        <field name="invoice_status" invisible="1"/>
+                        <field name="qty_to_invoice" invisible="1"/>
+                        <field name="qty_delivered_method" invisible="1"/>
+                        <field name="price_total" invisible="1"/>
+                        <field name="price_tax" invisible="1"/>
+                        <field name="price_subtotal" invisible="1"/>
+                        <field name="product_uom_readonly" invisible="1"/>
+                        <label for="product_uom_qty"/>
+                        <div class="o_row" name="ordered_qty">
+                            <field context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}" name="product_uom_qty"/>
+                            <field name="product_uom" invisible="1" groups="!uom.group_uom"/>
+                            <field name="product_uom" force_save="1" groups="uom.group_uom" class="oe_no_button" attrs="{                                                     'readonly': [('product_uom_readonly', '=', True)],                                                     'required': [('display_type', '=', False)],                                                 }"/>
+                        </div>
+                        <label for="qty_delivered" string="Delivered" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                        <div name="delivered_qty" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
+                            <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_method', '!=', 'manual')]}"/>
+                        </div>
+                        <label for="qty_invoiced" string="Invoiced" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                        <div name="invoiced_qty" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
+                            <field name="qty_invoiced" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                        </div>
+                        <field name="product_packaging_id" attrs="{'invisible': [('product_id', '=', False)]}" context="{'default_product_id': product_id, 'tree_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}" groups="product.group_stock_packaging"/>
+                        <field name="price_unit"/>
+                        <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" context="{'search_view_ref': 'account.account_tax_view_search'}" domain="[('type_tax_use','=','sale'), ('company_id','=',parent.company_id), ('country_id', '=', parent.tax_country_id)]" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                        <label for="discount" groups="product.group_discount_per_so_line"/>
+                        <div name="discount" groups="product.group_discount_per_so_line">
+                            <field name="discount" class="oe_inline"/> %
+                        </div>
+                        <field name="sequence" invisible="1"/>
+                    </group>
+                    <group attrs="{'invisible': [('display_type', '!=', False)]}">
+                        <label for="customer_lead"/>
+                        <div name="lead">
+                            <field name="customer_lead" class="oe_inline"/> days
+                        </div>
+                        <field name="analytic_distribution" widget="analytic_distribution" groups="analytic.group_analytic_accounting" options="{'product_field': 'product_id', 'business_domain': 'sale_order'}"/>
+                    </group>
+                </group>
+                <label for="name" string="Description" attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <label for="name" string="Section Name (eg. Products, Services)" attrs="{'invisible': [('display_type', '!=', 'line_section')]}"/>
+                <label for="name" string="Note" attrs="{'invisible': [('display_type', '!=', 'line_note')]}"/>
+                <field name="name"/>
+                <div name="invoice_lines" groups="base.group_no_one" attrs="{'invisible': [('display_type', '!=', False)]}">
+                    <label for="invoice_lines"/>
+                    <field name="invoice_lines"/>
+                </div>
+                <field name="state" invisible="1"/>
+                <field name="company_id" invisible="1"/>
+            </form> -->
+
+
+
+
+
     <!-- sale.order  -->
     <record id="is_view_order_form" model="ir.ui.view">
         <field name="name">is_view_order_form</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet[1]" position="inside">
+            <xpath expr="//form" position="inside">
                 <style>
                     .o_form_label{
                         white-space: nowrap;
@@ -14,19 +85,77 @@
                     .btn-primary, .btn-secondary:not(.dropdown-toggle):not(.dropdown-item), .btn-secondary.o_arrow_button:not(.dropdown-item) {
                         white-space: nowrap;
                     }
+                    .modal-lg, .modal-xl {
+                        max-width: 1550px;
+                    }
                 </style>
             </xpath>
-            <!-- <button name="payment_action_capture" position="before">
-                <button 
-                    name="convertir_en_commande_action" 
-                    type="object" 
-                    string="Convertir en commande" 
-                    attrs="{'invisible': ['|',
-                        ('state', 'not in', ['draft','sent']),
-                        ('is_devis_id', '!=', False),
-                    ]}"
-                />
-            </button> -->
+            <xpath expr="//page[@name='order_lines']/field/tree" position="attributes">
+                <attribute name="edit">0</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field/form/div[@name='invoice_lines']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field/form/group/group[1]" position="attributes">
+                <attribute name="string">Commande</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field/form/group/group[2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field/form/group/group/label[2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field/form/group/group/div[2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field/form/group/group/label[3]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field/form/group/group/div[3]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+
+            <xpath expr="//page[@name='order_lines']/field/form/group/group/div[@name='ordered_qty']" position="after">
+                <label for="is_longueur_totale"/>
+                <div class="o_row">
+                    <field name="is_longueur_totale"/>
+                </div>
+                <label for="is_surface_totale"/>
+                <div class="o_row">
+                    <field name="is_surface_totale"/>
+                </div>
+                <label for="is_volume_total"/>
+                <div class="o_row">
+                    <field name="is_volume_total"/>
+                </div>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field/form/group/group/field[@name='price_unit']" position="after">
+                <field name="price_subtotal"/>
+            </xpath>
+
+
+
+             <xpath expr="//page[@name='order_lines']/field/form/group/group[2]" position="after">
+                <group string="Dimensions">
+                    <field name="is_longueur_product" invisible="1"/>
+                    <field name="is_largeur_saisie"   attrs="{'invisible': [('is_longueur_product', '>', 0)]}"/>
+                    <field name="is_epaisseur_saisie" attrs="{'invisible': [('is_longueur_product', '>', 0)]}"/>
+                    <field name="is_longueur_saisie"  attrs="{'invisible': [('is_longueur_product', '>', 0)]}"/>
+                    <field name="is_longueur"         attrs="{'invisible': [('is_longueur', '=', 0)]}"/>
+                    <field name="is_surface"          attrs="{'invisible': [('is_surface' , '=', 0)]}"/>
+                    <field name="is_volume"           attrs="{'invisible': [('is_volume'  , '=', 0)]}"/>
+                    <field name="is_detail_quantite"/>
+                </group>
+                <group string="Tarif Jurabotec">
+                    <field name="is_prix_tarif"/>
+                    <field name="is_unite_tarif"/>
+                </group>
+             </xpath>
+
+        
+
+
             <field name="client_order_ref" position="replace"/>
             <field name="payment_term_id" position="before">
                 <field name="is_delai"/>
