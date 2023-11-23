@@ -237,7 +237,7 @@ class sale_order(models.Model):
             if order.is_num_cde_client:
                 list.append("N° commande client : %s"%order.is_num_cde_client)
             for picking in pickings:
-                list.append("Livraion : %s"%picking.name)
+                list.append("Livraison : %s"%picking.name)
             name = " - ".join(list)
             section_vals = {
                 'display_type': 'line_section',
