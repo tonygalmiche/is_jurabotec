@@ -222,6 +222,12 @@
             </xpath>
         </field>
     </record>
+
+
+
+
+
+
     <record id="is_view_order_tree" model="ir.ui.view">
         <field name="name">is_view_order_tree</field>
         <field name="model">sale.order</field>
@@ -262,6 +268,36 @@
             </field>
         </field>
     </record>
+
+
+    <!-- Saisie des commandes en ligne pour Hekipia -->
+    <record id="is_view_order_hekipia_form" model="ir.ui.view">
+        <field name="name">is_view_order_hekipia_form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="is_jurabotec.is_view_order_form"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='order_lines']/field/tree" position="attributes">
+                <attribute name="edit">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="is_view_order_hekipia_action" model="ir.actions.act_window">
+        <field name="name">Commandes en ligne (Hekipia)</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('is_view_order_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('is_view_order_hekipia_form')}),
+            ]"
+        />
+        <field name="domain">[]</field>
+    </record>
+
+
+
+
 
 
     <!--is.sale.order.colis -->
@@ -330,9 +366,6 @@
                     <field name="qty"/>
                     <field name="sale_line_id" readonly="1"/>
                     <field name="colis_ids"    invisible="1"/>
-
-
-
                 </group>
             </sheet>
         </form>
