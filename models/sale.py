@@ -482,7 +482,7 @@ class sale_order_line(models.Model):
         for obj in self:
             x = False
             if obj.is_quantite_saisie and  obj.is_epaisseur_saisie and obj.is_largeur_saisie:
-                x = "%.0f pièces - Section %.0fx%.0f. "%(obj.is_quantite_saisie, obj.is_epaisseur_saisie, obj.is_largeur_saisie)
+                x = "%.0f pièces. Section %.0fx%.0f. "%(obj.is_quantite_saisie, obj.is_epaisseur_saisie, obj.is_largeur_saisie)
             if obj.product_id.is_epaisseur and obj.product_id.is_largeur:
                 x = "Section %.0fx%.0f. "%(obj.product_id.is_epaisseur, obj.product_id.is_largeur)
             if obj.product_uom_qty and obj.is_longueur  and obj.is_longueur_totale and obj.is_surface_totale:
