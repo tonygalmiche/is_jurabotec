@@ -452,6 +452,8 @@ class sale_order_line(models.Model):
 
     is_longueur_product = fields.Float(string="Longueur product", digits='Product Unit of Measure', related="product_id.is_longueur", readonly=True)
 
+
+    is_quantite_saisie  = fields.Float("Quantité saisie"      , digits='Product Unit of Measure')
     is_largeur_saisie   = fields.Float("Largeur saisie (mm)"  , digits='Product Unit of Measure')
     is_epaisseur_saisie = fields.Float("Epaisseur saisie (mm)", digits='Product Unit of Measure')
     is_longueur_saisie  = fields.Float("Longueur saisie (m)"  , digits='Product Unit of Measure')
@@ -662,3 +664,15 @@ class sale_order_line(models.Model):
             html = "\n".join(t)
             obj.is_composants = html
 
+
+    @api.onchange('is_quantite_saisie')
+    def _onchange_is_quantite_saisie(self):
+        print(self)
+
+        unite = self.product_uom.category_id.name
+        if unite=='Unité':
+            self.product_uom_qty = self.is_quantite_saisie
+        if unite=='Volume':
+            self.product_uom_qty = self.is_quantite_saisie * self.is_volume
+        if unite=='Surface':
+            self.product_uom_qty = self.is_quantite_saisie * self.is_surface

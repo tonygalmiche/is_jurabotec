@@ -116,6 +116,8 @@
             </xpath>
 
 
+
+
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[@name='ordered_qty']" position="after">
                 <label for="is_longueur_totale"/>
                 <div class="o_row">
@@ -139,8 +141,9 @@
              <xpath expr="//page[@name='order_lines']/field/form/group/group[2]" position="after">
                 <group string="Dimensions">
                     <field name="is_longueur_product" invisible="1"/>
-                    <field name="is_largeur_saisie"   attrs="{'invisible': [('is_longueur_product', '>', 0)]}"/>
+                    <field name="is_quantite_saisie"  attrs="{'invisible': [('is_longueur_product', '>', 0)]}"/>
                     <field name="is_epaisseur_saisie" attrs="{'invisible': [('is_longueur_product', '>', 0)]}"/>
+                    <field name="is_largeur_saisie"   attrs="{'invisible': [('is_longueur_product', '>', 0)]}"/>
                     <field name="is_longueur_saisie"  attrs="{'invisible': [('is_longueur_product', '>', 0)]}"/>
                     <field name="is_longueur"         attrs="{'invisible': [('is_longueur', '=', 0)]}"/>
                     <field name="is_surface"          attrs="{'invisible': [('is_surface' , '=', 0)]}"/>
@@ -241,6 +244,9 @@
                 <field name="is_num_cde_client" optional="show"/>
                 <field name="is_volume_total"   optional="hide"/>
             </field>
+            <field name="invoice_status" position="before">
+                <field name="state" decoration-success="state == 'sale' or state == 'done'" decoration-info="state == 'draft' or state == 'sent'" widget="badge" optional="show"/>
+            </field>
         </field>
     </record>
     <record id="is_view_quotation_tree" model="ir.ui.view">
@@ -266,8 +272,23 @@
                 <field name="client_order_ref"/>
                 <field name="is_num_cde_client"/>
             </field>
+
+
+            <filter name="my_sale_orders_filter" position="before">
+                <filter string="Devis" domain="[('state', 'in', ['draft','sent'])]" name="devis"/>
+            </filter>
+
+
+
         </field>
     </record>
+
+    
+    <!-- sale.action_orders -->
+    <record id="sale.action_orders" model="ir.actions.act_window">
+        <field name="domain">[]</field>
+    </record>
+
 
 
     <!-- Saisie des commandes en ligne pour Hekipia -->
