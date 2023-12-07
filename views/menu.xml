@@ -9,6 +9,14 @@
         parent="sale.sale_order_menu" 
         action="is_view_order_hekipia_action"
     />
+    <menuitem 
+        id="is_sale_order_colisage_composant_menu" 
+        sequence="22" 
+        name="Lignes des colis (Hekipia)" 
+        parent="sale.sale_order_menu" 
+        action="is_sale_order_colisage_composant_action"
+    />
+
     <!-- Ventes / Articles -->
     <menuitem 
         id="is_product_pricelist_item_menu" sequence="90" 

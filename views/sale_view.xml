@@ -380,6 +380,12 @@
                 <field name="qty_cde"       readonly="1" optional="hide" />
                 <field name="sale_line_id"  readonly="1" optional="hide" widget="many2one_clickable"/>
                 <field name="colis_ids"     readonly="1" optional="hide" widget="many2many_tags"/>
+
+
+                <field name="order_id"   optional="hide"/>
+                <field name="date_order" optional="hide"/>
+
+
             </tree>
         </field>
     </record>
@@ -458,4 +464,40 @@
             </search>
         </field>
     </record>
+
+
+
+
+    <record id="is_sale_order_colisage_composant_pivot_view" model="ir.ui.view">
+        <field name="name">is_sale_order_colisage_composant_pivot_view</field>
+        <field name="model">is.sale.order.colisage.composant</field>
+        <field name="arch" type="xml">
+            <pivot default_order="qty desc">
+                <field name="composant_id"         type="row"/>
+                <!-- <field name="invoice_date"       type="col"/> -->
+                <field name="qty"              type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="is_sale_order_colisage_composant_graph_view" model="ir.ui.view">
+        <field name="name">is_account_invoice_line_graph_view</field>
+        <field name="model">is.sale.order.colisage.composant</field>
+        <field name="arch" type="xml">
+            <graph order="desc">
+                <field name="composant_id"/>
+                <!-- <field name="invoice_date"       type="col"/> -->
+                <field name="qty"              type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+
+
+    <record id="is_sale_order_colisage_composant_action" model="ir.actions.act_window">
+        <field name="name">Lignes des colis (Hekipia)</field>
+        <field name="res_model">is.sale.order.colisage.composant</field>
+        <field name="view_mode">graph,pivot,tree,form</field>
+    </record>
+
+
 </odoo>
