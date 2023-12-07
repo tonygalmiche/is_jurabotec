@@ -159,10 +159,16 @@ class ProductProduct(models.Model):
             obj.is_prix_revient_variante=obj.is_prix_revient*obj.is_longueur
 
 
+    def _compute_is_volume_stock(self):
+        for obj in self:
+            obj.is_volume_stock = obj.is_volume * obj.qty_available
+
+
     is_longueur              = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
     is_surface               = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
     is_volume                = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
     is_prix_revient_variante = fields.Float("Prix de revient variante"                      , compute='_compute_is_prix_revient_variante')
+    is_volume_stock          = fields.Float("Volume en stock (m3) ", digits='Volume'        , compute='_compute_is_volume_stock')
 
 
     def liste_charges_action(self):

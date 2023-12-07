@@ -271,15 +271,30 @@
             <field name="inherit_id" ref="product.product_product_tree_view"/>
             <field name="arch" type="xml">
                 <field name="product_template_variant_value_ids" position="after">
-                    <field name="is_epaisseur"   optional="show"/>
-                    <field name="is_largeur"     optional="show"/>
-                    <field name="is_longueur"    optional="show"/>
-                    <field name="is_surface"     optional="show"/>
-                    <field name="is_volume"      optional="show"/>
+                    <field name="is_epaisseur"   optional="hide"/>
+                    <field name="is_largeur"     optional="hide"/>
+                    <field name="is_longueur"    optional="hide"/>
+                    <field name="is_surface"     optional="hide"/>
+                    <field name="is_volume"      optional="hide"/>
                     <field name="is_litre_metre" optional="hide"/>
                     <field name="is_prix_revient"          optional="hide"/>
                     <field name="is_prix_revient_variante" optional="hide"/>
                 </field>
+
+                <field name="qty_available" position="after">
+                    <field name="is_volume_stock" optional="show" sum="Total"/>
+
+                </field>
+
+                <field name="qty_available" position="attributes">
+                    <attribute name="sum">Total</attribute>
+                </field>
+                <field name="virtual_available" position="attributes">
+                    <attribute name="sum">Total</attribute>
+                </field>
+
+
+
             </field>
         </record>
 
