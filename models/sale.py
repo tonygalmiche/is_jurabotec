@@ -481,8 +481,14 @@ class sale_order_line(models.Model):
     def _compute_is_detail_quantite(self):
         for obj in self:
             x = False
+            if obj.is_quantite_saisie and  obj.is_epaisseur_saisie and obj.is_largeur_saisie:
+                x = "%.0f pièces - Section %.0fx%.0f. "%(obj.is_quantite_saisie, obj.is_epaisseur_saisie, obj.is_largeur_saisie)
+            if obj.product_id.is_epaisseur and obj.product_id.is_largeur:
+                x = "Section %.0fx%.0f. "%(obj.product_id.is_epaisseur, obj.product_id.is_largeur)
             if obj.product_uom_qty and obj.is_longueur  and obj.is_longueur_totale and obj.is_surface_totale:
-                x = "En longueur de %.1fm soit %.1fml ou %.1fm2"%(obj.is_longueur, obj.is_longueur_totale, obj.is_surface_totale)
+                if not x:
+                    x=""
+                x = "%sLongueur de %.1fm soit %.1fml ou %.1fm2"%(x,obj.is_longueur, obj.is_longueur_totale, obj.is_surface_totale)
             obj.is_detail_quantite = x
 
 
@@ -665,7 +671,7 @@ class sale_order_line(models.Model):
             obj.is_composants = html
 
 
-    @api.onchange('is_quantite_saisie')
+    @api.onchange('is_quantite_saisie','is_largeur_saisie', 'is_epaisseur_saisie','is_longueur_saisie')
     def _onchange_is_quantite_saisie(self):
         print(self)
 
