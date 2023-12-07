@@ -242,13 +242,18 @@
             <field name="name" position="after">
                 <field name="is_devis_id" optional="show"/>
             </field>
+            <field name="date_order" position="after">
+                <field name="is_delai" optional="show"/>
+            </field>
             <field name="user_id" position="before">
                 <field name="client_order_ref"  optional="show"/>
                 <field name="is_num_cde_client" optional="show"/>
                 <field name="is_volume_total"   optional="hide"/>
             </field>
             <field name="invoice_status" position="before">
-                <field name="state" decoration-success="state == 'sale' or state == 'done'" decoration-info="state == 'draft' or state == 'sent'" widget="badge" optional="show"/>
+                <field name="state" widget="badge"  decoration-success="state in ('sale','done')" decoration-info="state in ('draft','sent')" optional="show"/>
+                <!-- <field name="state" decoration-success="state == 'sale' or state == 'done'" decoration-info="state == 'draft' or state == 'sent'" widget="badge" optional="show"/> -->
+                <!-- <field name="state" decoration-danger="state == 'draft'" widget="badge"/> -->
             </field>
         </field>
     </record>
@@ -278,7 +283,8 @@
 
 
             <filter name="my_sale_orders_filter" position="before">
-                <filter string="Devis" domain="[('state', 'in', ['draft','sent'])]" name="devis"/>
+                <filter string="Devis"    domain="[('state', 'in', ['draft','sent'])]"               name="devis"/>
+                <filter string="Commandes" domain="[('state', 'not in', ['draft','sent','cancel'])]" name="commandes"/>
             </filter>
 
 

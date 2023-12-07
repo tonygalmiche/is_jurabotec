@@ -220,7 +220,7 @@ class sale_order(models.Model):
 
         for order in orders:
             invoice_line_vals = []
-            #** Recherche des livraions à facturer pour indiquer le BL ******** 
+            #** Recherche des livraisons à facturer pour indiquer le BL ******** 
             pickings=[]
             for line in order.order_line:
                 if line.qty_invoiced<line.qty_delivered:
