@@ -170,7 +170,7 @@
             <field name="partner_id" position="after">
                 <field name="client_order_ref"/>
                 <field name="is_num_cde_client"/>
-                <field name="is_devis_id" attrs="{'invisible': [('is_devis_id', '=', False)]}"/>
+                <!-- <field name="is_devis_id" attrs="{'invisible': [('is_devis_id', '=', False)]}"/> -->
                 <field name="is_volume_total"/>
             </field>
 
@@ -239,9 +239,9 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_tree"/>
         <field name="arch" type="xml">
-            <field name="name" position="after">
+            <!-- <field name="name" position="after">
                 <field name="is_devis_id" optional="show"/>
-            </field>
+            </field> -->
             <field name="date_order" position="after">
                 <field name="is_delai" optional="show"/>
             </field>
@@ -250,10 +250,18 @@
                 <field name="is_num_cde_client" optional="show"/>
                 <field name="is_volume_total"   optional="hide"/>
             </field>
+
+
+            <field name="user_id" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>
+            <field name="activity_ids" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>
+
+            <field name="state" position="replace"/>
             <field name="invoice_status" position="before">
                 <field name="state" widget="badge"  decoration-success="state in ('sale','done')" decoration-info="state in ('draft','sent')" optional="show"/>
-                <!-- <field name="state" decoration-success="state == 'sale' or state == 'done'" decoration-info="state == 'draft' or state == 'sent'" widget="badge" optional="show"/> -->
-                <!-- <field name="state" decoration-danger="state == 'draft'" widget="badge"/> -->
             </field>
         </field>
     </record>
@@ -262,9 +270,9 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_quotation_tree"/>
         <field name="arch" type="xml">
-            <field name="name" position="after">
+            <!-- <field name="name" position="after">
                 <field name="is_devis_id" optional="show"/>
-            </field>
+            </field> -->
             <field name="user_id" position="before">
                 <field name="client_order_ref" optional="hide"/>
                 <field name="is_num_cde_client" optional="hide"/>
