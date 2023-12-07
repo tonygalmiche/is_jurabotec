@@ -36,20 +36,34 @@
                         </tr>
                     </tbody>
                 </table>
+
                 <t t-set="lines_to_report" t-value="doc._get_order_lines_to_report()"/>
                 <t t-set="display_discount" t-value="any(l.discount for l in lines_to_report)"/>
+
+                <t t-set="affiche_palette" t-value="0"/>
+                <t t-foreach="lines_to_report" t-as="line">
+                    <div></div>
+                    <t t-if="line.is_num_palette">
+                        <t t-set="affiche_palette" t-value="1"/>
+                    </t>
+                </t>
+
                 <table class="table table-sm o_main_table mt-4">
                     <thead style="display: table-row-group">
                         <tr>
-                            <th name="th_description" class="text-start">Désignation</th>
-                            <th name="th_quantity"    class="text-end">Quantité</th>
-                            <th name="th_priceunit"   class="text-end">P.U. HT</th>
-                            <!-- <th name="th_taxes"       class="text-end">TVA</th> -->
-                            <th name="th_subtotal"    class="text-end">Montant HT</th>
+                            <th name="th_description"  class="text-start">Désignation</th>
+                            <th t-if="affiche_palette" class="text-center">N°Palette</th>
+                            <th name="th_quantity"     class="text-end">Quantité</th>
+                            <th name="th_priceunit"    class="text-end">P.U. HT</th>
+                            <th name="th_subtotal"     class="text-end">Montant HT</th>
                         </tr>
                     </thead>
                     <tbody class="sale_tbody">
     
+
+
+
+
                         <t t-set="current_subtotal" t-value="0"/>
     
                         <t t-foreach="lines_to_report" t-as="line">
@@ -72,6 +86,9 @@
 
 
                                         <div t-if="doc.is_detail_composants" t-field="line.is_composants"/>
+                                    </td>
+                                    <td class="text-center" t-if="affiche_palette">
+                                        <span t-field="line.is_num_palette"/>
                                     </td>
                                     <td name="td_quantity" class="text-end">
                                         <span t-field="line.product_uom_qty"/>
@@ -123,7 +140,10 @@
                 <div class="clearfix" name="so_total_summary">
                     <div id="total" class="row" name="total">
                         <div class="col-6">
-                            <i>Volume total : <span t-esc="round(doc.is_volume_total,3)"/> m3</i>
+                            <t t-if="doc.is_volume_total>0">
+                                <i>Volume total : <span t-esc="round(doc.is_volume_total,3)"/> m3</i>
+                            </t>
+
                         </div>
                         <!-- <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto"> -->
                         <div class="col-6">
