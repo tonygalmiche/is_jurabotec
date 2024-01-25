@@ -122,15 +122,18 @@ class IsSaleOrderColisageComposant(models.Model):
     qty_cde      = fields.Float(related='sale_line_id.product_uom_qty')
     sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande', required=True)
     colis_ids    = fields.Many2many('is.sale.order.colis', 'is_sale_order_line_colis_ids', 'line_id', 'colis_id', store=False, readonly=True, compute='_compute_colis_ids', string="Colis autorisés")
-    date_order   = fields.Datetime(store=True, readonly=True, compute='_compute_date_order', string="Date commande")
+
     state        = fields.Selection(related="order_id.state")
+
+    date_order   = fields.Datetime(string="Date commande",  store=True, readonly=True, compute='_compute_date_order')
+    partner_id   = fields.Many2one('res.partner', 'Client', store=True, readonly=True, compute='_compute_date_order')
 
 
     @api.depends('order_id','order_id.date_order')
     def _compute_date_order(self):
         for obj in self:
             obj.date_order = obj.order_id.date_order
-
+            obj.partner_id = obj.order_id.partner_id.id
 
 
     @api.depends('colis_id')

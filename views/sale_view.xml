@@ -395,16 +395,17 @@
                     icon="fa-copy" 
                 />
                 <field name="colis_id" domain="[('id', 'in', colis_ids)]"  widget="selection"/>
-                <field name="product_id"    readonly="1"/>
-                <field name="composant_id"  readonly="1"/>
+                <field name="product_id"    readonly="1" widget="many2one_clickable"/>
+                <field name="composant_id"  readonly="1" widget="many2one_clickable"/>
                 <field name="qty" sum="Total"/>
                 <field name="qty_bom"       readonly="1" optional="hide" />
                 <field name="qty_cde"       readonly="1" optional="hide" />
                 <field name="sale_line_id"  readonly="1" optional="hide" widget="many2one_clickable"/>
                 <field name="colis_ids"     readonly="1" optional="hide" widget="many2many_tags"/>
-                <field name="order_id"   optional="hide"/>
+                <field name="order_id"   optional="hide" widget="many2one_clickable"/>
                 <field name="date_order" optional="hide"/>
                 <field name="state"      optional="hide"/>
+                <field name="partner_id" optional="hide" widget="many2one_clickable"/>
             </tree>
         </field>
     </record>
@@ -476,6 +477,7 @@
         <field name="model">is.sale.order.colisage.composant</field>
         <field name="arch" type="xml">
             <search>
+                <field name="partner_id" />
                 <field name="colis_id" />
                 <field name="product_id" />
                 <field name="composant_id" />
