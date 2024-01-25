@@ -123,6 +123,7 @@ class IsSaleOrderColisageComposant(models.Model):
     sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande', required=True)
     colis_ids    = fields.Many2many('is.sale.order.colis', 'is_sale_order_line_colis_ids', 'line_id', 'colis_id', store=False, readonly=True, compute='_compute_colis_ids', string="Colis autorisés")
     date_order   = fields.Datetime(store=True, readonly=True, compute='_compute_date_order', string="Date commande")
+    state        = fields.Selection(related="order_id.state")
 
 
     @api.depends('order_id','order_id.date_order')
