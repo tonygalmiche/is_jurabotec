@@ -125,15 +125,18 @@ class IsSaleOrderColisageComposant(models.Model):
 
     state        = fields.Selection(related="order_id.state")
 
-    date_order   = fields.Datetime(string="Date commande",  store=True, readonly=True, compute='_compute_date_order')
-    partner_id   = fields.Many2one('res.partner', 'Client', store=True, readonly=True, compute='_compute_date_order')
+    volume_article = fields.Float(related="composant_id.is_volume")
+    date_order   = fields.Datetime(string="Date commande" , store=True, readonly=True, compute='_compute')
+    partner_id   = fields.Many2one('res.partner', 'Client', store=True, readonly=True, compute='_compute')
+    volume_total = fields.Float("Volume total (m3) "      , store=True, readonly=True, compute='_compute', digits='Volume')
 
 
     @api.depends('order_id','order_id.date_order')
-    def _compute_date_order(self):
+    def _compute(self):
         for obj in self:
             obj.date_order = obj.order_id.date_order
             obj.partner_id = obj.order_id.partner_id.id
+            obj.volume_total = obj.qty * obj.volume_article
 
 
     @api.depends('colis_id')
