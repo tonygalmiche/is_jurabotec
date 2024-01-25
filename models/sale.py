@@ -192,6 +192,7 @@ class sale_order(models.Model):
     is_detail_composants = fields.Boolean('Imprimer le détail des composants', default=False)
     is_devis_id          = fields.Many2one('sale.order', "Devis d'origine", copy=False, readonly=True)
     is_volume_total      = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
+    is_gestion_colisage  = fields.Boolean(related="partner_id.is_gestion_colisage")
 
 
     @api.depends('order_line','order_line.product_uom_qty')
@@ -389,44 +390,68 @@ class sale_order(models.Model):
             return res
 
 
+    def colisage_init_ir_cron(self):
+        self.env['sale.order'].search([]).colisage_init()
+
+
     def colisage_action(self):
         for obj in self:
-            if len(obj.is_colisage_ids)==0 and len(obj.is_colis_ids)>0:
-                for line in obj.order_line:
-                    filtre=[
-                        ('product_tmpl_id', '=', line.product_id.product_tmpl_id.id),
-                        ('type'           , '=', 'commande'),
-                    ]
-                    boms = self.env['mrp.bom'].search(filtre,limit=1)
-                    if len(boms)>0:
-                        for bom_line in boms[0].bom_line_ids:
+            if obj.is_gestion_colisage:
+                obj.colisage_init()
+                return {
+                    "name": "Colisage des composants %s"%(obj.name),
+                    "view_mode": "kanban,tree,form",
+                    "res_model": "is.sale.order.colisage.composant",
+                    "domain": [
+                        ("order_id","=",obj.id),
+                    ],
+                    "type": "ir.actions.act_window",
+                }
+
+
+    def colisage_init(self):
+        for obj in self:
+
+            if obj.is_gestion_colisage:
+                "A livrer"
+
+                #** Création colis par défaut si inexistant *******************
+                if len(obj.is_colis_ids)==0:
+                    vals={
+                        'order_id': obj.id,
+                        'name'    : 'A livrer',
+                        'sequence': 1,
+                    }
+                    self.env['is.sale.order.colis'].create(vals)
+                #**************************************************************
+
+                if len(obj.is_colisage_ids)==0 and len(obj.is_colis_ids)>0:
+                    for line in obj.order_line:
+                        filtre=[
+                            ('product_tmpl_id', '=', line.product_id.product_tmpl_id.id),
+                            ('type'           , '=', 'commande'),
+                        ]
+                        boms = self.env['mrp.bom'].search(filtre,limit=1)
+                        if len(boms)>0:
+                            for bom_line in boms[0].bom_line_ids:
+                                vals={
+                                    "colis_id"    : obj.is_colis_ids[0].id,
+                                    "order_id"    : obj.id,
+                                    "composant_id": bom_line.product_id.id,
+                                    "qty"         : line.product_uom_qty*bom_line.product_qty,
+                                    "qty_bom"     : bom_line.product_qty,
+                                    "sale_line_id": line.id,
+                                }
+                                res = self.env['is.sale.order.colisage.composant'].create(vals)
+                        else:
                             vals={
-                                "colis_id"    : obj.is_colis_ids[0].id,
-                                "order_id"    : obj.id,
-                                "composant_id": bom_line.product_id.id,
-                                "qty"         : line.product_uom_qty*bom_line.product_qty,
-                                "qty_bom"     : bom_line.product_qty,
+                                "colis_id": obj.is_colis_ids[0].id,
+                                "order_id": obj.id,
+                                "composant_id": line.product_id.id,
+                                "qty": line.product_uom_qty,
                                 "sale_line_id": line.id,
                             }
                             res = self.env['is.sale.order.colisage.composant'].create(vals)
-                    else:
-                        vals={
-                            "colis_id": obj.is_colis_ids[0].id,
-                            "order_id": obj.id,
-                            "composant_id": line.product_id.id,
-                            "qty": line.product_uom_qty,
-                            "sale_line_id": line.id,
-                        }
-                        res = self.env['is.sale.order.colisage.composant'].create(vals)
-            return {
-                "name": "Colisage des composants %s"%(obj.name),
-                "view_mode": "kanban,tree,form",
-                "res_model": "is.sale.order.colisage.composant",
-                "domain": [
-                    ("order_id","=",obj.id),
-                ],
-                "type": "ir.actions.act_window",
-            }
 
 
     def liste_colis_action(self):

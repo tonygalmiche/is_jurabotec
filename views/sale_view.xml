@@ -72,6 +72,21 @@
 
 
     <!-- sale.order  -->
+    <record id="init_colisage_ir_cron" model="ir.cron">
+        <field name="name">Initialisation du colisage</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">model.colisage_init_ir_cron()</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+    </record>
+    <record id="init_colisage_actions_server" model="ir.actions.server">
+        <field name="name">Initialisation du colisage</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">records.colisage_init()</field>
+    </record>
     <record id="is_view_order_form" model="ir.ui.view">
         <field name="name">is_view_order_form</field>
         <field name="model">sale.order</field>
@@ -114,10 +129,6 @@
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[3]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-
-
-
-
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[@name='ordered_qty']" position="after">
                 <label for="is_longueur_totale"/>
                 <div class="o_row">
@@ -135,12 +146,9 @@
             <xpath expr="//page[@name='order_lines']/field/form/group/group/field[@name='price_unit']" position="after">
                 <field name="price_subtotal"/>
             </xpath>
-
-
             <xpath expr="//page[@name='order_lines']/field/form/group/group/field[@name='product_id']" position="after">
                 <field name="is_num_palette"/>
             </xpath>
-
              <xpath expr="//page[@name='order_lines']/field/form/group/group[2]" position="after">
                 <group string="Dimensions">
                     <field name="is_longueur_product" invisible="1"/>
@@ -165,7 +173,8 @@
             <field name="client_order_ref" position="replace"/>
             <field name="payment_term_id" position="before">
                 <field name="is_delai"/>
-                <field name="is_detail_composants"/>
+                <field name="is_gestion_colisage"/>
+                <field name="is_detail_composants" attrs="{'invisible': [('is_gestion_colisage', '=', False)]}"/>
             </field>
             <field name="partner_id" position="after">
                 <field name="client_order_ref"/>
@@ -193,7 +202,7 @@
             </xpath>
 
             <xpath expr="//page[@name='order_lines']" position="after">
-                <page string="Colis">
+                <page string="Colis"  attrs="{'invisible': [('is_gestion_colisage', '=', False)]}">
                     <field name="is_colis_ids" nolabel="1">
                         <tree editable="bottom">
                             <field name="sequence" widget="handle" />

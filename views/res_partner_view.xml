@@ -13,6 +13,9 @@
                         }
                     </style>
                 </xpath>
+                <field name="vat" position="after">
+                    <field name="is_gestion_colisage"/>
+                </field>
                 <field name="property_account_receivable_id" position="after">
                     <field name="is_code_comptable_client"/>
                 </field>
