@@ -352,7 +352,12 @@
                 />
                 <button 
                     string="Répartir les lignes de ce colis par 8 maximum" 
-                    name="repartir_colis_action" 
+                    name="repartir_par8_colis_action" 
+                    type="object" 
+                />
+                <button 
+                    string="Répartir les lignes de ce colis par 1 maximum" 
+                    name="repartir_par1_colis_action" 
                     type="object" 
                 />
             </header>

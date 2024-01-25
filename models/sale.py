@@ -22,13 +22,21 @@ class IsSaleOrderColis(models.Model):
             return report.report_action([obj.id])
 
 
-    def repartir_colis_action(self):
+    def repartir_par1_colis_action(self):
+        self.repartir_par_colis_action(maxi=1)
+
+
+    def repartir_par8_colis_action(self):
+        self.repartir_par_colis_action(maxi=8)
+
+
+    def repartir_par_colis_action(self,maxi=8):
         for obj in self:
 
-            #** Test si supérieur à 8
+            #** Test si supérieur à maxi
             for line in obj.colisage_ids:
-                if line.qty_cde<=8:
-                    raise ValidationError("La quantité commandée doit-être supérieure à 8")
+                if line.qty_cde<=maxi:
+                    raise ValidationError("La quantité commandée doit-être supérieure à %s"%maxi)
                 if line.qty!=(line.qty_cde*line.qty_bom):
                     raise ValidationError("Une répartition a déjà été faite")
                 
@@ -40,9 +48,8 @@ class IsSaleOrderColis(models.Model):
                         qty_mini = line.qty_cde
                     if qty_mini>line.qty_cde:
                         qty_mini = line.qty_cde
-            repartition=ceil(qty_mini/8)
+            repartition=ceil(qty_mini/maxi)
             if repartition>1:
-
                 #Liste des colis
                 dict_colis={}
                 name=obj.name
@@ -54,7 +61,6 @@ class IsSaleOrderColis(models.Model):
                         colis = obj.copy()
                     colis.name = "%s.%s"%(name,(i+1))
                     dict_colis[i]=colis
-    
                 for line in obj.colisage_ids:
                     reste = line.qty_cde
                     if line.qty_cde>0:
@@ -70,6 +76,8 @@ class IsSaleOrderColis(models.Model):
                                 new_line = line.copy()
                                 new_line.qty = qty*line.qty_bom
                                 new_line.colis_id = dict_colis[i].id
+
+
 
 
     def lignes_colis_action(self):
@@ -682,8 +690,6 @@ class sale_order_line(models.Model):
 
     @api.onchange('is_quantite_saisie','is_largeur_saisie', 'is_epaisseur_saisie','is_longueur_saisie')
     def _onchange_is_quantite_saisie(self):
-        print(self)
-
         unite = self.product_uom.category_id.name
         if unite=='Unité':
             self.product_uom_qty = self.is_quantite_saisie
