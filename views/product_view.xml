@@ -153,6 +153,7 @@
                     <field name="is_qualite_bois_ids" widget="many2many_tags"  options="{'color_field': 'color'}"/>
                     <field name="is_epaisseur"/>
                     <field name="is_largeur"/>
+                    <field name="is_longueur_modele"/>
                 </field>
                 <field name="product_variant_id" position="after">
                     <field name="is_ref_plan"/>
@@ -178,6 +179,7 @@
                             <field name="is_prix_revient_bois"/>
                             <field name="is_montant_bois"/>
                             <field name="is_prix_revient"/>
+                            <button name="init_cout_action" string="Initialisation coût" type="object"/>
                         </group>
                     </page>
                 </page>
@@ -193,6 +195,7 @@
                     <field name="is_qualite_bois_ids"  optional="show" widget="many2many_tags"  options="{'color_field': 'color'}"/>
                     <field name="is_epaisseur"         optional="show"/>
                     <field name="is_largeur"           optional="show"/>
+                    <field name="is_longueur_modele"   optional="hide"/>
                     <field name="is_litre_metre"       optional="hide"/>
                     <field name="is_prix_revient"      optional="hide"/>
                 </field>
@@ -381,5 +384,69 @@
             <field name="view_id" ref="is_product_product_tablette_tree"/>
             <field name="act_window_id" ref="is_product_product_tablette_action"/>
         </record> -->
+
+
+
+
+
+
+
+        <!--    = fields.Many2one('product.template', 'Article', required=True, ondelete='cascade')
+             = fields.Integer("Ordre")
+         = fields.Many2one('is.calculateur.operation', 'Opération', required=True)
+         = fields.Float(related="operation_id.prix_revient")
+                = fields.Selection(related="operation_id.unite")
+              = fields.Float(string="Montant", digits="Product Price", compute='_compute_montant', store=True) -->
+    
+
+        <!-- is.product.template.calculateur.operation -->
+        <record model="ir.ui.view" id="is_product_template_calculateur_operation_tree_view">
+            <field name="name">is.product.template.calculateur.operation.tree</field>
+            <field name="model">is.product.template.calculateur.operation</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="product_id" widget="many2one_clickable"/>
+                    <field name="sequence"/>
+                    <field name="operation_id"/>
+                    <field name="prix_revient"/>
+                    <field name="unite"/>
+                    <field name="montant"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_product_template_calculateur_operation_form_view">
+            <field name="name">is.product.template.calculateur.operation.form</field>
+            <field name="model">is.product.template.calculateur.operation</field>
+            <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="product_id"/>
+                        <field name="sequence"/>
+                        <field name="operation_id"/>
+                        <field name="prix_revient"/>
+                        <field name="unite"/>
+                        <field name="montant"/>
+                    </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_product_template_calculateur_operation_search_view" >
+            <field name="name">is.product.template.calculateur.operation.search</field>
+            <field name="model">is.product.template.calculateur.operation</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="product_id"/>
+                    <field name="operation_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="is_product_template_calculateur_operation_action" model="ir.actions.act_window">
+            <field name="name">Lignes des opérations du calculateur</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">is.product.template.calculateur.operation</field>
+            <field name="view_mode">tree,form</field>
+        </record>
     </data>
 </odoo>

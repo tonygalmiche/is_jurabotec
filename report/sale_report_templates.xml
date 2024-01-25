@@ -10,11 +10,17 @@
                     }
                 </style>
                 <div class="oe_structure"/>
-                <t t-if="doc.state in ['draft','sent']">
-                    <h1>Devis n° <span t-field="doc.name"/></h1>
+
+                <t t-if="env.context.get('proforma', False) or is_pro_forma">
+                    <h1>Facture Proforma n° <span t-field="doc.name"/></h1>
                 </t>
                 <t t-else="">
-                    <h1>Confirmation de commande n° <span t-field="doc.name"/></h1>
+                    <t t-if="doc.state in ['draft','sent']">
+                        <h1>Devis n° <span t-field="doc.name"/></h1>
+                    </t>
+                    <t t-else="">
+                        <h1>Confirmation de commande n° <span t-field="doc.name"/></h1>
+                    </t>
                 </t>
                 <table class="table table-sm o_main_table mt-4">
                     <thead style="display: table-row-group">

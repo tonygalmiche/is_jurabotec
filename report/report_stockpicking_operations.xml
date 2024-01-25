@@ -26,6 +26,10 @@
                             <strong>Commande:</strong>
                             <p t-field="o.origin"/>
                         </div>
+                        <div t-if="o.sale_id.client_order_ref" class="col-auto">
+                            <strong>Référence client:</strong>
+                            <p t-field="o.sale_id.client_order_ref"/>
+                        </div>
                         <div class="col-auto" name="div_sched_date">
                             <strong>Date prévue:</strong>
                             <p t-field="o.scheduled_date"/>

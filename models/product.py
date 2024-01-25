@@ -98,12 +98,18 @@ class ProductTemplate(models.Model):
     is_qualite_bois_ids  = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
     is_largeur           = fields.Float("Largeur (mm)"  , digits='Product Unit of Measure')
     is_epaisseur         = fields.Float("Epaisseur (mm)", digits='Product Unit of Measure')
+    is_longueur_modele   = fields.Float("Longueur modèle (m)", digits='Product Unit of Measure', help="Ce champ est utilisé si la longueure n'est pas indiquée dans la variante")
     is_ref_plan          = fields.Char("Référence plan")
     is_plan_ids          = fields.Many2many('ir.attachment', 'product_template_is_plan_rel', 'product_id', 'attachment_id', 'Plan')
     is_fds_ids           = fields.Many2many('ir.attachment', 'product_template_is_fds_rel' , 'product_id', 'attachment_id', 'FDS', help="Fiche de sécurité")
     is_litre_metre       = fields.Float("L/m ", digits='Product Unit of Measure', compute='_compute_is_litre_metre', store=True, help="Litre / mètre => Unité fictive pour faciliter le calcul des devis")
     is_operation_ids     = fields.One2many('is.product.template.calculateur.operation', 'product_id', 'Opérations')
     is_prix_revient      = fields.Float("Prix de revient (€/ml)", compute='_compute_is_prix_revient', store=False)
+
+
+    def init_cout_action(self):
+        for obj in self:
+            obj.product_variant_ids.init_cout_action()
 
 
     def import_plan_action(self):
@@ -137,6 +143,13 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
  
+    is_longueur              = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
+    is_surface               = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
+    is_volume                = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
+    is_prix_revient_variante = fields.Float("Prix de revient variante"                      , compute='_compute_is_prix_revient_variante')
+    is_volume_stock          = fields.Float("Volume en stock (m3) ", digits='Volume'        , compute='_compute_is_volume_stock')
+
+
     @api.depends('product_template_variant_value_ids','is_largeur','is_epaisseur')
     def _compute_longueur(self):
         for obj in self:
@@ -148,6 +161,8 @@ class ProductProduct(models.Model):
                         longeur = float(val)
                     except:
                         longeur = 0
+            if not longeur and obj.is_longueur_modele:
+                longeur = obj.is_longueur_modele
             obj.is_longueur    = longeur
             obj.is_surface     = longeur*obj.is_largeur/1000
             obj.is_volume      = longeur*obj.is_largeur*obj.is_epaisseur/1000/1000
@@ -164,11 +179,9 @@ class ProductProduct(models.Model):
             obj.is_volume_stock = obj.is_volume * obj.qty_available
 
 
-    is_longueur              = fields.Float("Longueur (m)", digits='Product Unit of Measure', compute='_compute_longueur')
-    is_surface               = fields.Float("Surface (m2)", digits='Product Unit of Measure', compute='_compute_longueur')
-    is_volume                = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
-    is_prix_revient_variante = fields.Float("Prix de revient variante"                      , compute='_compute_is_prix_revient_variante')
-    is_volume_stock          = fields.Float("Volume en stock (m3) ", digits='Volume'        , compute='_compute_is_volume_stock')
+    def init_cout_action(self):
+        for obj in self:
+            obj.standard_price = obj.is_prix_revient_variante
 
 
     def liste_charges_action(self):
