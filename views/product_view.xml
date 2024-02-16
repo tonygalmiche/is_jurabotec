@@ -179,6 +179,7 @@
                             <field name="is_prix_revient_bois"/>
                             <field name="is_montant_bois"/>
                             <field name="is_prix_revient"/>
+                            <field name="is_cout_fixe"/>
                             <button name="init_cout_action" string="Initialisation coût" type="object"/>
                         </group>
                     </page>
@@ -198,6 +199,7 @@
                     <field name="is_longueur_modele"   optional="hide"/>
                     <field name="is_litre_metre"       optional="hide"/>
                     <field name="is_prix_revient"      optional="hide"/>
+                    <field name="is_cout_fixe"         optional="hide"/>
                 </field>
                 <field name="default_code" position="after">
                     <field name="is_ref_plan" optional="show"/>
@@ -281,6 +283,7 @@
                     <field name="is_volume"      optional="hide"/>
                     <field name="is_litre_metre" optional="hide"/>
                     <field name="is_prix_revient"          optional="hide"/>
+                    <field name="is_cout_fixe"             optional="hide"/>
                     <field name="is_prix_revient_variante" optional="hide"/>
                 </field>
 

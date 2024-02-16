@@ -104,7 +104,8 @@ class ProductTemplate(models.Model):
     is_fds_ids           = fields.Many2many('ir.attachment', 'product_template_is_fds_rel' , 'product_id', 'attachment_id', 'FDS', help="Fiche de sécurité")
     is_litre_metre       = fields.Float("L/m ", digits='Product Unit of Measure', compute='_compute_is_litre_metre', store=True, help="Litre / mètre => Unité fictive pour faciliter le calcul des devis")
     is_operation_ids     = fields.One2many('is.product.template.calculateur.operation', 'product_id', 'Opérations')
-    is_prix_revient      = fields.Float("Prix de revient (€/ml)", compute='_compute_is_prix_revient', store=False)
+    is_prix_revient      = fields.Float("Prix de revient (€/ml)", compute='_compute_is_prix_revient', store=False, help="Montant des opérations + Montant bois")
+    is_cout_fixe         = fields.Float("Coût fixe", help="Coût fixe ajouté aux variantes")
 
 
     def init_cout_action(self):
@@ -168,10 +169,10 @@ class ProductProduct(models.Model):
             obj.is_volume      = longeur*obj.is_largeur*obj.is_epaisseur/1000/1000
 
 
-    @api.depends('is_prix_revient','is_longueur')
+    @api.depends('is_prix_revient','is_longueur','is_cout_fixe')
     def _compute_is_prix_revient_variante(self):
         for obj in self:
-            obj.is_prix_revient_variante=obj.is_prix_revient*obj.is_longueur
+            obj.is_prix_revient_variante=obj.is_prix_revient*obj.is_longueur+obj.is_cout_fixe
 
 
     def _compute_is_volume_stock(self):
