@@ -32,8 +32,12 @@ class StockPicking(models.Model):
         for obj in self:
             volume = 0
             for line in obj.move_ids_without_package:
+                if obj.state=='done':
+                    qty=line.quantity_done
+                else:
+                    qty=line.product_uom_qty
                 if line.sale_line_id.product_uom_qty>0:
-                    volume+=line.sale_line_id.is_volume_total*line.quantity_done/line.sale_line_id.product_uom_qty
+                    volume+=line.sale_line_id.is_volume_total*qty/line.sale_line_id.product_uom_qty
             obj.is_volume_total = round(volume,6)
 
 
