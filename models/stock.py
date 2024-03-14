@@ -27,13 +27,14 @@ class StockPicking(models.Model):
     is_volume_total   = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
 
 
-    @api.depends('move_ids_without_package')
+    @api.depends('move_ids_without_package','is_bl_fournisseur','state')
     def _compute_is_volume_total(self):
         for obj in self:
             volume = 0
             for line in obj.move_ids_without_package:
-                volume+=line.sale_line_id.is_volume*line.quantity_done
-            obj.is_volume_total = volume
+                if line.sale_line_id.product_uom_qty>0:
+                    volume+=line.sale_line_id.is_volume_total*line.quantity_done/line.sale_line_id.product_uom_qty
+            obj.is_volume_total = round(volume,6)
 
 
 class StockMove(models.Model):
