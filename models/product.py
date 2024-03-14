@@ -211,15 +211,14 @@ class ProductProduct(models.Model):
         contrat_id = self._context.get('contrat_id')
         if contrat_id:
             lines = self.env['is.contrat.fournisseur.ligne'].search([('contrat_id','=',contrat_id)])
+            ids=[]
             for line in lines:
                 for product in line.product_id.product_variant_ids:
-                    product_ids.append(product.id)
-        else:
-            product_ids = super()._name_search(name, args, operator, limit, name_get_uid)
+                    #product_ids.append(product.id)
+                    ids.append(product.id)
+            args.append(['id','in',ids])
+        product_ids = super()._name_search(name, args, operator, limit, name_get_uid)
         return product_ids
-
-
-
 
 
 class ProductTemplateAttributeValue(models.Model):
