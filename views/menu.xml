@@ -73,9 +73,24 @@
 
 
     
-    
+    <!-- Stock / Inventaire -->
+    <menuitem 
+        id="stock_inventory_main_menu" 
+        sequence="10" 
+        name="Inventaires"
+        action="stock_inventory_action"
+        parent="stock.menu_stock_root"
+    />
+    <menuitem 
+        id="stock_inventory_menu" 
+        sequence="10" 
+        name="Inventaires"
+        action="stock_inventory_action"
+        parent="stock_inventory_main_menu"
+    />
 
 
+   
 
 
     <!-- Tablette -->
