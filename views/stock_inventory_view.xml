@@ -172,11 +172,12 @@
                                 <button title="Inventaire" name="voir_inventory_action"  type="object" icon="fa-search-plus" />
                                 <field name="name"/>
                                 <field name="date"/>
-                                <field name="create_date"/>
-                                <field name="create_uid"/>
-                                <field name="write_date"/>
-                                <field name="write_uid"/>
-                                <field name="state"/>
+                                <field name="location_id" optional="show"/>
+                                <field name="create_date" optional="show"/>
+                                <field name="create_uid"  optional="hide"/>
+                                <field name="write_date"  optional="hide"/>
+                                <field name="write_uid"   optional="hide"/>
+                                <field name="state"       optional="show"/>
                             </tree>
                         </field>
                     </sheet>
