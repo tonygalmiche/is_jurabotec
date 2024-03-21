@@ -84,13 +84,17 @@
     <menuitem 
         id="stock_inventory_menu" 
         sequence="10" 
-        name="Inventaires"
+        name="Inventaire par emplacement"
         action="stock_inventory_action"
         parent="stock_inventory_main_menu"
     />
-
-
-   
+    <menuitem 
+        id="is_inventaire_menu" 
+        sequence="20" 
+        name="Inventaire général"
+        action="is_inventaire_action"
+        parent="stock_inventory_main_menu"
+    />
 
 
     <!-- Tablette -->

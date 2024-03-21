@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models,fields,api,tools
+from datetime import datetime, timedelta
+import pytz
 
 
 class stock_move(models.Model):
@@ -12,7 +14,6 @@ class stock_move_line(models.Model):
     _inherit = "stock.move.line"
 
     inventory_id = fields.Many2one(related="move_id.inventory_id")
-
 
 
 class stock_inventory(models.Model):
@@ -41,6 +42,7 @@ class stock_inventory(models.Model):
     product_id= fields.Many2one('product.product', 'Article', readonly=True, states={'draft': [('readonly', False)]})
     lot_id= fields.Many2one('stock.lot', 'Lot', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
     filter=fields.Selection(INVENTORY_FILTER_SELECTION, 'Inventaire de', required=True, readonly=True, states={'draft': [('readonly', False)]}, default='none')
+    inventaire_id = fields.Many2one('is.inventaire', 'Inventaire général', readonly=True)
 
 
     def demarrer_inventaire_action(self):
@@ -100,7 +102,6 @@ class stock_inventory(models.Model):
                     location_id = inventory_location_id
                 if qty>0:
                     vals={
-                        #"date": obj.date,
                         "date_deadline": obj.date,
                         "inventory_id": line.inventory_id.id,
                         "product_id": line.product_id.id,
@@ -119,7 +120,6 @@ class stock_inventory(models.Model):
                     }
                     move=self.env['stock.move'].create(vals)
                     vals={
-                        #"date": obj.date,
                         "move_id": move.id,
                         "product_id": line.product_id.id,
                         "product_uom_id": line.product_uom_id.id,
@@ -130,12 +130,9 @@ class stock_inventory(models.Model):
                         "reference": name,
                     }
                     move_line=self.env['stock.move.line'].create(vals)
-                    #move_line.date=obj.date
                     move._action_confirm()
                     move._action_done()
-                    #move.date=obj.date
                     move_line.date=obj.date
-                    print(move,move.date)
             obj.state="done"
 
 
@@ -154,6 +151,18 @@ class stock_inventory(models.Model):
                 'type': 'ir.actions.act_window',
                 'limit': 1000,
             }
+
+
+    def voir_inventory_action(self):
+        for obj in self:
+            res= {
+                'name': obj.name,
+                'view_mode': 'form',
+                'res_model': 'stock.inventory',
+                'res_id': obj.id,
+                'type': 'ir.actions.act_window',
+            }
+            return res
 
 
 class stock_inventory_line(models.Model):
@@ -208,4 +217,47 @@ class stock_inventory_line(models.Model):
             for quant in quants:
                 qty+=quant.quantity
             obj.theoretical_qty = qty
+
+
+class is_inventaire(models.Model):
+    _name='is.inventaire'
+    _description="Inventaire"
+    _order='name desc'
+
+    name          = fields.Char("N°", readonly=True)
+    date          = fields.Datetime("Date de l'inventaire", required=True, default=lambda *a: fields.datetime.now())
+    inventory_ids = fields.One2many('stock.inventory', 'inventaire_id', 'Inventaires', readonly=True)
+
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vals['name'] = self.env['ir.sequence'].next_by_code('is.inventaire')
+        return super().create(vals_list)
+
+
+    def utc_offset(self):
+        now = datetime.now()
+        offset = int(pytz.timezone('Europe/Paris').localize(now).utcoffset().total_seconds()/3600)
+        return offset
+ 
+
+    def creer_inventaires_action(self):
+        for obj in self:
+            filtre=[ 
+                ('usage', '=', 'internal'),
+            ]
+            locations=self.env['stock.location'].search(filtre,order='name desc')
+            for location in locations:
+                offset = self.utc_offset()
+                date=obj.date+timedelta(hours=offset)
+                name = "%s : %s - %s"%(obj.name,date,location.name)
+                vals={
+                    'name'         : name,
+                    'date'         : obj.date,
+                    'location_id'  : location.id,
+                    'inventaire_id': obj.id,
+                }
+                inventory = self.env['stock.inventory'].create(vals)
+                inventory.demarrer_inventaire_action()
 
