@@ -156,7 +156,7 @@
                     <field name="is_longueur_modele"/>
                 </field>
                 <field name="product_variant_id" position="after">
-                    <field name="is_ref_plan"/>
+                     <field name="is_ref_plan"/>
                     <field name="is_plan_ids" widget="many2many_binary"/>
                     <field name="is_fds_ids"  widget="many2many_binary"/>
                 </field>
@@ -235,6 +235,8 @@
             <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
                 <field name="default_code" position="before">
+                    <field name="is_bareme_valobat_id"/>
+                    <field name="is_eco_contribution" attrs="{'invisible':[('is_bareme_valobat_id', '=', False)]}"/>
                     <field name="is_longueur"/>
                     <field name="is_surface"/>
                     <field name="is_volume"/>
@@ -451,5 +453,55 @@
             <field name="res_model">is.product.template.calculateur.operation</field>
             <field name="view_mode">tree,form</field>
         </record>
+
+
+        <!-- is.bareme.valobat -->
+        <record model="ir.ui.view" id="is_bareme_valobat_tree_view">
+            <field name="name">is.bareme.valobat.tree</field>
+            <field name="model">is.bareme.valobat</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="designation"/>
+                    <field name="prix"/>
+                    <field name="unite"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_bareme_valobat_form_view">
+            <field name="name">is.bareme.valobat.form</field>
+            <field name="model">is.bareme.valobat</field>
+            <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="designation"/>
+                        <field name="prix"/>
+                        <field name="unite"/>
+                    </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="is_bareme_valobat_search_view" >
+            <field name="name">is.bareme.valobat.search</field>
+            <field name="model">is.bareme.valobat</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="designation"/>
+                    <field name="unite"/>
+                </search>
+            </field>
+        </record>
+        <record id="is_bareme_valobat_action" model="ir.actions.act_window">
+            <field name="name">Barème Valobat</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">is.bareme.valobat</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
     </data>
 </odoo>

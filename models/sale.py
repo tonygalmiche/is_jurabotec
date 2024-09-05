@@ -504,10 +504,16 @@ class sale_order_line(models.Model):
     is_epaisseur_saisie = fields.Float("Epaisseur saisie (mm)", digits='Product Unit of Measure')
     is_longueur_saisie  = fields.Float("Longueur saisie (m)"  , digits='Product Unit of Measure')
 
-    is_detail_quantite = fields.Text(string='Détail quantité', compute='_compute_is_detail_quantite')
-    is_num_palette     = fields.Char(string='N°Palette')
+    is_detail_quantite  = fields.Text(string='Détail quantité', compute='_compute_is_detail_quantite')
+    is_num_palette      = fields.Char(string='N°Palette')
+    is_eco_contribution = fields.Float("Eco contribution", digits="Product Price", compute='_compute_is_eco_contribution')
 
 
+    @api.depends('product_id', 'product_uom_qty')
+    def _compute_is_eco_contribution(self):
+        for obj in self:
+            eco_contribution = obj.product_id.is_eco_contribution * obj.product_uom_qty
+            obj.is_eco_contribution = eco_contribution
 
 
     @api.depends('product_id', 'is_largeur_saisie', 'is_epaisseur_saisie','is_longueur_saisie')

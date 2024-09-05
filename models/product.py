@@ -4,7 +4,17 @@ from odoo import api, fields, models, _
 from random import randint
 import os
 import base64
-from odoo.osv import expression
+#from odoo.osv import expression
+
+
+class IsBaremeValobat(models.Model):
+    _name='is.bareme.valobat'
+    _description = "Barème Valobat pour eco-contribution"
+
+    name         = fields.Char("Code"       , required=True)
+    designation  = fields.Char("Désignation", required=True)
+    prix         = fields.Float("Prix"      , required=True, digits="Product Price")
+    unite        = fields.Char("Unité"      , required=True)
 
 
 class IsBois(models.Model):
@@ -106,6 +116,7 @@ class ProductTemplate(models.Model):
     is_operation_ids     = fields.One2many('is.product.template.calculateur.operation', 'product_id', 'Opérations')
     is_prix_revient      = fields.Float("Prix de revient (€/ml)", compute='_compute_is_prix_revient', store=False, help="Montant des opérations + Montant bois")
     is_cout_fixe         = fields.Float("Coût fixe", help="Coût fixe ajouté aux variantes")
+    is_bareme_valobat_id = fields.Many2one('is.bareme.valobat', 'Barème Valobat')
 
 
     def init_cout_action(self):
@@ -149,6 +160,7 @@ class ProductProduct(models.Model):
     is_volume                = fields.Float("Volume (m3) ", digits='Volume'                 , compute='_compute_longueur')
     is_prix_revient_variante = fields.Float("Prix de revient variante"                      , compute='_compute_is_prix_revient_variante')
     is_volume_stock          = fields.Float("Volume en stock (m3) ", digits='Volume'        , compute='_compute_is_volume_stock')
+    is_eco_contribution      = fields.Float("Eco contribution", digits="Product Price")
 
 
     @api.depends('product_template_variant_value_ids','is_largeur','is_epaisseur')

@@ -130,6 +130,11 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[@name='ordered_qty']" position="after">
+                <label for="is_eco_contribution"/>
+                <div class="o_row">
+                    <field name="is_eco_contribution"/>
+                </div>
+
                 <label for="is_longueur_totale"/>
                 <div class="o_row">
                     <field name="is_longueur_totale"/>
@@ -195,10 +200,11 @@
 
 
             <xpath expr="//page[@name='order_lines']/field/tree/field[@name='product_uom_qty']" position="after">
-                <field name="is_longueur_totale" optional="show"/>
-                <field name="is_surface_totale"  optional="show"/>
-                <field name="is_volume_total"    optional="show"/>
-                <field name="is_composants"      optional="hide"/>
+                <field name="is_eco_contribution" optional="show"/>
+                <field name="is_longueur_totale"  optional="show"/>
+                <field name="is_surface_totale"   optional="show"/>
+                <field name="is_volume_total"     optional="show"/>
+                <field name="is_composants"       optional="hide"/>
             </xpath>
 
             <xpath expr="//page[@name='order_lines']" position="after">
