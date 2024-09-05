@@ -1,76 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-
-
-
-
-<!-- 
-    <page string="Order Lines" name="order_lines">
-        <field name="order_line" widget="section_and_note_one2many" mode="tree,kanban" attrs="{'readonly': [('state', 'in', ('done','cancel'))]}">
-            <form>
-                <field name="display_type" invisible="1"/>
-                <field name="sequence" invisible="1"/>
-                <field name="product_uom_category_id" invisible="1"/>
-                <group>
-                    <group attrs="{'invisible': [('display_type', '!=', False)]}">
-                        <field name="product_updatable" invisible="1"/>
-                        <field name="product_id" domain="[('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]" context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}" attrs="{                                                 'readonly': [('product_updatable', '=', False)],                                                 'required': [('display_type', '=', False)],                                             }" force_save="1" widget="many2one_barcode"/>
-                        <field name="product_type" invisible="1"/>
-                        <field name="invoice_status" invisible="1"/>
-                        <field name="qty_to_invoice" invisible="1"/>
-                        <field name="qty_delivered_method" invisible="1"/>
-                        <field name="price_total" invisible="1"/>
-                        <field name="price_tax" invisible="1"/>
-                        <field name="price_subtotal" invisible="1"/>
-                        <field name="product_uom_readonly" invisible="1"/>
-                        <label for="product_uom_qty"/>
-                        <div class="o_row" name="ordered_qty">
-                            <field context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}" name="product_uom_qty"/>
-                            <field name="product_uom" invisible="1" groups="!uom.group_uom"/>
-                            <field name="product_uom" force_save="1" groups="uom.group_uom" class="oe_no_button" attrs="{                                                     'readonly': [('product_uom_readonly', '=', True)],                                                     'required': [('display_type', '=', False)],                                                 }"/>
-                        </div>
-                        <label for="qty_delivered" string="Delivered" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-                        <div name="delivered_qty" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
-                            <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_method', '!=', 'manual')]}"/>
-                        </div>
-                        <label for="qty_invoiced" string="Invoiced" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-                        <div name="invoiced_qty" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
-                            <field name="qty_invoiced" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-                        </div>
-                        <field name="product_packaging_id" attrs="{'invisible': [('product_id', '=', False)]}" context="{'default_product_id': product_id, 'tree_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}" groups="product.group_stock_packaging"/>
-                        <field name="price_unit"/>
-                        <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" context="{'search_view_ref': 'account.account_tax_view_search'}" domain="[('type_tax_use','=','sale'), ('company_id','=',parent.company_id), ('country_id', '=', parent.tax_country_id)]" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                        <label for="discount" groups="product.group_discount_per_so_line"/>
-                        <div name="discount" groups="product.group_discount_per_so_line">
-                            <field name="discount" class="oe_inline"/> %
-                        </div>
-                        <field name="sequence" invisible="1"/>
-                    </group>
-                    <group attrs="{'invisible': [('display_type', '!=', False)]}">
-                        <label for="customer_lead"/>
-                        <div name="lead">
-                            <field name="customer_lead" class="oe_inline"/> days
-                        </div>
-                        <field name="analytic_distribution" widget="analytic_distribution" groups="analytic.group_analytic_accounting" options="{'product_field': 'product_id', 'business_domain': 'sale_order'}"/>
-                    </group>
-                </group>
-                <label for="name" string="Description" attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                <label for="name" string="Section Name (eg. Products, Services)" attrs="{'invisible': [('display_type', '!=', 'line_section')]}"/>
-                <label for="name" string="Note" attrs="{'invisible': [('display_type', '!=', 'line_note')]}"/>
-                <field name="name"/>
-                <div name="invoice_lines" groups="base.group_no_one" attrs="{'invisible': [('display_type', '!=', False)]}">
-                    <label for="invoice_lines"/>
-                    <field name="invoice_lines"/>
-                </div>
-                <field name="state" invisible="1"/>
-                <field name="company_id" invisible="1"/>
-            </form> -->
-
-
-
-
-
     <!-- sale.order  -->
     <record id="init_colisage_ir_cron" model="ir.cron">
         <field name="name">Initialisation du colisage</field>
@@ -184,7 +114,6 @@
             <field name="partner_id" position="after">
                 <field name="client_order_ref"/>
                 <field name="is_num_cde_client"/>
-                <!-- <field name="is_devis_id" attrs="{'invisible': [('is_devis_id', '=', False)]}"/> -->
                 <field name="is_volume_total"/>
             </field>
 
@@ -243,22 +172,13 @@
             </xpath>
         </field>
     </record>
-
-
-
-
-
-
     <record id="is_view_order_tree" model="ir.ui.view">
         <field name="name">is_view_order_tree</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_tree"/>
         <field name="arch" type="xml">
-            <!-- <field name="name" position="after">
-                <field name="is_devis_id" optional="show"/>
-            </field> -->
             <field name="date_order" position="after">
-                <field name="is_delai" optional="show"/>
+                <field name="is_delai" optional="show"  widget="date" />
             </field>
             <field name="user_id" position="before">
                 <field name="client_order_ref"  optional="show"/>
@@ -350,7 +270,35 @@
 
 
 
-
+    <!-- Calendrier des livraisons -->
+    <record model="ir.ui.view" id="is_calendrier_livraison_calendar" >
+        <field name="name">is_calendrier_livraison_calendar</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <calendar 
+                date_start="is_delai" 
+                color="partner_id" 
+                hide_time="false" 
+                event_limit="100"
+                event_open_popup="false"
+                quick_add="false"
+                mode="month"
+            >
+                <field name="partner_id" filters="1" invisible="1"/>
+                <field name="partner_id"/> 
+                <field name="date_order"/> 
+                <field name="is_delai"/> 
+                <field name="amount_total"/> 
+            </calendar>
+        </field>
+    </record>
+    <record id="is_calendrier_livraison_action" model="ir.actions.act_window">
+        <field name="name">Calendrier des livraisons</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="view_id" ref="is_calendrier_livraison_calendar"/>
+    </record>
 
 
     <!--is.sale.order.colis -->

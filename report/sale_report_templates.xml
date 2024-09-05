@@ -37,7 +37,7 @@
                             <td class="text-center"><span t-esc="doc.date_order" t-options='{"widget": "date"}'/></td>
                             <td class="text-center"><span t-field="doc.client_order_ref"/></td>
                             <td class="text-center"><span t-field="doc.user_id"/></td>
-                            <td class="text-center"><span t-field="doc.is_delai"/></td>
+                            <td class="text-center"><span t-field="doc.is_delai" t-options='{"widget": "date"}'/></td>
                             <td class="text-center"><span t-field="doc.is_num_cde_client"/></td>
                         </tr>
                     </tbody>

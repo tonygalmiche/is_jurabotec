@@ -3,6 +3,7 @@ from itertools import groupby
 from odoo import fields, models, api
 from odoo.exceptions import AccessError, ValidationError, UserError
 from odoo.fields import Command
+from datetime import datetime, timedelta
 from math import *
 
 class IsSaleOrderColis(models.Model):
@@ -185,14 +186,9 @@ class IsSaleOrderColisageComposant(models.Model):
             return res
 
 
-
-
-           
-
 class sale_order(models.Model):
     _inherit = "sale.order"
 
-    is_delai             = fields.Date('Délai')
     is_colis_ids         = fields.One2many('is.sale.order.colis'             , 'order_id', 'Colis')
     is_colisage_ids      = fields.One2many('is.sale.order.colisage.composant', 'order_id', 'Colisage')
     is_num_cde_client    = fields.Char('N° commande client')
@@ -200,6 +196,24 @@ class sale_order(models.Model):
     is_devis_id          = fields.Many2one('sale.order', "Devis d'origine", copy=False, readonly=True)
     is_volume_total      = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
     is_gestion_colisage  = fields.Boolean(related="partner_id.is_gestion_colisage")
+    is_delai             = fields.Datetime('Délai')
+    # is_delai_heure       = fields.Datetime('Délai (Heure)', compute='_compute_is_delai_heure', store=True, readonly=True, help="Champ utilisé par la vue 'Calendrier des livraisons'")
+
+
+    # @api.depends('date_order','is_delai')
+    # def _compute_is_delai_heure(self):
+    #     for obj in self:
+    #         delai = obj.date_order
+    #         if obj.is_delai and delai:
+    #             delai = str(obj.is_delai)+' '+str(obj.date_order)[11:]
+    #         obj.is_delai_heure = delai
+         
+
+    @api.onchange('date_order')
+    def _onchange_date_order(self):
+        if not self.is_delai and self.date_order:
+            delai = self.date_order+timedelta(days=6*7)
+            self.is_delai = delai
 
 
     @api.depends('order_line','order_line.product_uom_qty')

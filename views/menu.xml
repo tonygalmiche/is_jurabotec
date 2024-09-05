@@ -17,6 +17,17 @@
         action="is_sale_order_colisage_composant_action"
     />
 
+    <menuitem 
+        id="is_calendrier_livraison_menu" 
+        sequence="22" 
+        name="Calendrier des livraisons" 
+        parent="sale.sale_order_menu" 
+        action="is_calendrier_livraison_action"
+    />
+
+
+
+
     <!-- Ventes / Articles -->
     <menuitem 
         id="is_product_pricelist_item_menu" sequence="90" 
