@@ -211,6 +211,19 @@ class StockLot(models.Model):
 class StockQuant(models.Model):
     _inherit = "stock.quant"
 
+    is_cout       = fields.Float(string="Coût"      , compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût pour valorisation stock (Prix achat du lot ou prix dans fiche article)")
+    is_cout_total = fields.Float(string="Coût total", compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût total pour valorisation stock")
+
+
+    def _compute_is_cout(self):
+        for obj in self:
+            cout = obj.lot_id.is_prix_achat
+            if not cout:
+                cout = obj.product_id.standard_price
+            obj.is_cout = cout
+            obj.is_cout_total = obj.quantity * cout
+
+
     def deplacer_quant_action(self):
         for obj in self:
             context = self.env.context

@@ -398,37 +398,6 @@
             </kanban>
         </field>
     </record>
- 
-
-    <!-- <record id="modifier_charge_stock_quant_form_view" model="ir.ui.view" >
-        <field name="name">modifier_charge_stock_quant_form_view</field>
-        <field name="model">stock.quant</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <field name="lot_id"      readonly="1"/>
-                        <field name="location_id" readonly="1"/>
-                        <field name="product_id"  readonly="1"/>
-                        <field name="quantity"  readonly="1"/>
-                        <field name="inventory_quantity" widget="plus_moins10"/>
-                        <field name="inventory_diff_quantity"  readonly="1"/>
-                        <field name="inventory_quantity_set"  invisible="1"/>
-                    </group>
-                    <group>
-                        <button 
-                            string="Appliquer la modification"
-                            name="action_apply_inventory" 
-                            groups="stock.group_stock_manager"
-                            type="object"
-                            class="btn btn-primary"
-                            attrs="{'invisible': [('inventory_quantity_set', '=', False)]}"
-                        />
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record> -->
     <record id="modifier_charge_stock_quant_action" model="ir.actions.act_window">
         <field name="name">Charges</field>
         <field name="type">ir.actions.act_window</field>
@@ -439,4 +408,18 @@
             ]"/>
         <field name="domain">[('quantity', '&gt;', 0),('location_id.usage', '=', 'internal')]</field>
     </record>
+
+
+    <record id="is_view_stock_quant_tree_editable" model="ir.ui.view">
+        <field name="name">is_view_stock_quant_tree_editable</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
+        <field name="arch" type="xml">
+            <field name="value" position="replace">
+                <field name="is_cout"         optional="show"/>
+                <field name="is_cout_total"   optional="show" sum="Total"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>
