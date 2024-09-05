@@ -283,11 +283,14 @@
                 event_open_popup="false"
                 quick_add="false"
                 mode="month"
+                delete="false"
             >
                 <field name="partner_id" filters="1" invisible="1"/>
                 <field name="partner_id"/> 
                 <field name="date_order"/> 
                 <field name="is_delai"/> 
+                <field name="client_order_ref"/> 
+                <field name="is_num_cde_client"/> 
                 <field name="amount_total"/> 
             </calendar>
         </field>
