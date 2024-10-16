@@ -197,17 +197,52 @@ class sale_order(models.Model):
     is_volume_total      = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
     is_gestion_colisage  = fields.Boolean(related="partner_id.is_gestion_colisage")
     is_delai             = fields.Datetime('Délai')
-    # is_delai_heure       = fields.Datetime('Délai (Heure)', compute='_compute_is_delai_heure', store=True, readonly=True, help="Champ utilisé par la vue 'Calendrier des livraisons'")
+    is_eco_contribution  = fields.Monetary("Eco contribution", compute='_compute_is_eco_contribution', store=True, readonly=True, currency_field='currency_id')
 
 
-    # @api.depends('date_order','is_delai')
-    # def _compute_is_delai_heure(self):
-    #     for obj in self:
-    #         delai = obj.date_order
-    #         if obj.is_delai and delai:
-    #             delai = str(obj.is_delai)+' '+str(obj.date_order)[11:]
-    #         obj.is_delai_heure = delai
-         
+
+    @api.depends('order_line.is_eco_contribution')
+    def _compute_is_eco_contribution(self):
+        for obj in self:
+            is_eco_contribution=0
+            for line in obj.order_line:
+                is_eco_contribution+=line.is_eco_contribution
+            obj.is_eco_contribution = is_eco_contribution
+
+
+    def write(self, vals):
+        res = super(sale_order, self).write(vals)
+        self.ajout_eco_contribution()
+        return res
+
+
+    def ajout_eco_contribution(self):
+        for obj in self:
+            if obj.is_eco_contribution>0:
+                products = self.env['product.product'].search([('default_code','=','ECO-CONTRIBUTION')])
+                for product in products:
+                    sequence = 0
+                    order_line=False
+                    for line in obj.order_line:
+                        if line.sequence>sequence:
+                            sequence=line.sequence
+                        if line.product_id == product:
+                            order_line = line
+                    sequence+=10
+                    if not order_line:
+                        vals={
+                            'order_id': obj.id,
+                            'product_id': product.id,
+                            'name': product.name_get()[0][1],
+                            'product_uom_qty': 1,
+                            'price_unit':obj.is_eco_contribution,
+                            'sequence': sequence,
+                        }
+                        res=self.env['sale.order.line'].create(vals)
+                    else:
+                        order_line.sequence=sequence
+                        order_line.price_unit = obj.is_eco_contribution
+
 
     @api.onchange('date_order')
     def _onchange_date_order(self):
@@ -520,7 +555,13 @@ class sale_order_line(models.Model):
 
     is_detail_quantite  = fields.Text(string='Détail quantité', compute='_compute_is_detail_quantite')
     is_num_palette      = fields.Char(string='N°Palette')
-    is_eco_contribution = fields.Float("Eco contribution", digits="Product Price", compute='_compute_is_eco_contribution')
+
+    is_bareme_valobat_id = fields.Many2one(related='product_id.is_bareme_valobat_id')
+    is_eco_contribution  = fields.Monetary("Eco contribution", compute='_compute_is_eco_contribution', store=True, readonly=True, currency_field='currency_id')
+
+
+    # is_eco_contribution  = fields.Monetary("Eco contribution", digits="Product Price", compute='_compute_is_eco_contribution', store=True, readonly=True, currency_field='currency_id')
+
 
 
     @api.depends('product_id', 'product_uom_qty')

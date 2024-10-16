@@ -59,8 +59,14 @@
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[3]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <field name="payment_term_id" position="after">
+                <field name="is_eco_contribution"/>
+            </field>
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[@name='ordered_qty']" position="after">
-                <label for="is_eco_contribution"/>
+                <label for="is_bareme_valobat_id"/>
+                <div class="o_row">
+                    <field name="is_bareme_valobat_id"/>
+                </div>
                 <div class="o_row">
                     <field name="is_eco_contribution"/>
                 </div>
@@ -129,11 +135,12 @@
 
 
             <xpath expr="//page[@name='order_lines']/field/tree/field[@name='product_uom_qty']" position="after">
-                <field name="is_eco_contribution" optional="show"/>
-                <field name="is_longueur_totale"  optional="show"/>
-                <field name="is_surface_totale"   optional="show"/>
-                <field name="is_volume_total"     optional="show"/>
-                <field name="is_composants"       optional="hide"/>
+                <field name="is_bareme_valobat_id" optional="hide"/>
+                <field name="is_eco_contribution"  optional="show"/>
+                <field name="is_longueur_totale"   optional="show"/>
+                <field name="is_surface_totale"    optional="show"/>
+                <field name="is_volume_total"      optional="show"/>
+                <field name="is_composants"        optional="hide"/>
             </xpath>
 
             <xpath expr="//page[@name='order_lines']" position="after">
@@ -185,8 +192,6 @@
                 <field name="is_num_cde_client" optional="show"/>
                 <field name="is_volume_total"   optional="hide"/>
             </field>
-
-
             <field name="user_id" position="attributes">
                 <attribute name="optional">hide</attribute>
             </field>
@@ -197,6 +202,9 @@
             <field name="state" position="replace"/>
             <field name="invoice_status" position="before">
                 <field name="state" widget="badge"  decoration-success="state in ('sale','done')" decoration-info="state in ('draft','sent')" optional="show"/>
+            </field>
+            <field name="amount_untaxed" position="before">
+                <field name="is_eco_contribution" sum="Total"/>
             </field>
         </field>
     </record>

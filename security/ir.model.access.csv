@@ -27,3 +27,6 @@ access_is_inventaire_manager,access_is_inventaire_manager,model_is_inventaire,st
 
 access_is_bareme_valobat,access_is_bareme_valobat,model_is_bareme_valobat,base.group_user,1,0,0,0
 access_is_bareme_valobat_manager,access_is_bareme_valobat_manager,model_is_bareme_valobat,sales_team.group_sale_manager,1,1,1,1
+
+access_is_account_move_valobat,access_is_account_move_valobat,model_is_account_move_valobat,base.group_user,1,0,0,0
+access_is_account_move_valobat_manager,access_is_account_move_valobat_manager,model_is_account_move_valobat,sales_team.group_sale_manager,1,1,1,1

@@ -92,6 +92,10 @@
 
 
                                         <div t-if="doc.is_detail_composants" t-field="line.is_composants"/>
+
+                                        <div t-if="line.is_eco_contribution"><i>(Eco-contribution de <span t-field="line.is_eco_contribution"/>)</i></div>
+
+
                                     </td>
                                     <td class="text-center" t-if="affiche_palette">
                                         <span t-field="line.is_num_palette"/>

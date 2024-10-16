@@ -29,6 +29,21 @@
             </xpath>
             <!-- Suppression de l'apercu PDF sur la droite -->
             <xpath expr="//div[hasclass('o_attachment_preview')]" position="replace"/>
+            <xpath expr="//page[@name='invoice_tab']" position="after">
+                <page string="Synthèse Valobat">
+                    <group>
+                        <group>
+                            <field name="is_eco_contribution_ids" nolabel="1" colspan="2">
+                                <tree>
+                                    <field name="valobat_id"/>
+                                    <field name="eco_contribution"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                            </field>    
+                        </group>    
+                    </group>
+                </page>
+            </xpath>
         </field>
     </record> 
     <record id="is_view_out_invoice_tree" model="ir.ui.view">
