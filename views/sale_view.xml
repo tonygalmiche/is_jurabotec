@@ -67,6 +67,7 @@
                 <div class="o_row">
                     <field name="is_bareme_valobat_id"/>
                 </div>
+                <label for="is_eco_contribution"/>
                 <div class="o_row">
                     <field name="is_eco_contribution"/>
                 </div>
