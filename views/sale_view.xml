@@ -308,7 +308,7 @@
         <field name="name">Calendrier des livraisons</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">sale.order</field>
-        <field name="view_mode">calendar,tree,form</field>
+        <field name="view_mode">calendar,tree,form,kanban,pivot,graph,activity</field>
         <field name="view_id" ref="is_calendrier_livraison_calendar"/>
     </record>
 
