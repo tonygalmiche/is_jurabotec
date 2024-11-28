@@ -157,6 +157,17 @@ class StockLot(models.Model):
     is_valeur         = fields.Float(string="Valeur stock", digits="Product Price", compute='_compute_is_valeur', store=True, readonly=True)
     is_detail_charge_client = fields.Char(string="Détail charge Client")
     is_num_interne_client   = fields.Char(string="N° interne Client")
+    is_purchase_order_id    = fields.Many2one('purchase.order', string="Cde fournisseur", compute='_compute_is_purchase_order_id', store=False, readonly=True)
+
+
+
+    @api.depends('purchase_order_ids')
+    def _compute_is_purchase_order_id(self):
+        for obj in self:
+            order_id=False
+            for line in obj.purchase_order_ids:
+                order_id = line.id
+            obj.is_purchase_order_id = order_id
 
 
     @api.depends('is_prix_achat','product_qty')

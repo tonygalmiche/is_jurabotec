@@ -42,9 +42,13 @@
                             <td>
                                 <span t-field="move.is_description_cde"/>
                                 <div t-if="o.is_detail_charge" t-foreach="move.move_line_ids" t-as="l">
-                                    COLIS  <span t-field="l.lot_id.name"/>
-                                    <t t-if="l.lot_id.is_num_interne_client"> - <span t-field="l.lot_id.is_num_interne_client"/></t>
-                                    <t t-if="l.lot_id.is_detail_charge_client"> - <span t-field="l.lot_id.is_detail_charge_client"/></t>
+
+                                    <t t-if="l.lot_id.is_purchase_order_id.partner_ref">
+                                        CDE : <span t-field="l.lot_id.is_purchase_order_id.partner_ref"/> - 
+                                    </t>
+                                    COLIS : <span t-field="l.lot_id.name"/>
+                                    <!-- <t t-if="l.lot_id.is_num_interne_client"> - <span t-field="l.lot_id.is_num_interne_client"/></t>
+                                    <t t-if="l.lot_id.is_detail_charge_client"> - <span t-field="l.lot_id.is_detail_charge_client"/></t> -->
                                 </div>
                              </td>
                             <td>
