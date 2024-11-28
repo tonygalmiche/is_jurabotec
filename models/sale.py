@@ -630,15 +630,24 @@ class sale_order_line(models.Model):
         unite = False
         pricelist = self.order_id.pricelist_id
         if pricelist:
+            #** Recherche dans les variantes **********************************
             for line in pricelist.item_ids:
                 if line.product_id == self.product_id:
                     price = line.fixed_price
                     unite = line.is_unite
                     break
-                if line.product_tmpl_id == self.product_template_id and self.product_uom_qty>=line.min_quantity:
-                    price = line.fixed_price
-                    unite = line.is_unite
-                    break
+
+            #** Recherche dans les artciles si non trouvé *********************
+            if price==0:
+                for line in pricelist.item_ids:
+                    # if line.product_id == self.product_id:
+                    #     price = line.fixed_price
+                    #     unite = line.is_unite
+                    #     break
+                    if line.product_tmpl_id == self.product_template_id and self.product_uom_qty>=line.min_quantity:
+                        price = line.fixed_price
+                        unite = line.is_unite
+                        break
                     
         self.is_prix_tarif  = price
         self.is_unite_tarif = unite
