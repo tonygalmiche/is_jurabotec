@@ -14,7 +14,11 @@ class IsSaleOrderColis(models.Model):
     order_id     = fields.Many2one('sale.order', 'Commande', required=True, ondelete='cascade')
     sequence     = fields.Integer("Ordre")
     name         = fields.Char("Colis", required=True)
+    repartition  = fields.Integer("Répartition", default=8)
     colisage_ids = fields.One2many('is.sale.order.colisage.composant', 'colis_id', 'Colisage')
+
+
+
 
 
     def imprimer_fiche_colisage_action(self):

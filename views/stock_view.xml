@@ -7,15 +7,30 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet[1]" position="inside">
+                <style>
+                    .o_form_label{
+                        white-space: nowrap;
+                    }
+                </style>
+            </xpath>
             <xpath expr="//group/group/field[@name='origin']" position="after">
                 <field name="sale_id" attrs="{'invisible': [('sale_id', '=', False)]}"/>
                 <field name="is_bl_fournisseur"/>
             </xpath>
             <xpath expr="//group/field[@name='backorder_id']" position="after">
                 <field name="is_volume_total"/>
+                <field name="is_detail_charge"/>
             </xpath>
             <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='description_picking']" position="after">
                 <field name="is_description_cde" optional="show"/>
+            </xpath>
+
+            <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='lot_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='lot_ids']" position="after">
+                <field name="is_lot_id" optional="show" widget="many2one_clickable"/>
             </xpath>
         </field>
     </record>
@@ -28,6 +43,7 @@
             <field name="name" position="after">
                 <field name="is_bl_fournisseur" optional="show"/>
                 <field name="is_volume_total"   optional="hide"/>
+                <field name="is_detail_charge"  optional="hide"/>
             </field>
         </field>
     </record>
@@ -144,6 +160,8 @@
         <field name="inherit_id" ref="stock.view_production_lot_form"/>
         <field name="arch" type="xml">
             <field name="ref" position="after">
+                <field name="is_detail_charge_client"/>
+                <field name="is_num_interne_client"/>
                 <field name="product_qty"/>
                 <field name="is_fournisseur_id"/>
                 <field name="is_prix_achat"/>
@@ -157,6 +175,8 @@
         <field name="inherit_id" ref="stock.view_production_lot_tree"/>
         <field name="arch" type="xml">
             <field name="create_date" position="before">
+                <field name="is_detail_charge_client" optional="hide"/>
+                <field name="is_num_interne_client"   optional="hide"/>
                 <field name="product_qty" sum="Total"/>
                 <field name="is_fournisseur_id"/>
                 <field name="is_prix_achat"/>
@@ -172,6 +192,8 @@
         <field name="arch" type="xml">
             <field name="product_id" position="after">
                 <field name="is_fournisseur_id"/>
+                <field name="is_detail_charge_client"/>
+                <field name="is_num_interne_client"/>
             </field>
             <filter name="group_by_product" position="after">
                 <filter name="group_by_is_fournisseur_id" string="Fournisseur" domain="[]" context="{'group_by': 'is_fournisseur_id'}"/>

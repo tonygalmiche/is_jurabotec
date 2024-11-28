@@ -325,6 +325,11 @@
                     name="lignes_colis_action" 
                     type="object" 
                 />
+                <!-- <button 
+                    string="Répartir les lignes de ce colis par le nombre indiqué dans le champ 'Répartition'" 
+                    name="repartir_par8_colis_action" 
+                    type="object" 
+                /> -->
                 <button 
                     string="Répartir les lignes de ce colis par 8 maximum" 
                     name="repartir_par8_colis_action" 
@@ -340,6 +345,7 @@
                 <group>
                     <field name="order_id" readonly="1"/>
                     <field name="name"     readonly="1"/>
+                    <field name="repartition"/>
                 </group>
             </sheet>
         </form>

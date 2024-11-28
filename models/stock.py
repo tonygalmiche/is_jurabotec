@@ -25,6 +25,7 @@ class StockPicking(models.Model):
  
     is_bl_fournisseur = fields.Char("BL fournisseur")
     is_volume_total   = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
+    is_detail_charge  = fields.Boolean("Imprimer le détail des charges")
 
 
     @api.depends('move_ids_without_package','is_bl_fournisseur','state')
@@ -45,6 +46,19 @@ class StockMove(models.Model):
     _inherit = "stock.move"
 
     is_description_cde = fields.Text('Description commande', compute="_compute_is_description_cde")
+    is_lot_id          = fields.Many2one("stock.lot", "Lot", compute="_compute_is_lot_id")
+
+
+
+    @api.onchange('move_line_ids.lot_id')
+    def _compute_is_lot_id(self):
+        for obj in self:
+            lot_id=False
+            for line in obj.move_line_ids:
+                lot_id = line.lot_id.id
+                break
+            obj.is_lot_id = lot_id
+
 
     @api.onchange('product_id')
     def _compute_is_description_cde(self):
@@ -55,6 +69,8 @@ class StockMove(models.Model):
             if obj.purchase_line_id:
                 description = obj.purchase_line_id.name
             obj.is_description_cde=description
+
+
 
 
 
@@ -139,6 +155,8 @@ class StockLot(models.Model):
     is_fournisseur_id = fields.Many2one('res.partner', 'Fournisseur')
     is_prix_achat     = fields.Float(string="Prix d'achat", digits="Product Price")
     is_valeur         = fields.Float(string="Valeur stock", digits="Product Price", compute='_compute_is_valeur', store=True, readonly=True)
+    is_detail_charge_client = fields.Char(string="Détail charge Client")
+    is_num_interne_client   = fields.Char(string="N° interne Client")
 
 
     @api.depends('is_prix_achat','product_qty')
