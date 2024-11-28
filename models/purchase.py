@@ -127,7 +127,7 @@ class PurchaseOrderLine(models.Model):
     is_volume       = fields.Float(string="Volume"      , digits='Volume', related="product_id.is_volume", readonly=True)
     is_volume_total = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total')
 
-    is_surface         = fields.Float(string="Surface"    , related="product_id.is_volume")
+    is_surface         = fields.Float(string="Surface"    , related="product_id.is_surface")
     is_surface_totale  = fields.Float(string="Surface cde", digits='Product Unit of Measure', compute='_compute_is_surface_totale')
 
 
