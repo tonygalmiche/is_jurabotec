@@ -90,16 +90,6 @@
                 <field name="partner_ref" position="after">
                     <field name="is_contrat_id" domain="[('partner_id','=',partner_id),('state', '=', 'en_cours')]"/>
                 </field>
-
-
-                <!-- 
-                <xpath expr="//page[@name='products']/field/tree/field[@name='product_id']" position="before">
-                    <field name="is_product_ids" optional="hide" widget="many2many_tags"/>
-                </xpath>
-                <xpath expr="//page[@name='products']/field/tree/field[@name='product_id']" position="attributes">
-                    <attribute name="domain">[('id', 'in', is_product_ids)]</attribute>
-                </xpath> -->
-
                 <xpath expr="//page[@name='products']/field/tree/field[@name='product_id']" position="attributes">
                     <attribute name="context">
                         {
@@ -111,19 +101,14 @@
                         }
                     </attribute>
                 </xpath>
-
-                <!-- `<field name="partner_id" filter_domain="[('partner_id','child_of',self)]"/>` -->
-
-
                 <xpath expr="//page[@name='products']/field/tree/field[@name='name']" position="after">
+                    <field name="is_surface"     optional="hide"/>
                     <field name="is_volume"      optional="hide"/>
                 </xpath>
                 <xpath expr="//page[@name='products']/field/tree/field[@name='product_qty']" position="after">
-                    <field name="is_volume_total" sum="Total" optional="hide"/>
+                    <field name="is_surface_totale" sum="Total" optional="hide"/>
+                    <field name="is_volume_total"   sum="Total" optional="hide"/>
                 </xpath>
-
-
-
                 <xpath expr="//page[@name='products']/field/tree/field[@name='price_tax']" position="after">
                     <field name="is_ligne_contrat_id" optional="hide"/>
                     <field name="is_qt_contrat"       optional="hide"/>
