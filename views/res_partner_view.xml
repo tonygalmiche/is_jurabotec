@@ -22,7 +22,17 @@
                 <field name="property_account_payable_id" position="after">
                     <field name="is_code_comptable_fournisseur"/>
                 </field>
+
+                <xpath expr="//page[@name='sales_purchases']/group/group/field[@name='user_id']" position="before">
+                    <field name="is_emplacement_charge_id"/>
+                </xpath>
+
             </field>
+
+
+
+
+
         </record>
         <record id="is_view_partner_tree" model="ir.ui.view">
             <field name="name">is_view_partner_tree</field>

@@ -23,6 +23,7 @@ InfoSaône - Module Odoo 16 pour Jurabotec
         "views/purchase_view.xml",
         "views/sale_view.xml",
         "views/stock_view.xml",
+        "views/stock_lot_view.xml",
         "views/res_partner_view.xml",
         "views/account_move_view.xml",
         "views/is_export_compta.xml",

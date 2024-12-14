@@ -23,9 +23,9 @@ from odoo.exceptions import UserError, ValidationError
 class StockPicking(models.Model):
     _inherit = "stock.picking"
  
-    is_bl_fournisseur = fields.Char("BL fournisseur")
-    is_volume_total   = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
-    is_detail_charge  = fields.Boolean("Imprimer le détail des charges")
+    is_bl_fournisseur        = fields.Char("BL fournisseur")
+    is_volume_total          = fields.Float(string="Volume total", digits='Volume', compute='_compute_is_volume_total', store=True, readonly=False)
+    is_detail_charge         = fields.Boolean("Imprimer le détail des charges")
 
 
     @api.depends('move_ids_without_package','is_bl_fournisseur','state')
@@ -42,21 +42,41 @@ class StockPicking(models.Model):
             obj.is_volume_total = round(volume,6)
 
 
+
+    def liste_charges_action(self):
+        for obj in self:
+            ids=[]
+            for move in obj.move_ids_without_package:
+                for lot in move.lot_ids:
+                    ids.append(lot.id)
+            return {
+                "name": "Charges",
+                "view_mode": "tree,form",
+                "res_model": "stock.lot",
+                "domain": [
+                    ("id","in",ids),
+                ],
+                "type": "ir.actions.act_window",
+            }
+
+
+
+
+
 class StockMove(models.Model):
     _inherit = "stock.move"
 
     is_description_cde = fields.Text('Description commande', compute="_compute_is_description_cde")
-    is_lot_id          = fields.Many2one("stock.lot", "Lot", compute="_compute_is_lot_id")
-
+    is_lot_id          = fields.Many2one("stock.lot", "Charge", compute="_compute_is_lot_id")
 
 
     @api.onchange('move_line_ids.lot_id')
     def _compute_is_lot_id(self):
         for obj in self:
             lot_id=False
-            for line in obj.move_line_ids:
-                lot_id = line.lot_id.id
-                break
+            if len(obj.move_line_ids)==1:
+                for line in obj.move_line_ids:
+                    lot_id = line.lot_id.id
             obj.is_lot_id = lot_id
 
 
@@ -155,10 +175,29 @@ class StockLot(models.Model):
     is_fournisseur_id = fields.Many2one('res.partner', 'Fournisseur')
     is_prix_achat     = fields.Float(string="Prix d'achat", digits="Product Price")
     is_valeur         = fields.Float(string="Valeur stock", digits="Product Price", compute='_compute_is_valeur', store=True, readonly=True)
+    is_purchase_order_id    = fields.Many2one('purchase.order', string="Cde fournisseur", compute='_compute_is_purchase_order_id', store=False, readonly=True)
     is_detail_charge_client = fields.Char(string="Détail charge Client")
     is_num_interne_client   = fields.Char(string="N° interne Client")
-    is_purchase_order_id    = fields.Many2one('purchase.order', string="Cde fournisseur", compute='_compute_is_purchase_order_id', store=False, readonly=True)
+    is_sale_order_id        = fields.Many2one('sale.order', string="Cde client") #, compute='_compute_is_sale_order_id', store=True)
+    is_charge_associee_a_commande = fields.Selection([
+        ('non', 'Non associée'), 
+        ('oui', 'Associée'),
+    ], string='Charge associée à une commande', group_expand='_group_expand_states', default='non')
 
+
+    def write(self, vals):
+        charge_associee = vals.get('is_charge_associee_a_commande',False)
+        if charge_associee:
+            order_id=False
+            if charge_associee=='oui':
+                order_id = self._context.get('is_sale_order_id',False)
+            vals['is_sale_order_id'] = order_id
+        res = super(StockLot, self).write(vals)
+        return res
+
+
+    def _group_expand_states(self, states, domain, order):
+        return [key for key, val in type(self).is_charge_associee_a_commande.selection]
 
 
     @api.depends('purchase_order_ids')
@@ -240,8 +279,9 @@ class StockLot(models.Model):
 class StockQuant(models.Model):
     _inherit = "stock.quant"
 
-    is_cout       = fields.Float(string="Coût"      , compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût pour valorisation stock (Prix achat du lot ou prix dans fiche article)")
-    is_cout_total = fields.Float(string="Coût total", compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût total pour valorisation stock")
+    is_cout          = fields.Float(string="Coût"      , compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût pour valorisation stock (Prix achat du lot ou prix dans fiche article)")
+    is_cout_total    = fields.Float(string="Coût total", compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût total pour valorisation stock")
+    is_sale_order_id = fields.Many2one(related="lot_id.is_sale_order_id")
 
 
     def _compute_is_cout(self):

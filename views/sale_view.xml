@@ -35,6 +35,17 @@
                     }
                 </style>
             </xpath>
+
+            <button name="action_draft" position="after">
+                <field name="is_charge_ids" invisible="1"/>
+                <button name="associer_charges_action"  attrs="{'invisible':['|',('state', '!=', 'draft'),('is_emplacement_charge_id','=',False)]}" type="object" string="Associer des charges"/>
+                <button 
+                    name="actualiser_lignes_action" 
+                    attrs="{'invisible':['|',('state', '!=', 'draft'),('is_charge_ids','=',[])]}"               
+                    type="object" string="Actualiser les lignes avec les charges"
+                    confirm="ATTENTION : Cela va supprimer les lignes de la commandes et les re-créer à partir des charges!"
+                />
+            </button>
             <xpath expr="//page[@name='order_lines']/field/tree" position="attributes">
                 <attribute name="edit">0</attribute>
             </xpath>
@@ -61,6 +72,7 @@
             </xpath>
             <field name="payment_term_id" position="after">
                 <field name="is_eco_contribution"/>
+                <field name="is_emplacement_charge_id"/>
             </field>
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[@name='ordered_qty']" position="after">
                 <label for="is_bareme_valobat_id"/>
@@ -102,6 +114,7 @@
                     <field name="is_surface"          attrs="{'invisible': [('is_surface' , '=', 0)]}"/>
                     <field name="is_volume"           attrs="{'invisible': [('is_volume'  , '=', 0)]}"/>
                     <field name="is_detail_quantite"/>
+                    <field name="is_charge_id"        attrs="{'invisible': [('is_charge_id', '=', False)]}"/>
                 </group>
                 <group string="Tarif Jurabotec">
                     <field name="is_prix_tarif"/>
@@ -126,6 +139,7 @@
 
 
             <xpath expr="//page[@name='order_lines']/field/tree/field[@name='product_uom_qty']" position="before">
+                <field name="is_charge_id"       optional="hide" widget="many2one_clickable"/>
                 <field name="is_longueur"        optional="hide"/>
                 <field name="is_surface"         optional="hide"/>
                 <field name="is_volume"          optional="hide"/>

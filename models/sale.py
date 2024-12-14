@@ -18,9 +18,6 @@ class IsSaleOrderColis(models.Model):
     colisage_ids = fields.One2many('is.sale.order.colisage.composant', 'colis_id', 'Colisage')
 
 
-
-
-
     def imprimer_fiche_colisage_action(self):
         for obj in self:
             report=self.env.ref('is_jurabotec.is_sale_order_colis_reports')
@@ -83,8 +80,6 @@ class IsSaleOrderColis(models.Model):
                                 new_line.colis_id = dict_colis[i].id
 
 
-
-
     def lignes_colis_action(self):
         for obj in self:
             return {
@@ -109,17 +104,12 @@ class IsSaleOrderColis(models.Model):
             return res
 
 
-
-
-
-
 class IsSaleOrderColisageComposant(models.Model):
     _name='is.sale.order.colisage.composant'
     _description = "Colisage des composants"
 
     order_id     = fields.Many2one('sale.order', 'Commande', required=True, ondelete='cascade')
     colis_id     = fields.Many2one('is.sale.order.colis', 'Colis', group_expand='_group_expand_colis_id', required=True)
-    #product_id   = fields.Many2one('product.product', 'Article')
     product_id   = fields.Many2one("product.product", string="Article", related="sale_line_id.product_id", readonly=True)
     composant_id = fields.Many2one('product.product', 'Composant')
     qty          = fields.Float(string='Quantité', digits='Product Unit of Measure')
@@ -127,9 +117,7 @@ class IsSaleOrderColisageComposant(models.Model):
     qty_cde      = fields.Float(related='sale_line_id.product_uom_qty')
     sale_line_id = fields.Many2one('sale.order.line', 'Ligne de commande', required=True)
     colis_ids    = fields.Many2many('is.sale.order.colis', 'is_sale_order_line_colis_ids', 'line_id', 'colis_id', store=False, readonly=True, compute='_compute_colis_ids', string="Colis autorisés")
-
     state        = fields.Selection(related="order_id.state")
-
     volume_article = fields.Float(related="composant_id.is_volume")
     date_order   = fields.Datetime(string="Date commande" , store=True, readonly=True, compute='_compute')
     partner_id   = fields.Many2one('res.partner', 'Client', store=True, readonly=True, compute='_compute')
@@ -202,7 +190,8 @@ class sale_order(models.Model):
     is_gestion_colisage  = fields.Boolean(related="partner_id.is_gestion_colisage")
     is_delai             = fields.Datetime('Délai')
     is_eco_contribution  = fields.Monetary("Eco contribution", compute='_compute_is_eco_contribution', store=True, readonly=True, currency_field='currency_id')
-
+    is_emplacement_charge_id = fields.Many2one(related="partner_id.is_emplacement_charge_id")
+    is_charge_ids            = fields.One2many('stock.lot', 'is_sale_order_id', 'Charges')
 
 
     @api.depends('order_line.is_eco_contribution')
@@ -217,6 +206,33 @@ class sale_order(models.Model):
     def write(self, vals):
         res = super(sale_order, self).write(vals)
         self.ajout_eco_contribution()
+        return res
+
+
+    def action_confirm(self):
+        res = super(sale_order, self).action_confirm()
+        for obj in self:
+            if obj.is_emplacement_charge_id:
+                domain=[
+                    ('sale_id', '=' , obj.id),
+                    ('state'  , '!=', 'cancel'),
+                ]
+                pickings = self.env['stock.picking'].search(domain,limit=1)
+                for picking in pickings:
+                    picking.move_line_ids_without_package.unlink()
+                    for line in obj.order_line:
+                        if line.is_charge_id:
+                            vals={
+                                "picking_id"        : picking.id,
+                                "product_id"        : line.product_id.id,
+                                "lot_id"            : line.is_charge_id.id,
+                                "company_id"        : picking.company_id.id,
+                                "product_uom_id"    : line.product_id.uom_id.id,
+                                "location_id"       : obj.is_emplacement_charge_id.id,
+                                "qty_done"          : line.product_uom_qty,
+                                "reserved_uom_qty"  : line.product_uom_qty,
+                            }
+                            self.env['stock.move.line'].create(vals)
         return res
 
 
@@ -527,6 +543,58 @@ class sale_order(models.Model):
             }
 
 
+    def associer_charges_action(self):
+        for obj in self:
+            domain=[
+                ('location_id','=',obj.is_emplacement_charge_id.id)
+            ]
+            quants = self.env['stock.quant'].search(domain)
+
+            print(quants)
+
+            ids=[]
+            for quant in quants:
+                if  quant.quantity>0 and quant.lot_id:
+                    order_id = quant.lot_id.is_sale_order_id.id
+                    if order_id==obj.id or order_id==False:
+                        ids.append(quant.lot_id.id)
+            view_id = self.env.ref('is_jurabotec.is_stock_lot_sale_order_kanban_view', False)
+            ctx={
+                'is_sale_order_id':  obj.id,
+            }
+            return {
+                "name": "Charges",
+                "view_mode": "kanban,tree,form",
+                "views": [(view_id.id, 'kanban'),(False, 'tree'),(False, 'form')],
+                "res_model": "stock.lot",
+                "domain": [
+                    ("id","in",ids),
+                ],
+                "type": "ir.actions.act_window",
+                "context": ctx,
+            }
+
+
+    def actualiser_lignes_action(self):
+        for obj in self:
+            obj.order_line.unlink()
+            sequence=10
+            for charge in obj.is_charge_ids:
+                vals={
+                    'order_id'    : obj.id,
+                    'product_id'  : charge.product_id.id,
+                    'name'        : charge.product_id.name_get()[0][1],
+                    'sequence'    : sequence,
+                    'is_charge_id': charge.id,
+                }
+                line = self.env['sale.order.line'].create(vals)
+                line._onchange_product_id()
+                line.product_uom_qty = charge.product_qty
+                line._onchange_product_uom_qty()
+                line._compute_longeur()
+                sequence+=10
+
+
 class sale_order_line(models.Model):
     _inherit = "sale.order.line"
 
@@ -539,9 +607,6 @@ class sale_order_line(models.Model):
         ('m3'   , 'm3'),
         ('unite', 'Unité'),
     ], "Unité", help="Unité de la liste de prix")
-    # is_longueur        = fields.Float(string="Longueur",      digits='Product Unit of Measure', related="product_id.is_longueur", readonly=True)
-    # is_surface         = fields.Float(string="Surface",       digits='Product Unit of Measure', related="product_id.is_surface" , readonly=True)
-    # is_volume          = fields.Float(string="Volume",        digits='Volume'                 , related="product_id.is_volume"  , readonly=True)
 
     is_longueur        = fields.Float(string="Longueur",      digits='Product Unit of Measure', compute='_compute_longeur')
     is_surface         = fields.Float(string="Surface",       digits='Product Unit of Measure', compute='_compute_longeur')
@@ -562,10 +627,7 @@ class sale_order_line(models.Model):
 
     is_bareme_valobat_id = fields.Many2one(related='product_id.is_bareme_valobat_id')
     is_eco_contribution  = fields.Monetary("Eco contribution", compute='_compute_is_eco_contribution', store=True, readonly=True, currency_field='currency_id')
-
-
-    # is_eco_contribution  = fields.Monetary("Eco contribution", digits="Product Price", compute='_compute_is_eco_contribution', store=True, readonly=True, currency_field='currency_id')
-
+    is_charge_id         = fields.Many2one('stock.lot', string="Charge", readonly=True, copy=False)
 
 
     @api.depends('product_id', 'product_uom_qty')
@@ -640,29 +702,15 @@ class sale_order_line(models.Model):
                     price = line.fixed_price
                     unite = line.is_unite
                     break
-
             #** Recherche dans les artciles si non trouvé *********************
             if price==0:
                 for line in pricelist.item_ids:
-                    # if line.product_id == self.product_id:
-                    #     price = line.fixed_price
-                    #     unite = line.is_unite
-                    #     break
                     if line.product_tmpl_id == self.product_template_id and self.product_uom_qty>=line.min_quantity:
                         price = line.fixed_price
                         unite = line.is_unite
-                        break
-                    
+                        break       
         self.is_prix_tarif  = price
         self.is_unite_tarif = unite
-
-
-    # Type d'unité : Volume, Unité, Surface, Longueur/distance
-    # Epaisseur (mm)
-    # Longueur (m)
-    # Largeur (mm)
-    # Surface (m2)
-    # Volume (m3)
 
 
     def _get_dimensions(self):
