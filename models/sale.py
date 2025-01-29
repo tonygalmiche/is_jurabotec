@@ -24,17 +24,20 @@ class IsSaleOrderColis(models.Model):
             return report.report_action([obj.id])
 
 
-    def repartir_par1_colis_action(self):
-        self.repartir_par_colis_action(maxi=1)
+    # def repartir_par1_colis_action(self):
+    #     self.repartir_par_colis_action(maxi=1)
 
 
-    def repartir_par8_colis_action(self):
-        self.repartir_par_colis_action(maxi=8)
+    # def repartir_par8_colis_action(self):
+    #     self.repartir_par_colis_action(maxi=8)
+
+
+    def repartir_par_x_colis_action(self):
+        self.repartir_par_colis_action(maxi=self.repartition)
 
 
     def repartir_par_colis_action(self,maxi=8):
         for obj in self:
-
             #** Test si supérieur à maxi
             for line in obj.colisage_ids:
                 if line.qty_cde<=maxi:
@@ -549,9 +552,6 @@ class sale_order(models.Model):
                 ('location_id','=',obj.is_emplacement_charge_id.id)
             ]
             quants = self.env['stock.quant'].search(domain)
-
-            print(quants)
-
             ids=[]
             for quant in quants:
                 if  quant.quantity>0 and quant.lot_id:
