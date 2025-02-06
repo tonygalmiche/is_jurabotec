@@ -68,7 +68,6 @@ class StockPicking(models.Model):
         for obj in self:
             ZPL=""
             for line in obj.move_ids_without_package:
-                print(line,line.move_line_ids)
                 for move_line in line.move_line_ids:
                     ZPL+=move_line.lot_id.get_zpl()
                     print(move_line.lot_id.name)
@@ -308,7 +307,7 @@ class StockLot(models.Model):
 ^FWR          ^FX Rotation à 90°
 ^CF0,60       ^FX Taille de police
 
-^BY10,4,270                           ^FX Dimensions du code barre
+^BY7,4,200                        ^FX Dimensions du code barre
 ^FO500,50^BC^FD%s^FS              ^FX Code barre avec texte dessous
 
 ^CF0,70                                                                         ^FX Taille de police
