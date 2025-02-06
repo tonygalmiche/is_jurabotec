@@ -195,6 +195,7 @@ class sale_order(models.Model):
     is_eco_contribution  = fields.Monetary("Eco contribution", compute='_compute_is_eco_contribution', store=True, readonly=True, currency_field='currency_id')
     is_emplacement_charge_id = fields.Many2one(related="partner_id.is_emplacement_charge_id")
     is_charge_ids            = fields.One2many('stock.lot', 'is_sale_order_id', 'Charges')
+    is_nombre_unites         = fields.Integer("Nombre d’unités")
 
 
     @api.depends('order_line.is_eco_contribution')

@@ -70,7 +70,6 @@ class StockPicking(models.Model):
             for line in obj.move_ids_without_package:
                 for move_line in line.move_line_ids:
                     ZPL+=move_line.lot_id.get_zpl()
-                    print(move_line.lot_id.name)
             path="/tmp/etiquette.zpl"
             fichier = open(path, "w")
             fichier.write(ZPL)

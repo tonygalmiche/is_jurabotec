@@ -10,13 +10,13 @@
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
     </record>
-    <record id="init_colisage_actions_server" model="ir.actions.server">
+    <!-- <record id="init_colisage_actions_server" model="ir.actions.server">
         <field name="name">Initialisation du colisage</field>
         <field name="model_id" ref="sale.model_sale_order"/>
         <field name="binding_model_id" ref="sale.model_sale_order"/>
         <field name="state">code</field>
         <field name="code">records.colisage_init()</field>
-    </record>
+    </record> -->
     <record id="is_view_order_form" model="ir.ui.view">
         <field name="name">is_view_order_form</field>
         <field name="model">sale.order</field>
@@ -73,6 +73,7 @@
             <field name="payment_term_id" position="after">
                 <field name="is_eco_contribution"/>
                 <field name="is_emplacement_charge_id"/>
+                <field name="is_nombre_unites"/>
             </field>
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[@name='ordered_qty']" position="after">
                 <label for="is_bareme_valobat_id"/>
@@ -215,11 +216,12 @@
             </field>
 
             <field name="state" position="replace"/>
-            <field name="invoice_status" position="before">
+            <field name="invoice_status" position="before" optional="show">
                 <field name="state" widget="badge"  decoration-success="state in ('sale','done')" decoration-info="state in ('draft','sent')" optional="show"/>
             </field>
             <field name="amount_untaxed" position="before">
-                <field name="is_eco_contribution" sum="Total"/>
+                <field name="is_eco_contribution" sum="Total" optional="show"/>
+                <field name="is_nombre_unites"    sum="Total" optional="show"/>
             </field>
         </field>
     </record>
@@ -322,8 +324,8 @@
         <field name="name">Calendrier des livraisons</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">sale.order</field>
-        <field name="view_mode">calendar,tree,form,kanban,pivot,graph,activity</field>
-        <field name="view_id" ref="is_calendrier_livraison_calendar"/>
+        <field name="view_mode">tree,form,calendar,kanban,pivot,graph,activity</field>
+        <field name="view_id" ref=""/>
     </record>
 
 
