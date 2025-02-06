@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-from odoo import _, api, fields, models
-from odoo.tools.float_utils import float_compare, float_is_zero
-from odoo.exceptions import UserError, ValidationError
+from odoo import _, api, fields, models                          # type: ignore
+from odoo.tools.float_utils import float_compare, float_is_zero  # type: ignore
+from odoo.exceptions import UserError, ValidationError           # type: ignore
 import os
+import logging
+_logger = logging.getLogger(__name__)
+
 
 
 # class StockQuant(models.Model):
@@ -308,12 +311,18 @@ class StockLot(models.Model):
 ^XZ
             """%(obj.name,designation,fournisseur,longueur,quantite)
 
+
+            _logger.info(ZPL)
+
+
+
             path="/tmp/etiquette.zpl"
             fichier = open(path, "w")
             fichier.write(ZPL)
             fichier.close()
-            imprimante = "D621-1"
+            imprimante = "ZD621-1"
             cmd="lpr -h -P"+imprimante+" "+path
+            _logger.info(cmd)
             os.system(cmd)
 
 
