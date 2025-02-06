@@ -2,6 +2,7 @@
 from odoo import _, api, fields, models
 from odoo.tools.float_utils import float_compare, float_is_zero
 from odoo.exceptions import UserError, ValidationError
+import os
 
 
 # class StockQuant(models.Model):
@@ -274,6 +275,46 @@ class StockLot(models.Model):
     def init_prix_achat_ir_cron(self):
         self.env['stock.lot'].search([]).init_prix_achat_action()
         return True
+
+
+    def imprime_etiquette_action(self):
+        for obj in self:
+            designation = obj.product_id.name_get()[0][1]
+            fournisseur = obj.is_fournisseur_id.name
+            longueur    = round(obj.product_id.is_longueur,1)
+            quantite    = round(obj.product_qty)
+            ZPL="""
+^XA
+^CI28         ^FX UTF-8
+
+^FWR          ^FX Rotation à 90°
+^CF0,60       ^FX Taille de police
+
+^BY10,4,270                           ^FX Dimensions du code barre
+^FO500,50^BC^FD%s^FS              ^FX Code barre avec texte dessous
+
+^CF0,70                                                                         ^FX Taille de police
+^FO310,50^FD%s^FS   ^FX Postion x,y et texte
+
+^CF0,60                                                                         ^FX Taille de police
+^FO230,50^FD%s^FS   ^FX Postion x,y et texte
+
+^CF0,180                                                                        ^FX Taille de police
+^FO10,50^FD%sm ^FS   ^FX Postion x,y et texte
+
+^CF0,180                                                                        ^FX Taille de police
+^FO10,800^FD%s^FS   ^FX Postion x,y et texte
+
+^XZ
+            """%(obj.name,designation,fournisseur,longueur,quantite)
+
+            path="/tmp/etiquette.zpl"
+            fichier = open(path, "w")
+            fichier.write(ZPL)
+            fichier.close()
+            imprimante = "D621-1"
+            cmd="lpr -h -P"+imprimante+" "+path
+            os.system(cmd)
 
 
 class StockQuant(models.Model):

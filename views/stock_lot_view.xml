@@ -28,11 +28,36 @@
         <!-- <record id="is_calculateur_operation_action" model="ir.actions.act_window"> -->
 
 
+  <!-- <header>
+                <button 
+                    string="Lignes de ce colis" 
+                    name="lignes_colis_action" 
+                    type="object" 
+                />
+                
+
+                 -->
+
+
+
     <record id="is_view_production_lot_form" model="ir.ui.view">
         <field name="name">is_view_production_lot_form</field>
         <field name="model">stock.lot</field>
         <field name="inherit_id" ref="stock.view_production_lot_form"/>
         <field name="arch" type="xml">
+
+
+            <xpath expr="//sheet[1]" position="before">
+                <header>
+                    <button 
+                        string="Imprimer étiquette" 
+                        name="imprime_etiquette_action" 
+                        type="object" 
+                    />
+                </header>
+            </xpath>
+
+
             <field name="ref" position="after">
                 <field name="is_purchase_order_id"/>
                 <field name="is_fournisseur_id"/>
