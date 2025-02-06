@@ -14,7 +14,13 @@
                     }
                 </style>
             </xpath>
-
+            <button name="action_open_label_type" position="replace">
+                <button 
+                    string="Imprimer étiquette" 
+                    name="imprime_etiquette_action" 
+                    type="object" 
+                />
+            </button>
             <button name="action_cancel" position="after">
                 <button name="liste_charges_action" string="Liste des charges" type="object"/>
             </button>

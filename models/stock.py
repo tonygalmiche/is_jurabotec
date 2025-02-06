@@ -64,7 +64,22 @@ class StockPicking(models.Model):
             }
 
 
-
+    def imprime_etiquette_action(self):
+        for obj in self:
+            ZPL=""
+            for line in obj.move_ids_without_package:
+                print(line,line.move_line_ids)
+                for move_line in line.move_line_ids:
+                    ZPL+=move_line.lot_id.get_zpl()
+                    print(move_line.lot_id.name)
+            path="/tmp/etiquette.zpl"
+            fichier = open(path, "w")
+            fichier.write(ZPL)
+            fichier.close()
+            imprimante = "ZD621-1"
+            cmd="lpr -h -P"+imprimante+" "+path
+            _logger.info(cmd)
+            os.system(cmd)
 
 
 class StockMove(models.Model):
@@ -280,7 +295,7 @@ class StockLot(models.Model):
         return True
 
 
-    def imprime_etiquette_action(self):
+    def get_zpl(self):
         for obj in self:
             designation = obj.product_id.name_get()[0][1]
             fournisseur = obj.is_fournisseur_id.name
@@ -310,12 +325,13 @@ class StockLot(models.Model):
 
 ^XZ
             """%(obj.name,designation,fournisseur,longueur,quantite)
-
-
             _logger.info(ZPL)
+            return ZPL
 
 
-
+    def imprime_etiquette_action(self):
+        for obj in self:
+            ZPL = obj.get_zpl()
             path="/tmp/etiquette.zpl"
             fichier = open(path, "w")
             fichier.write(ZPL)
