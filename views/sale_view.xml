@@ -179,7 +179,7 @@
                             <field name="name"/>
                         </tree>
                     </field>
-                    <group>
+                    <div>
                         <button 
                             name="colisage_action" 
                             string="Gestion du colisage des composants" type="object" 
@@ -188,9 +188,15 @@
                         <button 
                             name="liste_colis_action" 
                             string="Liste des colis" type="object" 
-                            class="btn btn-primary"
+                            class="btn btn-primary margin_left10"
                         />
-                    </group>
+                       <button 
+                            name="reinit_colisage_action" 
+                            string="Ré-initialiser le colisage" type="object" 
+                            class="btn btn-warning margin_left100"
+                            confirm="ATTENTION : Cela va supprimer les colis et le colisage"
+                        />
+                    </div>
                 </page>
             </xpath>
         </field>
@@ -341,13 +347,13 @@
                     name="lignes_colis_action" 
                     type="object" 
                 />
-                <button 
+                <!-- <button 
                     string="Répartir les lignes de ce colis par le nombre indiqué dans le champ 'Répartition'" 
                     name="repartir_par_x_colis_action" 
                     type="object" 
                     class="btn btn-info"
-                />
-                <!-- <button 
+                /> -->
+                <button 
                     string="Répartir les lignes de ce colis par 8 maximum" 
                     name="repartir_par8_colis_action" 
                     type="object" 
@@ -356,13 +362,13 @@
                     string="Répartir les lignes de ce colis par 1 maximum" 
                     name="repartir_par1_colis_action" 
                     type="object" 
-                /> -->
+                />
             </header>
             <sheet>
                 <group>
                     <field name="order_id" readonly="1"/>
                     <field name="name"     readonly="1"/>
-                    <field name="repartition"/>
+                    <!-- <field name="repartition"/> -->
                 </group>
             </sheet>
         </form>
@@ -414,6 +420,18 @@
         <field name="model">is.sale.order.colisage.composant</field>
         <field name="arch" type="xml">
         <form>
+            <style>
+                .o_form_label{
+                    white-space: nowrap;
+                }
+            </style>
+            <header>
+                <button 
+                    string="Créer les copies" 
+                    name="creer_copie_action" 
+                    type="object" 
+                />
+            </header>
             <sheet>
                 <group>
                     <group>
@@ -427,6 +445,7 @@
                         <field name="qty"/>
                         <field name="qty_cde"/>
                         <field name="qty_bom"/>
+                        <field name="nb_copies"/>
                     </group>
                 </group>
             </sheet>

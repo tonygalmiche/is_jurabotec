@@ -24,16 +24,16 @@ class IsSaleOrderColis(models.Model):
             return report.report_action([obj.id])
 
 
-    # def repartir_par1_colis_action(self):
-    #     self.repartir_par_colis_action(maxi=1)
+    def repartir_par1_colis_action(self):
+        self.repartir_par_colis_action(maxi=1)
 
 
-    # def repartir_par8_colis_action(self):
-    #     self.repartir_par_colis_action(maxi=8)
+    def repartir_par8_colis_action(self):
+        self.repartir_par_colis_action(maxi=8)
 
 
-    def repartir_par_x_colis_action(self):
-        self.repartir_par_colis_action(maxi=self.repartition)
+    # def repartir_par_x_colis_action(self):
+    #     self.repartir_par_colis_action(maxi=self.repartition)
 
 
     def repartir_par_colis_action(self,maxi=8):
@@ -125,6 +125,7 @@ class IsSaleOrderColisageComposant(models.Model):
     date_order   = fields.Datetime(string="Date commande" , store=True, readonly=True, compute='_compute')
     partner_id   = fields.Many2one('res.partner', 'Client', store=True, readonly=True, compute='_compute')
     volume_total = fields.Float("Volume total (m3) "      , store=True, readonly=True, compute='_compute', digits='Volume')
+    nb_copies    = fields.Integer("Nombre de copies à faire", default=2)
 
 
     @api.depends('order_id','order_id.date_order')
@@ -161,6 +162,20 @@ class IsSaleOrderColisageComposant(models.Model):
         colis = self.env['is.sale.order.colis'].search([])
         colis = stages.order_id.is_colis_ids
         return colis
+
+
+    def creer_copie_action(self):
+        for obj in self:
+            if obj.nb_copies>1:
+                qty = ceil(obj.qty / obj.nb_copies)
+                reste = obj.qty - qty
+                obj.qty = qty
+                for i in range(1,obj.nb_copies):
+                    reste=reste-qty
+                    if reste<0:
+                        qty = qty+reste
+                    copy = obj.copy()
+                    copy.qty=qty
 
 
     def dupliquer_colis_action(self):
@@ -487,6 +502,13 @@ class sale_order(models.Model):
                     ],
                     "type": "ir.actions.act_window",
                 }
+
+
+    def reinit_colisage_action(self):
+        for obj in self:
+            obj.is_colisage_ids.unlink()
+            obj.is_colis_ids.unlink()
+            obj.colisage_action()
 
 
     def colisage_init(self):
