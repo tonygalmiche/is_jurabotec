@@ -296,6 +296,7 @@ class StockLot(models.Model):
 
     def get_zpl(self):
         for obj in self:
+            obj.init_prix_achat_action()
             designation = obj.product_id.name_get()[0][1]
             fournisseur = obj.is_fournisseur_id.name
             longueur    = round(obj.product_id.is_longueur,1)
