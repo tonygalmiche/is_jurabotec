@@ -4,7 +4,8 @@ from odoo import api, fields, models, _
 from random import randint
 import os
 import base64
-#from odoo.osv import expression
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class IsBaremeValobat(models.Model):
@@ -117,6 +118,8 @@ class ProductTemplate(models.Model):
     is_prix_revient      = fields.Float("Prix de revient (€/ml)", compute='_compute_is_prix_revient', store=False, help="Montant des opérations + Montant bois")
     is_cout_fixe         = fields.Float("Coût fixe", help="Coût fixe ajouté aux variantes")
     is_bareme_valobat_id = fields.Many2one('is.bareme.valobat', 'Barème Valobat')
+    is_ligne_etiquette1  = fields.Char("Ligne étiquette 1")
+    is_ligne_etiquette2  = fields.Char("Ligne étiquette 2")
 
 
     def init_cout_action(self):
@@ -152,6 +155,53 @@ class ProductTemplate(models.Model):
                     obj.is_plan_ids=[(6,0,[attachment.id])]
 
 
+    def get_zpl(self):
+        for obj in self:
+            ligne1 = obj.is_ligne_etiquette1
+            ligne2 = obj.is_ligne_etiquette2
+            ligne3 = obj.is_ref_plan
+            #^FO5,8^GB329,187,3^FS             ^FX Rectangle bordure de l'étiquette
+            ZPL="""
+^XA
+^FWR
+^FO10,15    ^A0N,60,40   ^FD%s^FS     ^FX Ligne 1
+^FO10,82    ^A0N,60,40   ^FD%s^FS     ^FX Ligne 2
+^FO10,145   ^A0N,60,40   ^FD%s^FS     ^FX Ligne 3
+^XZ
+            """%(ligne1,ligne2,ligne3)
+            _logger.info(ZPL)
+            return ZPL
+
+
+    def imprime_etiquette_action(self):
+        for obj in self:
+            ZPL = obj.get_zpl()
+            _logger.info(ZPL)
+            path="/tmp/etiquette-petite.zpl"
+            fichier = open(path, "w")
+            fichier.write(ZPL)
+            fichier.close()
+            imprimante = "ZD621-2"
+            cmd="lpr -h -P"+imprimante+" "+path
+            _logger.info(cmd)
+            os.system(cmd)
+
+
+class is_product_template_etiquette(models.TransientModel):
+    _name = 'is.product.template.etiquette'
+    _description = "Nombre d'étiquettes à imprimer"
+
+    nb_etiquettes = fields.Integer("Nombre d'étiquettes à imprimer", default=1, required=True)
+
+
+    def imprimer(self):
+        product_id = self._context.get('active_id')
+        product = self.env['product.template'].browse(product_id)
+        if self.nb_etiquettes>0 and product:
+           for i in range(0,self.nb_etiquettes):
+            product.imprime_etiquette_action()
+
+
 class ProductProduct(models.Model):
     _inherit = "product.product"
  
@@ -161,6 +211,11 @@ class ProductProduct(models.Model):
     is_prix_revient_variante = fields.Float("Prix de revient variante"                      , compute='_compute_is_prix_revient_variante')
     is_volume_stock          = fields.Float("Volume en stock (m3) ", digits='Volume'        , compute='_compute_is_volume_stock')
     is_eco_contribution      = fields.Float("Eco contribution", digits="Product Price")
+
+
+    def imprime_etiquette_action(self):
+        for obj in self:
+            obj.product_tmpl_id.imprime_etiquette_action()
 
 
     @api.depends('product_template_variant_value_ids','is_largeur','is_epaisseur')
