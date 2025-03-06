@@ -294,7 +294,15 @@
         </field>
     </record>
 
+
     <!-- stock.quant -->
+    <record id="is_stock_quant_imprime_etiquette_actions_server" model="ir.actions.server">
+        <field name="name">Imprimer les étiquettes</field>
+        <field name="model_id" ref="stock.model_stock_quant"/>
+        <field name="binding_model_id" ref="stock.model_stock_quant"/>
+        <field name="state">code</field>
+        <field name="code">records.imprime_etiquette_action()</field>
+    </record>
     <record id="charge_stock_quant_kanban_view" model="ir.ui.view">
         <field name="name">charge_stock_quant_kanban_view</field>
         <field name="model">stock.quant</field>

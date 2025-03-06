@@ -324,7 +324,6 @@ class StockLot(models.Model):
 
 ^XZ
             """%(obj.name,designation,fournisseur,longueur,quantite)
-            _logger.info(ZPL)
             return ZPL
 
 
@@ -382,8 +381,21 @@ class StockQuant(models.Model):
             }
 
 
-
-
+    def imprime_etiquette_action(self):
+        nb=len(self)
+        ct=1
+        for obj in self:
+            ZPL = obj.lot_id.get_zpl()
+            path="/tmp/etiquette-lot-stock-quant.zpl"
+            fichier = open(path, "w")
+            fichier.write(ZPL)
+            fichier.close()
+            imprimante = "ZD621-1"
+            cmd="lpr -h -P"+imprimante+" "+path
+            msg="%s/%s : %s"%(ct,nb,cmd)
+            _logger.info(msg)
+            os.system(cmd)
+            ct+=1
 
 
     @api.model
