@@ -185,6 +185,37 @@ class StockLocation(models.Model):
             }
 
 
+    def get_zpl(self):
+        for obj in self:
+            ZPL="""
+^XA
+^CI28                    ^FX UTF-8
+^FWR                     ^FX Rotation à 90°
+^CF0,60                  ^FX Taille de police
+^BY12,6,370              ^FX Dimensions du code barre
+^FO400,150^BC^FD%s^FS    ^FX Code barre avec texte dessous
+^CF0,100                 ^FX Taille de police
+^FO100,50^FD%s^FS        ^FX Postion x,y et texte
+^XZ
+            """%(obj.id,obj.name)
+            return ZPL
+
+
+    def imprime_etiquette_action(self):
+        nb=len(self)
+        ct=1
+        for obj in self:
+            ZPL = obj.get_zpl()
+            path="/tmp/etiquette-emplacement.zpl"
+            fichier = open(path, "w")
+            fichier.write(ZPL)
+            fichier.close()
+            imprimante = "ZD621-1"
+            cmd="lpr -h -P"+imprimante+" "+path
+            msg="%s/%s : %s"%(ct,nb,cmd)
+            _logger.info(msg)
+            os.system(cmd)
+            ct+=1
 
 
 class StockLot(models.Model):
