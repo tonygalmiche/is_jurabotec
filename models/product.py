@@ -157,9 +157,9 @@ class ProductTemplate(models.Model):
 
     def get_zpl(self):
         for obj in self:
-            ligne1 = obj.is_ligne_etiquette1
-            ligne2 = obj.is_ligne_etiquette2
-            ligne3 = obj.is_ref_plan
+            ligne1 = obj.is_ligne_etiquette1 or ''
+            ligne2 = obj.is_ligne_etiquette2 or ''
+            ligne3 = obj.is_ref_plan or ''
             #^FO5,8^GB329,187,3^FS             ^FX Rectangle bordure de l'étiquette
             ZPL="""
 ^XA
@@ -169,14 +169,12 @@ class ProductTemplate(models.Model):
 ^FO10,145   ^A0N,60,40   ^FD%s^FS     ^FX Ligne 3
 ^XZ
             """%(ligne1,ligne2,ligne3)
-            _logger.info(ZPL)
             return ZPL
 
 
     def imprime_etiquette_action(self):
         for obj in self:
             ZPL = obj.get_zpl()
-            _logger.info(ZPL)
             path="/tmp/etiquette-petite.zpl"
             fichier = open(path, "w")
             fichier.write(ZPL)
