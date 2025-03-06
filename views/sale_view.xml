@@ -74,6 +74,7 @@
                 <field name="is_eco_contribution"/>
                 <field name="is_emplacement_charge_id"/>
                 <field name="is_nombre_unites"/>
+                <field name="is_solde_commande"/>
             </field>
             <xpath expr="//page[@name='order_lines']/field/form/group/group/div[@name='ordered_qty']" position="after">
                 <label for="is_bareme_valobat_id"/>
@@ -229,6 +230,9 @@
                 <field name="is_eco_contribution" sum="Total" optional="show"/>
                 <field name="is_nombre_unites"    sum="Total" optional="show"/>
             </field>
+            <field name="invoice_status" position="after">
+                <field name="is_solde_commande" optional="hide"/>
+            </field>
         </field>
     </record>
     <record id="is_view_quotation_tree" model="ir.ui.view">
@@ -240,8 +244,9 @@
                 <field name="is_devis_id" optional="show"/>
             </field> -->
             <field name="user_id" position="before">
-                <field name="client_order_ref" optional="hide"/>
+                <field name="client_order_ref"  optional="hide"/>
                 <field name="is_num_cde_client" optional="hide"/>
+                <field name="is_solde_commande" optional="hide"/>
             </field>
         </field>
     </record>

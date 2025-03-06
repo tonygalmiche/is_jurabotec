@@ -211,6 +211,7 @@ class sale_order(models.Model):
     is_emplacement_charge_id = fields.Many2one(related="partner_id.is_emplacement_charge_id")
     is_charge_ids            = fields.One2many('stock.lot', 'is_sale_order_id', 'Charges')
     is_nombre_unites         = fields.Integer("Nombre d’unités")
+    is_solde_commande        = fields.Boolean('Commande soldée', default=False)
 
 
     @api.depends('order_line.is_eco_contribution')
