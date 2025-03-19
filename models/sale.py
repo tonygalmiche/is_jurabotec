@@ -291,11 +291,13 @@ class sale_order(models.Model):
             self.is_delai = delai
 
 
-    @api.depends('order_line','order_line.product_uom_qty')
+    @api.depends('order_line','order_line.product_uom_qty','is_solde_commande')
     def _compute_is_volume_total(self):
         for obj in self:
             volume = 0
             for line in obj.order_line:
+                self.env.context = self.with_context(noonchange=False).env.context
+                line._onchange_product_uom_qty()
                 volume+=line.is_volume_total
             obj.is_volume_total = volume
 

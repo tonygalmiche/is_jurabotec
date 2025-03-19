@@ -32,7 +32,7 @@ class StockPicking(models.Model):
     is_detail_charge         = fields.Boolean("Imprimer le détail des charges")
 
 
-    @api.depends('move_ids_without_package','is_bl_fournisseur','state')
+    @api.depends('move_ids_without_package','is_bl_fournisseur','state','is_detail_charge')
     def _compute_is_volume_total(self):
         for obj in self:
             volume = 0
