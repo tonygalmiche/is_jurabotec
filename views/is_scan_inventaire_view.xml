@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="is_scan_inventaire_form" model="ir.ui.view">
+            <field name="name">is_scan_inventaire_form</field>
+            <field name="model">is.scan.inventaire</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+
+                        <style>
+                            .o_form_label{
+                                white-space: nowrap;
+                            }
+                        </style>
+
+                        <group>
+                            <field name="barcode_input" widget="barcode_scan_widget" nolabel="1" colspan="2"/>
+                            <field name="barcode_scan"/>
+                            <!-- <field name="test_onchange"/> -->
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="is_scan_inventaire_action" model="ir.actions.act_window">
+            <field name="name">Inventaire par scan</field>
+            <field name="res_model">is.scan.inventaire</field>
+            <field name="view_mode">form</field>
+        </record>
+        <menuitem id="is_scan_inventaire_menu"
+            action="is_scan_inventaire_action"
+            sequence="200" 
+        />
+    </data>
+</odoo>

@@ -113,6 +113,8 @@
     <menuitem id="is_creation_charge_menu"          sequence="30" name="Création charge" action="is_creation_charge_action"                   parent="is_tablette_menu"/>
     <menuitem id="is_modifier_charge_menu"          sequence="40" name="Modifier charge" action="modifier_charge_stock_quant_action"          parent="is_tablette_menu"/>
 
+
+
     <!-- Déplacer les menus non utilisés -->
     <menuitem id="is_archive_menu"           parent="base.menu_custom" sequence="900" name="Archives"/>
     <menuitem id="mail.menu_root_discuss"    parent="is_archive_menu"  sequence="20"/>
