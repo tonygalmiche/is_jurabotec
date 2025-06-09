@@ -139,6 +139,14 @@ class IsScanInventaire(models.Model):
                 "type": "ir.actions.act_window",
             }
 
+
+    def vers_saisie_action(self):
+        for obj in self:
+            if not obj.emplacement_dst_id:
+                raise UserError("Vous devez définir un emplacement de destination")
+            obj.state="saisie"           
+ 
+
     def terminer_inventaire_action(self):
         """
         Termine l'inventaire en déplaçant le stock des lots vers le nouvel emplacement

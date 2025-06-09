@@ -8,6 +8,13 @@
                 <form>
                     <header>
                         <button 
+                            name="vers_saisie_action" 
+                            string="Saisie" 
+                            type="object" 
+                            class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'emplacement')]}"
+                        />
+                        <button 
                             name="terminer_inventaire_action" 
                             string="Terminer" 
                             type="object" 
