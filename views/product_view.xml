@@ -128,7 +128,7 @@
             </field>
         </record>
         <record id="is_qualite_bois_action" model="ir.actions.act_window">
-            <field name="name">Bois</field>
+            <field name="name">Profil</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">is.qualite.bois</field>
             <field name="view_mode">tree,form</field>

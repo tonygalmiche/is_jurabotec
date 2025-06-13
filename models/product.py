@@ -31,7 +31,7 @@ class IsBois(models.Model):
 
 class IsQualiteBois(models.Model):
     _name='is.qualite.bois'
-    _description = "Qualité bois"
+    _description = "Profil (ex Qualité bois)"
 
     def _get_default_color(self):
         return randint(1, 11)
@@ -106,7 +106,7 @@ class ProductTemplate(models.Model):
     is_bois_id           = fields.Many2one('is.bois', 'Bois')
     is_prix_revient_bois = fields.Float("Prix de revient du bois", related="is_bois_id.prix_revient")
     is_montant_bois      = fields.Float("Montant bois", compute='_compute_is_montant_bois', store=True)
-    is_qualite_bois_ids  = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Qualité bois')
+    is_qualite_bois_ids  = fields.Many2many('is.qualite.bois', column1='product_id', column2='qualite_id', string='Profil')
     is_largeur           = fields.Float("Largeur (mm)"  , digits='Product Unit of Measure')
     is_epaisseur         = fields.Float("Epaisseur (mm)", digits='Product Unit of Measure')
     is_longueur_modele   = fields.Float("Longueur modèle (m)", digits='Product Unit of Measure', help="Ce champ est utilisé si la longueure n'est pas indiquée dans la variante")
