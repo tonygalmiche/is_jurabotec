@@ -163,6 +163,13 @@
 
 
         <!-- product.template -->
+        <record id="init_cout_actions_server" model="ir.actions.server">
+            <field name="name">Initialisation coût avec calculateur</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="binding_model_id" ref="product.model_product_template"/>
+            <field name="state">code</field>
+            <field name="code">records.init_cout_actions_server()</field>
+        </record>
         <record id="is_import_plan_actions_server" model="ir.actions.server">
             <field name="name">Importation plan</field>
             <field name="model_id" ref="product.model_product_template"/>
@@ -198,7 +205,13 @@
                 <page name="general_information" position="after">
                     <page name="calculateur" string="Calculateur">
                         <group>
-                            <field name="is_litre_metre"/>
+                            <group>
+                                <field name="is_largeur_brute"/>
+                                <field name="is_epaisseur_brute"/>
+                            </group>
+                            <group>
+                                <field name="is_litre_metre"/>
+                            </group>
                         </group>
                         <field name="is_operation_ids" nolabel="1">
                             <tree editable="bottom">
@@ -215,8 +228,8 @@
                             <field name="is_montant_bois"/>
                             <field name="is_prix_revient"/>
                             <field name="is_cout_fixe"/>
-                            <button name="init_cout_action" string="Initialisation coût" type="object"/>
                         </group>
+                        <button name="init_cout_action" string="Initialisation coût" type="object"/>
                     </page>
                 </page>
             </field>
@@ -232,6 +245,8 @@
                     <field name="is_epaisseur"         optional="show"/>
                     <field name="is_largeur"           optional="show"/>
                     <field name="is_longueur_modele"   optional="hide"/>
+                    <field name="is_largeur_brute"     optional="hide"/>
+                    <field name="is_epaisseur_brute"   optional="hide"/>
                     <field name="is_litre_metre"       optional="hide"/>
                     <field name="is_prix_revient"      optional="hide"/>
                     <field name="is_cout_fixe"         optional="hide"/>
