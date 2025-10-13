@@ -7,23 +7,6 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-
-# class StockQuant(models.Model):
-#     _inherit = "stock.quant"
-
-#     def modifier_charge_action(self):
-#         for obj in self:
-#             view_id = self.env.ref('is_jurabotec.modifier_charge_stock_quant_form_view', False)
-#             return {
-#                 "name": obj.lot_id,
-#                 "view_mode": "form",
-#                 "res_model": "stock.quant",
-#                 "views": [(view_id.id, 'form')],
-#                 "res_id": obj.id,
-#                 "type": "ir.actions.act_window",
-#             }
-
-
 class StockPicking(models.Model):
     _inherit = "stock.picking"
  
@@ -370,107 +353,6 @@ class StockLot(models.Model):
             cmd="lpr -h -P"+imprimante+" "+path
             _logger.info(cmd)
             os.system(cmd)
-
-
-class StockQuant(models.Model):
-    _inherit = "stock.quant"
-
-    is_cout          = fields.Float(string="Coût"      , compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût pour valorisation stock (Prix achat du lot ou prix dans fiche article)")
-    is_cout_total    = fields.Float(string="Coût total", compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût total pour valorisation stock")
-    is_sale_order_id = fields.Many2one(related="lot_id.is_sale_order_id")
-
-
-    def _compute_is_cout(self):
-        for obj in self:
-            cout = obj.lot_id.is_prix_achat
-            if not cout:
-                cout = obj.product_id.standard_price
-            obj.is_cout = cout
-            obj.is_cout_total = obj.quantity * cout
-
-
-    def deplacer_quant_action(self):
-        for obj in self:
-            context = self.env.context
-            origine_id = obj.location_id.id
-            new_context = dict(context).copy()
-            new_context["origine_id"] = origine_id
-            new_context["lot_id"]     = obj.lot_id.id
-            new_context["product_id"] = obj.product_id.id
-            new_context["quantity"]   = obj.quantity
-            view_id = self.env.ref('is_jurabotec.is_stock_location_kanban_view2', False)
-            return {
-                "name": "Lot %s"%(obj.lot_id.name),
-                "view_mode": "kanban",
-                "res_model": "stock.location",
-                "views": [(view_id.id, 'kanban')],
-                "domain": [
-                    ('usage', '=' , 'internal'),
-                    ('id'   , '!=', origine_id),
-                ],
-                "type": "ir.actions.act_window",
-                "context": new_context,
-            }
-
-
-    def imprime_etiquette_action(self):
-        nb=len(self)
-        ct=1
-        for obj in self:
-            ZPL = obj.lot_id.get_zpl()
-            path="/tmp/etiquette-lot-stock-quant.zpl"
-            fichier = open(path, "w")
-            fichier.write(ZPL)
-            fichier.close()
-            imprimante = "ZD621-1"
-            cmd="lpr -h -P"+imprimante+" "+path
-            msg="%s/%s : %s"%(ct,nb,cmd)
-            _logger.info(msg)
-            os.system(cmd)
-            ct+=1
-
-
-    @api.model
-    def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False):
-        self = self.sudo()
-        rounding = product_id.uom_id.rounding
-        quants = self._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict)
-        reserved_quants = []
-
-        if float_compare(quantity, 0, precision_rounding=rounding) > 0:
-            # if we want to reserve
-            available_quantity = sum(quants.filtered(lambda q: float_compare(q.quantity, 0, precision_rounding=rounding) > 0).mapped('quantity')) - sum(quants.mapped('reserved_quantity'))
-            #if float_compare(quantity, available_quantity, precision_rounding=rounding) > 0:
-            #    raise UserError(_('It is not possible to reserve more products of %s than you have in stock.', product_id.display_name))
-        elif float_compare(quantity, 0, precision_rounding=rounding) < 0:
-            # if we want to unreserve
-            available_quantity = sum(quants.mapped('reserved_quantity'))
-            #if float_compare(abs(quantity), available_quantity, precision_rounding=rounding) > 0:
-            #    raise UserError(_('It is not possible to unreserve more products of %s than you have in stock.', product_id.display_name))
-        else:
-            return reserved_quants
-
-        for quant in quants:
-            if float_compare(quantity, 0, precision_rounding=rounding) > 0:
-                max_quantity_on_quant = quant.quantity - quant.reserved_quantity
-                if float_compare(max_quantity_on_quant, 0, precision_rounding=rounding) <= 0:
-                    continue
-                max_quantity_on_quant = min(max_quantity_on_quant, quantity)
-                quant.reserved_quantity += max_quantity_on_quant
-                reserved_quants.append((quant, max_quantity_on_quant))
-                quantity -= max_quantity_on_quant
-                available_quantity -= max_quantity_on_quant
-            else:
-                max_quantity_on_quant = min(quant.reserved_quantity, abs(quantity))
-                quant.reserved_quantity -= max_quantity_on_quant
-                reserved_quants.append((quant, -max_quantity_on_quant))
-                quantity += max_quantity_on_quant
-                available_quantity += max_quantity_on_quant
-
-            if float_is_zero(quantity, precision_rounding=rounding) or float_is_zero(available_quantity, precision_rounding=rounding):
-                break
-        return reserved_quants
-
 
 
 
