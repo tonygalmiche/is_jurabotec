@@ -14,14 +14,18 @@ class StockQuant(models.Model):
     is_cout          = fields.Float(string="Coût"      , compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût pour valorisation stock (Prix achat du lot ou prix dans fiche article)")
     is_cout_total    = fields.Float(string="Coût total", compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût total pour valorisation stock")
     is_sale_order_id = fields.Many2one(related="lot_id.is_sale_order_id")
-    is_volume        = fields.Float(related="product_id.is_volume")
-    is_volume_total  = fields.Float("Volume total (m3) ", digits='Volume', compute='_compute_is_volume_total')
+    is_volume        = fields.Float("Volume (m3) "      , digits='Volume', compute='_compute_volume', store=True, readonly=True)
+    is_volume_total  = fields.Float("Volume total (m3) ", digits=(14,2)  , compute='_compute_volume', store=True, readonly=True)
 
 
-    def _compute_is_volume_total(self):
+    @api.depends('quantity')
+    def _compute_volume(self):
         for obj in self:
-            obj.is_volume_total = (obj.is_volume or 0) * (obj.inventory_quantity_auto_apply or 0)
-
+            obj.is_volume       = obj.product_id.is_volume
+            volume_total = (obj.is_volume or 0) * (obj.quantity or 0)
+            if volume_total<0:
+                volume_total = 0
+            obj.is_volume_total = volume_total
 
     def _compute_is_cout(self):
         for obj in self:
