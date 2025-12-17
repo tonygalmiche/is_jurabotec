@@ -14,6 +14,7 @@ class StockQuant(models.Model):
     is_cout          = fields.Float(string="Coût"      , compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût pour valorisation stock (Prix achat du lot ou prix dans fiche article)")
     is_cout_total    = fields.Float(string="Coût total", compute='_compute_is_cout', readonly=True, store=False, digits="Product Price", help="Coût total pour valorisation stock")
     is_sale_order_id = fields.Many2one(related="lot_id.is_sale_order_id")
+    is_pefc          = fields.Boolean(related="lot_id.is_pefc", store=True, readonly=True)
     is_volume        = fields.Float("Volume (m3) "      , digits='Volume', compute='_compute_volume', store=True, readonly=True)
     is_volume_total  = fields.Float("Volume total (m3) ", digits=(14,2)  , compute='_compute_volume', store=True, readonly=True)
 

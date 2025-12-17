@@ -215,6 +215,7 @@ class StockLot(models.Model):
         ('non', 'Non associée'), 
         ('oui', 'Associée'),
     ], string='Charge associée à une commande', group_expand='_group_expand_states', default='non')
+    is_pefc = fields.Boolean('PEFC', default=True)
 
 
     def write(self, vals):

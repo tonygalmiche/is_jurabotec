@@ -57,6 +57,7 @@
                     <field name="is_sale_order_id"/>
                     <field name="is_num_interne_client"/>
                     <field name="is_detail_charge_client"/>
+                    <field name="is_pefc"/>
                 </group>
             </xpath>
             <notebook position="attributes">
@@ -80,6 +81,7 @@
                 <field name="is_sale_order_id"        optional="show" widget="many2one_clickable" sum="Total"/>
                 <field name="is_num_interne_client"   optional="show"/>
                 <field name="is_detail_charge_client" optional="show"/>
+                <field name="is_pefc"                 optional="show"/>
             </field>
 
         </field>
@@ -97,6 +99,8 @@
                 <field name="is_detail_charge_client"/>
             </field>
             <filter name="group_by_product" position="after">
+                <filter name="filter_pefc"     string="PEFC"     domain="[('is_pefc', '=', True)]"/>
+                <filter name="filter_non_pefc" string="non PEFC" domain="[('is_pefc', '=', False)]"/>
                 <filter name="group_by_is_sale_order_id"  string="Cde Client" domain="[]"  context="{'group_by': 'is_sale_order_id'}"/>
                 <filter name="group_by_is_fournisseur_id" string="Fournisseur" domain="[]" context="{'group_by': 'is_fournisseur_id'}"/>
             </filter>

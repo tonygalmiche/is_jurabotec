@@ -138,7 +138,20 @@
              </field>
             <field name="lot_id" position="after">
                 <field name="is_sale_order_id" optional="show"  widget="many2one_clickable"/>
+                <field name="is_pefc" optional="show"/>
             </field>
+        </field>
+    </record>
+
+    <record id="is_quant_search_view" model="ir.ui.view">
+        <field name="name">is_quant_search_view</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.quant_search_view"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <filter name="filter_pefc" string="PEFC" domain="[('is_pefc', '=', True)]"/>
+                <filter name="filter_non_pefc" string="Non PEFC" domain="[('is_pefc', '=', False)]"/>
+            </search>
         </field>
     </record>
 
