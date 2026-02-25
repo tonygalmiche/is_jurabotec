@@ -26,6 +26,13 @@
         <field name="state">code</field>
         <field name="code">records.init_prix_achat_action()</field>
     </record>
+    <record id="stock_lot_imprime_etiquette_actions_server" model="ir.actions.server">
+        <field name="name">Imprimer les étiquettes</field>
+        <field name="model_id" ref="stock.model_stock_lot"/>
+        <field name="binding_model_id" ref="stock.model_stock_lot"/>
+        <field name="state">code</field>
+        <field name="code">records.imprime_etiquette_action()</field>
+    </record>
 
     <record id="stock.action_production_lot_form" model="ir.actions.act_window">
         <field name="context">{'display_complete': True, 'default_company_id': allowed_company_ids[0]}</field>
