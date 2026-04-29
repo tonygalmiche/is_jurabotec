@@ -106,6 +106,37 @@
     />
 
 
+
+
+    <!-- Scan -->
+    <menuitem id="is_scan_main_menu"
+        name="Scan"
+        sequence="200" 
+    />
+
+    <menuitem id="is_scan_deplacement_charge_historique_menu"
+        action="is_scan_deplacement_charge_action"
+        name="Historique déplacements"
+        parent="is_scan_main_menu"
+        sequence="10" 
+    />
+
+
+
+    <menuitem id="is_scan_deplacement_charge_menu"
+        action="is_scan_deplacement_charge_new_action"
+        parent="is_scan_main_menu"
+        sequence="11" 
+    />
+    <menuitem id="is_scan_inventaire_menu"
+        action="is_scan_inventaire_action"
+        parent="is_scan_main_menu"
+        sequence="20" 
+    />
+
+
+
+
     <!-- Tablette -->
     <menuitem id="is_tablette_menu" sequence="146"  name="Tablette"/>
     <menuitem id="is_product_product_tablette_menu" sequence="10" name="Articles"        action="is_product_product_tablette_action"          parent="is_tablette_menu"/>

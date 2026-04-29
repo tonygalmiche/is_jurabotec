@@ -11,3 +11,4 @@ from . import account_move
 from . import is_export_compta
 from . import stock_inventory
 from . import is_scan_inventaire
+from . import is_scan_deplacement_charge
